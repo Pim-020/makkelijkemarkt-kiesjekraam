@@ -3,8 +3,8 @@
 // Project Settings for Deployment
 String PROJECTNAME = "fixxx/pakjekraam"
 String CONTAINERDIR = "."
-String PRODUCTION_BRANCH = "production"
-String ACCEPTANCE_BRANCH = "acceptance"
+String PRODUCTION_BRANCH = "master"
+String ACCEPTANCE_BRANCH = "develop"
 String PLAYBOOK = 'deploy.yml'
 
 // All other data uses variables, no changes needed for static
