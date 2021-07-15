@@ -100,6 +100,7 @@ export default class MarketPage extends DynamicBase {
                         title: "",
                         layout: [
                             {
+                                _key: "",
                                 title: "",
                                 class: "block-left",
                                 landmarkBottom: "",

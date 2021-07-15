@@ -265,6 +265,7 @@ export default class Day extends Component<DayPageProps> {
             _marketEventDetails.pages.push({
                 title: "",
                 layout: [{
+                    _key:"",
                     title: "",
                     lots: [],
                     class: "block-left",
@@ -320,7 +321,7 @@ export default class Day extends Component<DayPageProps> {
                         <div className="block-wrapper">
                             {page.layout && page.layout.length > 0 && page.layout.map((layout: MarketLayout, i: number) => {
                                 const layoutindex = i
-                                return <div key={i} className={this.getRowClass(layout)}>
+                                return <div key={layout._key} className={this.getRowClass(layout)}>
                                     {layout.class === 'block-left' &&
                                         <LayoutEdit
                                             index={i}

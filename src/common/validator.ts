@@ -7,6 +7,9 @@ export const validateLots = (market: MarketEventDetails): boolean => {
         p.invalid = false
         p.layout.forEach((m: MarketLayout, mi: number) => {
             m.invalid = false
+            if(m._key === undefined){
+                m._key = `key_${Math.random()}`.replace(".", "");
+            }
             m.lots.forEach((l: Lot, li: number) => {
                 if (l.type === "stand" && l.plaatsId) {
                     if (!lotUnique(l, market)) {

@@ -108,6 +108,7 @@ export interface Markets {
 }
 
 export interface MarketLayout {
+    _key: string
     class: string
     landmarkTop: string
     landmarkBottom: string
