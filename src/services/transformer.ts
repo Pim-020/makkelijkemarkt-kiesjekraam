@@ -112,7 +112,12 @@ export class Transformer {
                             const firstLotPosition = rowSets.indexOf(firstLot)
                             const lastLotPosition = rowSets.indexOf(lastLot)
                             //grab the part of the array that is between (and including) first and last
-                            const t = rowSets.slice(firstLotPosition, lastLotPosition + 1)
+                            let t: any[];
+                            if(firstLotPosition < lastLotPosition){
+                                t = rowSets.slice(firstLotPosition, lastLotPosition + 1)
+                            }else{
+                                t = rowSets.slice(lastLotPosition, firstLotPosition + 1)
+                            }
                             // remove faults in lots!!
                             const pageLotsAndObstacles = t.filter((e) => {
                                 if (e.type === "obstacle") {
