@@ -58,13 +58,7 @@ const Toewijzing = {
         indeling: IMarktindeling,
         plaats: IMarktplaats
     ): IToewijzing | null => {
-        for (const i in indeling.toewijzingen){
-            let tw:IToewijzing = indeling.toewijzingen[i];
-            if(tw.plaatsen.includes(plaats.plaatsId)){
-                return tw;
-            }
-        }
-        return null;
+        return indeling.toewijzingen.find(tw => tw.plaatsen.includes(plaats.plaatsId));
     },
 
     remove: (
