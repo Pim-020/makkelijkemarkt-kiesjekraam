@@ -35,7 +35,6 @@ describe('BUG 9718 (Markt22): Een ondernemer (sollicitant) die een extra kraam w
     it('krijgt voorrang op andere sollicitanten die een *extra* kraam willen als de vrije kraam in zijn branche is', () => {
         const { toewijzingen, afwijzingen } = calc({
             ondernemers: [
-                //{ sollicitatieNummer: 1, status: "soll", voorkeur: { branches: ['afg'], maximum:2, minimum:1 } },
                 { sollicitatieNummer: 2, status: "soll", voorkeur: { branches: ['kleding'], maximum:2, minimum:1 } },
                 { sollicitatieNummer: 1, status: "soll", voorkeur: { branches: ['afg'], maximum:2, minimum:1 } }
             ],
@@ -43,9 +42,6 @@ describe('BUG 9718 (Markt22): Een ondernemer (sollicitant) die een extra kraam w
                 { branches: ['afg'] , plaatsId: "1"}, 
                 { branches: ['afg'] , plaatsId: "2"},
                 { branches: ['kleding'] , plaatsId: "3"}
-            ],
-            aLijst: [
-                //{ sollicitatieNummer: 1 }
             ]
         });
         
@@ -65,9 +61,6 @@ describe('BUG 9718 (Markt22): Een ondernemer (sollicitant) die een extra kraam w
             marktplaatsen: [
                 { branches: ['afg'] }, 
                 { branches: ['afg'] }
-            ],
-            aLijst: [
-                //{ sollicitatieNummer: 1 }
             ],
             branches: [{
                 brancheId: 'afg', verplicht: false

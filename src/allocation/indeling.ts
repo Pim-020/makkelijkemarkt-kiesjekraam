@@ -752,7 +752,7 @@ const Indeling = {
     _tryBestExpansion: (
         indeling: IMarktindeling,
         toewijzing: IToewijzing
-    ): IMarktplaats => {
+    ): IMarktplaats | null => {
         const { ondernemer, plaatsen } = toewijzing;
         return Markt.getAdjacentPlaatsen(indeling, plaatsen, 1)[0] || null;
     },
