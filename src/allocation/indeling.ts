@@ -22,7 +22,6 @@ import Ondernemer from './ondernemer';
 import Ondernemers from './ondernemers';
 import Afwijzing from './afwijzing';
 import Toewijzing from './toewijzing';
-import { is } from 'bluebird';
 
 // Wordt gebruikt in `_findBestePlaatsen` om `IMarktplaats` object om te vormen
 // tot `IPlaatsvoorkeur` objecten met een berekend `brancheIntersectCount` getal.
