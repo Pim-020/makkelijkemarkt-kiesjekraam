@@ -57,7 +57,7 @@ const Toewijzing = {
     findByPlaats: (
         indeling: IMarktindeling,
         plaats: IMarktplaats
-    ): IToewijzing => {
+    ): IToewijzing | null => {
         for (var i in indeling.toewijzingen){
             let tw:IToewijzing = indeling.toewijzingen[i];
             if(tw.plaatsen.includes(plaats.plaatsId)){
