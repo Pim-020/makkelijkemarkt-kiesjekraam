@@ -22,6 +22,7 @@ import Ondernemer from './ondernemer';
 import Ondernemers from './ondernemers';
 import Afwijzing from './afwijzing';
 import Toewijzing from './toewijzing';
+import { is } from 'bluebird';
 
 // Wordt gebruikt in `_findBestePlaatsen` om `IMarktplaats` object om te vormen
 // tot `IPlaatsvoorkeur` objecten met een berekend `brancheIntersectCount` getal.
@@ -389,6 +390,31 @@ const Indeling = {
         }, indeling);
     },
 
+    // Kijkt of er onterechte (branche incompatible) toewijzingen zijn
+    // 1. waar had deze ondernemer kunnen uitbreiden als er nog wel plek was geweest?
+    // 2. heeft deze ondernemer een branch voor deze kraam indien beschikbaar
+    // 3. zoek de toewijzing voor deze kraam op
+    // 4. check of de ondernemer die er nu is ingedeeld geen verplichte branche heeft (want dan heeft hij voorrang)
+    _validateBrancheExpansion: (
+        indeling:IMarktindeling,
+        toewijzing: IToewijzing,
+        ondernemer: IMarktondernemer
+    ): IMarktindeling => {
+        let p = Indeling._tryBestExpansion(indeling, toewijzing);
+        if(p != null){
+            const sect = intersection(ondernemer.voorkeur.branches, p.branches);
+            if(p != null && sect.length > 0){
+                const t:IToewijzing = Toewijzing.findByPlaats(indeling, p);
+                const isBrancheCompatible:boolean = intersection(t.ondernemer.voorkeur.branches, p.branches).length > 0;
+                if(!Ondernemer.hasVerplichteBranche(indeling, t.ondernemer) && !isBrancheCompatible){
+                    indeling = Toewijzing.add(indeling, ondernemer, p);
+                    indeling = Afwijzing.add(indeling, t.ondernemer, Afwijzing.MINIMUM_UNAVAILABLE);
+                }
+            }
+        }
+        return indeling;
+    },
+
     // Uitbreiden gaat in iteraties: iedereen die een 2de plaats wil krijgt deze
     // aangeboden alvorens iedereen die een 3de plaats wil hiertoe de kans krijgt, enz.
     performExpansion: (
@@ -412,6 +438,9 @@ const Indeling = {
                 // ruimte op voor andere ondernemers.
                 if (!uitbreidingPlaats) {
                     contenders = Ondernemers.without(contenders, ondernemer);
+
+                    // check of er ondernemers staan op plekken die niet hun branche zijn
+                    indeling = Indeling._validateBrancheExpansion(indeling, toewijzing, ondernemer);
 
                     const { plaatsen } = toewijzing;
                     const minimum      = Ondernemer.getMinimumSize(ondernemer);
@@ -718,6 +747,15 @@ const Indeling = {
             Markt.getAdjacentPlaatsen(indeling, plaatsen, 1),
             1, true
         )[0] || null;
+    },
+
+    //
+    _tryBestExpansion: (
+        indeling: IMarktindeling,
+        toewijzing: IToewijzing
+    ): IMarktplaats => {
+        const { ondernemer, plaatsen } = toewijzing;
+        return Markt.getAdjacentPlaatsen(indeling, plaatsen, 1)[0] || null;
     },
 
     // Bepaalt samen met `_compareOndernemers` de volgorde van indeling:

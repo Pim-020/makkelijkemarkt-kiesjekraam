@@ -53,6 +53,20 @@ const Toewijzing = {
         );
     },
 
+    // vind een toewijzing m.b.v van een marktplaats
+    findByPlaats: (
+        indeling: IMarktindeling,
+        plaats: IMarktplaats
+    ): IToewijzing => {
+        for (var i in indeling.toewijzingen){
+            let tw:IToewijzing = indeling.toewijzingen[i];
+            if(tw.plaatsen.includes(plaats.plaatsId)){
+                return tw;
+            }
+        }
+        return null;
+    },
+
     remove: (
         indeling: IMarktindeling,
         ondernemer: IMarktondernemer
