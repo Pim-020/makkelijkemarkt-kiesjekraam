@@ -135,9 +135,9 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
                             }
                         }} /></td>
                         <td>
-                            <InputNumber min={0} max={99} value={branche.maximumPlaatsen || 0}
+                            <InputNumber min={0} max={999} value={branche.maximumPlaatsen || 0}
                                 onChange={(value: string | number | undefined) => {
-                                    if (value && this.state.branches) {
+                                    if ((value && this.state.branches) || (value === 0 && this.state.branches)) {
                                         const _branches = this.state.branches
                                         _branches[i].maximumPlaatsen = parseInt(value.toString())
                                         this.updateStorage(_branches)

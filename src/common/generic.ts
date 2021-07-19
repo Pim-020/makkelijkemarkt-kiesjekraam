@@ -141,7 +141,7 @@ export const zipAll = () => {
                             brancheId: _nB.brancheId,
                             verplicht: _nB.verplicht || false
                         }
-                        if (_nB.maximumPlaatsen && _nB.maximumPlaatsen > 0) {
+                        if (_nB.maximumPlaatsen && _nB.maximumPlaatsen > -1) {
                             _tmp.maximumPlaatsen = _nB.maximumPlaatsen
                         }
                         _nBranches.push(_tmp)

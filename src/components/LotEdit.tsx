@@ -63,6 +63,11 @@ export default class LotEdit extends Component<LotEditProps> {
         })
     }
 
+    isBakPresent = (): boolean => {
+        const _blist = this.props.branches.map(b => b.brancheId)
+        return _blist.indexOf("bak") > -1
+    }
+
     setBak = (e: CheckboxChangeEvent) => {
         if (this.state.lot && this.state.lot) {
             let _branches: string[] = this.state.lot.branches || []
@@ -334,8 +339,9 @@ export default class LotEdit extends Component<LotEditProps> {
                                     <br />
                                 Eigen<br/>materieel
                                 </Col>
+                                {this.isBakPresent() &&
                                 <Col style={colStyle}><Checkbox checked={this.getBak()} onChange={this.setBak} /><br />Bak</Col>
-
+                                }
                                 {this.state.properties && this.state.properties.map((prop: string, i: number) => {
                                     return <Col key={i} style={colStyle}>
                                         <Checkbox id={prop} checked={this.getProperty(prop)} onChange={this.setProperty} />
