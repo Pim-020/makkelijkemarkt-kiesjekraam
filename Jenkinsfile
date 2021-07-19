@@ -27,6 +27,10 @@ def tryStep(String message, Closure block, Closure tearDown = null) {
 }
 
 node {
+    tools {
+        nodejs "node"
+    }
+
     stage("Checkout") {
         checkout scm
     }
