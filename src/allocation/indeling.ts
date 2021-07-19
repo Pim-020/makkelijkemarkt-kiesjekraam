@@ -399,14 +399,14 @@ const Indeling = {
         toewijzing: IToewijzing,
         ondernemer: IMarktondernemer
     ): IMarktindeling => {
-        const p = Indeling._tryBestExpansion(indeling, toewijzing);
-        if(p != null){
-            const sect = intersection(ondernemer.voorkeur.branches, p.branches);
-            if(p != null && sect.length > 0){
-                const t:IToewijzing = Toewijzing.findByPlaats(indeling, p);
-                const isBrancheCompatible:boolean = intersection(t.ondernemer.voorkeur.branches, p.branches).length > 0;
+        const plaats = Indeling._tryBestExpansion(indeling, toewijzing);
+        if(plaats != null){
+            const sect = intersection(ondernemer.voorkeur.branches, plaats.branches);
+            if(plaats !== null && sect.length > 0){
+                const t:IToewijzing = Toewijzing.findByPlaats(indeling, plaats);
+                const isBrancheCompatible:boolean = intersection(t.ondernemer.voorkeur.branches, plaats.branches).length > 0;
                 if(!Ondernemer.hasVerplichteBranche(indeling, t.ondernemer) && !isBrancheCompatible){
-                    indeling = Toewijzing.add(indeling, ondernemer, p);
+                    indeling = Toewijzing.add(indeling, ondernemer, plaats);
                     indeling = Afwijzing.add(indeling, t.ondernemer, Afwijzing.MINIMUM_UNAVAILABLE);
                 }
             }
