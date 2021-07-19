@@ -399,7 +399,7 @@ const Indeling = {
         toewijzing: IToewijzing,
         ondernemer: IMarktondernemer
     ): IMarktindeling => {
-        let p = Indeling._tryBestExpansion(indeling, toewijzing);
+        const p = Indeling._tryBestExpansion(indeling, toewijzing);
         if(p != null){
             const sect = intersection(ondernemer.voorkeur.branches, p.branches);
             if(p != null && sect.length > 0){
@@ -753,7 +753,7 @@ const Indeling = {
         indeling: IMarktindeling,
         toewijzing: IToewijzing
     ): IMarktplaats | null => {
-        const { ondernemer, plaatsen } = toewijzing;
+        const { plaatsen } = toewijzing;
         return Markt.getAdjacentPlaatsen(indeling, plaatsen, 1)[0] || null;
     },
 
