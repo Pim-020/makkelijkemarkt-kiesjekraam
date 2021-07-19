@@ -65,7 +65,6 @@ export default class LotEdit extends Component<LotEditProps> {
 
     isBakPresent = (): boolean => {
         const _blist = this.props.branches.map(b => b.brancheId)
-        console.log(_blist)
         return _blist.indexOf("bak") > -1
     }
 
