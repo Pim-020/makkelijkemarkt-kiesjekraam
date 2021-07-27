@@ -118,9 +118,9 @@ const countToewijzingenPerBranche = (allBranches, ondernemers, toewijzingen) => 
 const countToewijzingenPerBrancheByMarktPlaatsen = (plaatsen, toewijzingen) => {
     return toewijzingen.reduce((result, toewijzing) => {
         toewijzing.plaatsen.forEach(p => {
-            let plaats = plaatsen.find(plaats => plaats.plaatsId == p);
+            let plaats = plaatsen.find(plaats => plaats.plaatsId === p);
             plaats.branches.forEach(branch => {
-                if(result[branch] == undefined){
+                if(!result[branch]){
                     result[branch] = 0;
                 }
                 result[branch] ++;
