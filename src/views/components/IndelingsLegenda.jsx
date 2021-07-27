@@ -15,7 +15,7 @@ const IndelingsLegenda = ({
     const relevantBranches     = getAllBranchesForLegend(branches, marktplaatsen);
     const showToewijzingen     = !!toewijzingen.length;
     const indelingenPerBranche = showToewijzingen ?
-                                 countToewijzingenPerBrancheByMarktPlaatsen(marktplaatsen, toewijzingen) : 
+                                 countBrancheToewijzingen(marktplaatsen, toewijzingen) :
                                  {};
 
     return (
@@ -115,19 +115,19 @@ const countToewijzingenPerBranche = (allBranches, ondernemers, toewijzingen) => 
     }, {});
 };
 
-const countToewijzingenPerBrancheByMarktPlaatsen = (plaatsen, toewijzingen) => {
+const countBrancheToewijzingen = (plaatsen, toewijzingen) => {
     return toewijzingen.reduce((result, toewijzing) => {
         toewijzing.plaatsen.forEach(p => {
-            let plaats = plaatsen.find(plaats => plaats.plaatsId === p);
+            const plaats = plaatsen.find(pl => pl.plaatsId === p);
             plaats.branches.forEach(branch => {
-                if(!result[branch]){
+                if (!result[branch]){
                     result[branch] = 0;
                 }
                 result[branch] ++;
             });
         });
         return result;
-    }, {})
-}
+    }, {});
+};
 
 module.exports = IndelingsLegenda;

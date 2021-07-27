@@ -395,16 +395,16 @@ const Indeling = {
     // 3. zoek de toewijzing voor deze kraam op
     // 4. check of de ondernemer die er nu is ingedeeld geen verplichte branche heeft (want dan heeft hij voorrang)
     _validateBrancheExpansion: (
-        indeling:IMarktindeling,
+        indeling: IMarktindeling,
         toewijzing: IToewijzing,
         ondernemer: IMarktondernemer
     ): IMarktindeling => {
         const plaats = Indeling._tryBestExpansion(indeling, toewijzing);
-        if(plaats != null){
+        if(plaats !== null){
             const sect = intersection(ondernemer.voorkeur.branches, plaats.branches);
             if(plaats !== null && sect.length > 0){
-                const t:IToewijzing = Toewijzing.findByPlaats(indeling, plaats);
-                const isBrancheCompatible:boolean = intersection(t.ondernemer.voorkeur.branches, plaats.branches).length > 0;
+                const t: IToewijzing = Toewijzing.findByPlaats(indeling, plaats);
+                const isBrancheCompatible: boolean = intersection(t.ondernemer.voorkeur.branches, plaats.branches).length > 0;
                 if(!Ondernemer.hasVerplichteBranche(indeling, t.ondernemer) && !isBrancheCompatible){
                     indeling = Toewijzing.add(indeling, ondernemer, plaats);
                     indeling = Afwijzing.add(indeling, t.ondernemer, Afwijzing.MINIMUM_UNAVAILABLE);

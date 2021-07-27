@@ -39,17 +39,16 @@ describe('BUG 9718 (Markt22): Een ondernemer (sollicitant) die een extra kraam w
                 { sollicitatieNummer: 1, status: "soll", voorkeur: { branches: ['afg'], maximum:2, minimum:1 } }
             ],
             marktplaatsen: [
-                { branches: ['afg'] , plaatsId: "1"}, 
-                { branches: ['afg'] , plaatsId: "2"},
-                { branches: ['kleding'] , plaatsId: "3"}
+                { branches: ['afg'], plaatsId: "1" },
+                { branches: ['afg'], plaatsId: "2" },
+                { branches: ['kleding'], plaatsId: "3" }
             ]
         });
-        
-        expect(findOndernemers(toewijzingen)).toStrictEqual([1,2]);
+
+        expect(findOndernemers(toewijzingen)).toStrictEqual([1, 2]);
         expect(findOndernemers(afwijzingen)).toStrictEqual([]);
         expect(toewijzingen.length).toBe(2);
         expect(afwijzingen.length).toBe(0);
-
     });
 
     it('krijgt voorrang op andere sollicitanten die een *eerste* kraam willen als de laatste vrije kraam in zijn branche is', () => {
@@ -59,21 +58,19 @@ describe('BUG 9718 (Markt22): Een ondernemer (sollicitant) die een extra kraam w
                 { sollicitatieNummer: 2, status: "soll", voorkeur: { branches: ['kleding'], maximum:2, minimum:1 } }
             ],
             marktplaatsen: [
-                { branches: ['afg'] }, 
+                { branches: ['afg'] },
                 { branches: ['afg'] }
             ],
             branches: [{
                 brancheId: 'afg', verplicht: false
             }]
         });
-        
+
         expect(findOndernemers(toewijzingen)).toStrictEqual([1]);
         expect(findOndernemers(afwijzingen)).toStrictEqual([2]);
         expect(toewijzingen.length).toBe(1);
         expect(afwijzingen.length).toBe(1);
-
     });
-
 });
 
 describe('Een ondernemer die ingedeeld wil worden', () => {
