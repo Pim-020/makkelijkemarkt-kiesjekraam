@@ -32,17 +32,17 @@ node {
         checkout scm
     }
 
-    // stage("Install") {
-    //      sh 'NODE_ENV=development npm ci'
-    //}
+    stage("Install") {
+        sh 'NODE_ENV=development npm ci'
+    }
 
-    // stage("Lint") {
-    //     sh 'npm run lint'
-    // }
+    stage("Lint") {
+        sh 'npm run lint'
+    }
 
-    // stage("Test") {
-    //     sh 'npm run test'
-    // }
+    stage("Test") {
+        sh 'npm run test'
+    }
 
     stage("Build image") {
         tryStep "build", {
