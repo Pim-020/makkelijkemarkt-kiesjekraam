@@ -10,6 +10,7 @@ const {
 
 const ObstakelList = require('./ObstakelList');
 const Plaats = require('./Plaats.tsx').default;
+const BlockedPlaats = require('./BlockedPlaats.tsx').default;
 
 const IndelingslijstGroup = ({
     page,
@@ -117,7 +118,7 @@ const IndelingslijstGroup = ({
                                 );
                             }
                         } else {
-                            return <Plaats key={i} />;
+                            return <BlockedPlaats { ... {nr: plaatsNr} } key={i}/>
                         }
                     })}
                 </tbody>
