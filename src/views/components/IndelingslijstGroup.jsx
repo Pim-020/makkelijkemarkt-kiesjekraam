@@ -77,9 +77,11 @@ const IndelingslijstGroup = ({
                         ) : null;
 
                         const plaats         = plaatsList[plaatsNr];
-                        const plaatsBranches = plaats.branches ?
-                                               branches.filter(branche => plaats.branches.includes(branche.brancheId)) :
+                        const plaatsBranches = plaats ?
+                                               plaats.branches ?
+                                               branches.filter(branche => plaats.branches.includes(branche.brancheId)) :[] :
                                                [];
+
                         const plaatsProps = {
                             key: plaatsNr,
                             first,
@@ -118,7 +120,7 @@ const IndelingslijstGroup = ({
                                 );
                             }
                         } else {
-                            return <BlockedPlaats { ... {nr: plaatsNr} } key={i}/>
+                            return <BlockedPlaats { ... { nr: plaatsNr } } key={i}/>;
                         }
                     })}
                 </tbody>
