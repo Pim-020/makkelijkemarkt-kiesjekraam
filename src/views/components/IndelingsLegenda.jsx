@@ -117,15 +117,19 @@ const countToewijzingenPerBranche = (allBranches, ondernemers, toewijzingen) => 
 
 const countBrancheToewijzingen = (plaatsen, toewijzingen) => {
     return toewijzingen.reduce((result, toewijzing) => {
-        toewijzing.plaatsen.forEach(p => {
-            const plaats = plaatsen.find(pl => pl.plaatsId === p);
-            plaats.branches.forEach(branch => {
-                if (!result[branch]){
-                    result[branch] = 0;
+        if (toewijzing.plaatsen){
+            toewijzing.plaatsen.forEach(p => {
+                const plaats = plaatsen.find(pl => pl.plaatsId === p);
+                if (plaats.branches) {
+                    plaats.branches.forEach(branch => {
+                        if (!result[branch]){
+                            result[branch] = 0;
+                        }
+                        result[branch] ++;
+                    });
                 }
-                result[branch] ++;
             });
-        });
+        }
         return result;
     }, {});
 };
