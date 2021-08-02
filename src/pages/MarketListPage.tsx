@@ -6,9 +6,6 @@ import MarketsService, { PagesService } from "../services/service_markets"
 import MarketListItem from '../components/MarketListItem'
 import { Breadcrumb } from 'antd'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import { //MinusCircleOutlined, 
-    PlusOutlined
-} from '@ant-design/icons'
 import { MMarkt } from '../models/mmarkt'
 import { MMarktService } from '../services/service_mmarkt'
 import { withRouter } from 'react-router-dom'
@@ -17,12 +14,11 @@ const { Search } = Input;
 
 class MarketListPage extends Component<RouteComponentProps> {
     weekdays: DayOfWeek[] = WeekDays
-    readonly state: { mmarkets: MMarkt[], markets: Markets, filter: "", filteredMarkets: Markets, showModal: boolean, newMarketId: string, day: DayOfWeek, newMarketInvalid?: string } = {
+    readonly state: { mmarkets: MMarkt[], markets: Markets, filter: "", filteredMarkets: Markets, newMarketId: string, day: DayOfWeek, newMarketInvalid?: string } = {
         mmarkets: [],
         markets: {},
         filter: "",
         filteredMarkets: {},
-        showModal: false,
         newMarketId: "",
         day: {
             id: 0,
@@ -50,37 +46,6 @@ class MarketListPage extends Component<RouteComponentProps> {
             this.applyFilter()
         })
     }
-
-    handleOk = () => {
-        //Add the newMarket to the markets
-        if (this.state.newMarketId !== "") {
-            const _markets = this.state.markets
-            //const _events: Events = {}
-            // _events[this.state.day.abbreviation] = {
-            //     weekday: 0
-            // }
-            // POST a new empty pagina's set to the backend
-            //this.pagesService.update(`${this.state.newMarketId}`, [])
-
-            _markets[this.state.newMarketId] = {
-                id: 0,
-                name: "",
-                //events: _events
-            }
-
-            this.updateMarkets(_markets)
-            this.setState({
-                showModal: false
-            })
-            this.props.history.push(`/market/${this.state.newMarketId}`)
-        }
-    };
-
-    handleCancel = () => {
-        this.setState({
-            showModal: false
-        })
-    };
 
     componentDidMount = () => {
         this.marketsService.retrieve().then((markets: Markets) => {
@@ -179,18 +144,8 @@ class MarketListPage extends Component<RouteComponentProps> {
                 <Col>
                     <Search placeholder="Filter markten" onChange={this.onChange} style={{ width: 200 }} />
                 </Col>
-                <Col key="add-market">
-                    <Button
-                        type="dashed"
-                        onClick={() => {
-                            this.setState({
-                                showModal: true
-                            })
-                        }}
-                        icon={<PlusOutlined />}
-                    >Toevoegen</Button>
-                </Col>
-            </Row><Row gutter={[16, 16]}>
+            </Row>  
+            <Row gutter={[16, 16]}>
                 {Object.keys(this.state.filteredMarkets).sort().map((key: string, i: number) => {
 
                     const market: Market = this.state.markets[key]
@@ -202,47 +157,12 @@ class MarketListPage extends Component<RouteComponentProps> {
                         if (mmarket && mmarket.naam) {
                             market.name = mmarket.naam
                         }
-                        //market.municipality = "Amsterdam"
                     }
                     return <Col key={key} style={{ margin: "0.5em" }}>
                         <MarketListItem marketId={key} market={market} />
                     </Col>
-                })}
-
+                })}  
             </Row>
-
-            <Modal
-                title="Nieuwe markt"
-                visible={this.state.showModal}
-                okButtonProps={{ disabled: this.checkAbbreviation() }}
-                onOk={this.handleOk}
-                onCancel={this.handleCancel}
-                cancelText="Annuleren"
-            >
-
-                <Input value={this.state.newMarketId} placeholder="Code" onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    if (e.target.value !== "") {
-                        if (Object.keys(this.state.markets).find((key: string) => key.toLowerCase() === e.target.value.toLowerCase())) {
-                            this.setState({
-                                newMarketId: e.target.value,
-                                newMarketInvalid: "Markt bestaat al"
-                            })
-                        } else {
-                            this.setState({
-                                newMarketId: e.target.value,
-                                newMarketInvalid: ""
-                            })
-                        }
-                    } else {
-                        this.setState({
-                            newMarketId: "",
-                            newMarketInvalid: "Code is vereist"
-                        })
-                    }
-
-                }} />
-                {this.state.newMarketInvalid !== "" && <div className="input-error">{this.state.newMarketInvalid}</div>}
-            </Modal>
         </>
     }
 }
