@@ -20,8 +20,7 @@ RUN npm run build
 # production environment
 FROM nginx:1.18.0-alpine
 COPY --from=build /app/build /usr/share/nginx/html
-ENV MMAP_API_URL https://makkelijkemarkt-api.amsterdam.nl/api/1.1.0/markt/
-ENV MMAP_API_KEY yoursecretapikey
+COPY /mmarkt_import.sh /mmarkt_import.sh
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d
 EXPOSE 8080
