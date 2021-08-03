@@ -14,7 +14,7 @@ const { Search } = Input;
 
 class MarketListPage extends Component<RouteComponentProps> {
     weekdays: DayOfWeek[] = WeekDays
-    readonly state: { mmarkets: MMarkt[], markets: Markets, filter: "", filteredMarkets: Markets, newMarketId: string, day: DayOfWeek, newMarketInvalid?: string } = {
+    readonly state: { mmarkets: MMarkt[], markets: Markets, filter: "", filteredMarkets: Markets, newMarketId: string, day: DayOfWeek} = {
         mmarkets: [],
         markets: {},
         filter: "",
@@ -38,15 +38,6 @@ class MarketListPage extends Component<RouteComponentProps> {
         this.mmarktService = new MMarktService()
     }
 
-    updateMarkets = (markets: Markets) => {
-        localStorage.setItem('bwdm_cache_markets', JSON.stringify(markets))
-        this.setState({
-            markets
-        }, () => {
-            this.applyFilter()
-        })
-    }
-
     componentDidMount = () => {
         this.marketsService.retrieve().then((markets: Markets) => {
             // Sort
@@ -65,6 +56,7 @@ class MarketListPage extends Component<RouteComponentProps> {
 
             mmarkets.forEach((m: MMarkt) => {
 
+                // extends markets with mmarkets
                 if (!marketKeys.includes(m.afkorting)) {
                     _markets[m.afkorting] = {
                         id: m.id,
@@ -76,7 +68,6 @@ class MarketListPage extends Component<RouteComponentProps> {
                     if (m.aantalKramen) {
                         _markets[m.afkorting].stands = m.aantalKramen
                     }
-                    //_markets[m.afkorting].municipality = "Amsterdam"
                 }
             })
             this.setState({
@@ -85,13 +76,6 @@ class MarketListPage extends Component<RouteComponentProps> {
                 filteredMarkets: _markets
             })
         })
-    }
-
-    checkAbbreviation = (): boolean => {
-        if (this.state.newMarketInvalid === "") {
-            return false
-        }
-        return true
     }
 
     applyFilter = () => {
