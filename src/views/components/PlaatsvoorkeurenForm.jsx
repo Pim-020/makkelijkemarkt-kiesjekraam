@@ -291,7 +291,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                     ? `/profile/${ondernemer.erkenningsnummer}?error=plaatsvoorkeuren-saved`
                                     : `/markt-detail/${markt.id}?error=plaatsvoorkeuren-saved#plaatsvoorkeuren`
                                 }`}>
-                            Bewaar
+                            Opslaan
                         </button>
                     </p>
                 </div>

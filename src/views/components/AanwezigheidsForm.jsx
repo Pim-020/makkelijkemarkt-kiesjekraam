@@ -136,7 +136,7 @@ class AanwezigheidsForm extends React.Component {
                                 : `/dashboard?error=aanwezigheid-saved`
                             }`}
                     >
-                        Bewaren
+                        Opslaan
                 </button>
                 </p>
             </Form>
