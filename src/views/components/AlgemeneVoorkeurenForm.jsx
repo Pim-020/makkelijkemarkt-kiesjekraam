@@ -152,7 +152,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                     : `/markt-detail/${markt.id}?error=algemene-voorkeuren-saved#marktprofiel`
                             }`}
                         >
-                            Bewaar
+                            Opslaan
                         </button>
 
                     </p>
