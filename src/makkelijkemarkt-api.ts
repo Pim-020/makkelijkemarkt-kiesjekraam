@@ -27,8 +27,8 @@ const MILLISECONDS_IN_SECOND = 1000;
 const SECONDS_IN_MINUTE = 60;
 const MINUTES_IN_HOUR = 60;
 
-const MAX_RETRY_50x = 10;
-const MAX_RETRY_40x = 10;
+const MAX_RETRY_50X = 10;
+const MAX_RETRY_40X = 10;
 
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
@@ -73,8 +73,8 @@ const apiBase = (
         });
     };
 
-    let counter_50x_retry = 0;
-    let counter_40x_retry = 0;
+    let counter50xRetry = 0;
+    let counter40xRetry = 0;
 
     const retry = (api: any) => {
         return login(api)
@@ -93,25 +93,25 @@ const apiBase = (
         return response;
     }, (error: any) => {
 
-        if (error.response.status === 504 || 
+        if (error.response.status === 504 ||
             error.response.status === 503) {
-            counter_50x_retry ++;
-            if (counter_50x_retry < MAX_RETRY_50x) {
-                console.log("RETRY 50x");
+            counter50xRetry ++;
+            if (counter50xRetry < MAX_RETRY_50X) {
+                console.log('RETRY 50x');
                 return retry(api);
             }
         }
-        counter_50x_retry = 0;
+        counter50xRetry = 0;
 
         if (error.response.status === 401 ||
             error.response.status === 403) {
-            counter_40x_retry ++;
-            if (counter_40x_retry < MAX_RETRY_40x) {
-                console.log("RETRY 40x");
+            counter40xRetry ++;
+            if (counter40xRetry < MAX_RETRY_40X) {
+                console.log('RETRY 40x');
                 return retry(api);
             }
         }
-        counter_40x_retry = 0;
+        counter40xRetry = 0;
         return error;
     });
 
