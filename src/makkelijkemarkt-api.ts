@@ -27,6 +27,9 @@ const MILLISECONDS_IN_SECOND = 1000;
 const SECONDS_IN_MINUTE = 60;
 const MINUTES_IN_HOUR = 60;
 
+const MAX_RETRY_50x = 10;
+const MAX_RETRY_40x = 10;
+
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
 requireEnv('API_READONLY_USER');
@@ -69,6 +72,10 @@ const apiBase = (
             },
         });
     };
+
+    let counter_50x_retry = 0;
+    let counter_40x_retry = 0;
+
     const retry = (api: any) => {
         return login(api)
         .then((res: any) => {
@@ -85,14 +92,27 @@ const apiBase = (
     api.interceptors.response.use((response: any) => {
         return response;
     }, (error: any) => {
-        if (
-            error.response.status === 401 ||
-            error.response.status === 403
-        ) {
-            return retry(api);
-        } else {
-            return error;
+
+        if (error.response.status === 504 || 
+            error.response.status === 503) {
+            counter_50x_retry ++;
+            if (counter_50x_retry < MAX_RETRY_50x) {
+                console.log("RETRY 50x");
+                return retry(api);
+            }
         }
+        counter_50x_retry = 0;
+
+        if (error.response.status === 401 ||
+            error.response.status === 403) {
+            counter_40x_retry ++;
+            if (counter_40x_retry < MAX_RETRY_40x) {
+                console.log("RETRY 40x");
+                return retry(api);
+            }
+        }
+        counter_40x_retry = 0;
+        return error;
     });
 
     return session.findByPk(mmConfig.sessionKey)
