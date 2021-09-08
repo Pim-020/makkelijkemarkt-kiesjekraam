@@ -1,18 +1,15 @@
 #!groovy
 
-// Project Settings for Deployment
 String PROJECTNAME = "pakjekraam"
 String CONTAINERDIR = "."
 String PRODUCTION_BRANCH = "main"
 String INFRASTRUCTURE = 'secure'
 String PLAYBOOK = 'deploy.yml'
-
-// All other data uses variables, no changes needed for static
 String CONTAINERNAME = "fixxx/${PROJECTNAME}"
 String DOCKERFILE = "Dockerfile"
 String BRANCH = "${env.BRANCH_NAME}"
 
-def tryStep(String message, Closure block, Closure tearDown = null) {
+def tryStep (String message, Closure block, Closure tearDown = null) {
     try {
         block();
     }
@@ -27,7 +24,7 @@ def tryStep(String message, Closure block, Closure tearDown = null) {
     }
 }
 
-def retagAndPush(String imageName, String newTag) {
+def retagAndPush (String imageName, String newTag) {
     def regex = ~"^https?://"
     def dockerReg = "${DOCKER_REGISTRY_HOST}" - regex
     sh "docker tag ${dockerReg}/${imageName}:${env.BUILD_NUMBER} ${dockerReg}/${imageName}:${newTag}"
@@ -35,12 +32,10 @@ def retagAndPush(String imageName, String newTag) {
 }
 
 node {
-    // Get a copy of the code
     stage("Checkout") {
         checkout scm
 }
 
-    // Build the Dockerfile in the $CONTAINERDIR and push it to docker registry
     stage("Build develop image") {
         tryStep "build", {
             sh "git rev-parse HEAD > version_file"
@@ -49,16 +44,14 @@ node {
             docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
                 image = docker.build("${CONTAINERNAME}:${env.BUILD_NUMBER}","-f ${DOCKERFILE} ${CONTAINERDIR}")
                 image.push()
-
             }
         }
     }
 }
 
-// On main branch, fetch the container, tag with production and latest and deploy to production
 if (BRANCH == "${PRODUCTION_BRANCH}") {
     stage('Waiting for approval') {
-        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Acceptance Release - please confirm"
+        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Acceptance Release - please confirm. URL: ${env.BUILD_URL}"
         input "Deploy to Acceptance?"
     }
 
@@ -83,7 +76,7 @@ if (BRANCH == "${PRODUCTION_BRANCH}") {
     }
 
     stage('Waiting for approval') {
-        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Production Release - please confirm"
+        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Production Release - please confirm. URL: ${env.BUILD_URL}"
         input "Deploy to Production?"
     }
 
