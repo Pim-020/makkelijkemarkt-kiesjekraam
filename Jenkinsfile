@@ -51,7 +51,7 @@ node {
 
 if (BRANCH == "${PRODUCTION_BRANCH}") {
     stage('Waiting for approval') {
-        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Acceptance Release - please confirm. URL: ${env.BUILD_URL}"
+        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Acceptance Release - please confirm. URL: ${env.JOB_URL}"
         input "Deploy to Acceptance?"
     }
 
@@ -76,7 +76,7 @@ if (BRANCH == "${PRODUCTION_BRANCH}") {
     }
 
     stage('Waiting for approval') {
-        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Production Release - please confirm. URL: ${env.BUILD_URL}"
+        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Production Release - please confirm. URL: ${env.JOB_URL}"
         input "Deploy to Production?"
     }
 
