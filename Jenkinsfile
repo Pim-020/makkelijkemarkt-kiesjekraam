@@ -58,7 +58,7 @@ node {
 // On main branch, fetch the container, tag with production and latest and deploy to production
 if (BRANCH == "${PRODUCTION_BRANCH}") {
     stage('Waiting for approval') {
-        slackSend channel: '#salmagundi_ci', color: 'warning', message: '${PROJECTNAME} is waiting for Acceptance Release - please confirm'
+        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Acceptance Release - please confirm"
         input "Deploy to Acceptance?"
     }
 
@@ -83,7 +83,7 @@ if (BRANCH == "${PRODUCTION_BRANCH}") {
     }
 
     stage('Waiting for approval') {
-        slackSend channel: '#salmagundi_ci', color: 'warning', message: '${PROJECTNAME} is waiting for Production Release - please confirm'
+        slackSend channel: '#salmagundi_ci', color: 'warning', message: "${PROJECTNAME} is waiting for Production Release - please confirm"
         input "Deploy to Production?"
     }
 
