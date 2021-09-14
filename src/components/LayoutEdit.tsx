@@ -8,6 +8,7 @@ const { confirm } = Modal
 export default class LayoutEdit extends Component<{ index: number, layout: MarketLayout, changed?: (layout: MarketLayout | undefined, position: [number, number], add?: boolean) => void, position: [number, number] }> {
     readonly state: { layout: MarketLayout } = {
         layout: {
+            _key: "",
             title: "",
             landmarkTop: "",
             landmarkBottom: "",
@@ -102,6 +103,7 @@ export default class LayoutEdit extends Component<{ index: number, layout: Marke
                     onClick={() => {
                         if (this.props.changed) {
                             const _newLayout: MarketLayout = {
+                                _key: `key_${Math.random()}`.replace(".", ""),
                                 title: "",
                                 class: "block-left",
                                 landmarkBottom: "",
