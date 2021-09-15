@@ -224,6 +224,7 @@ export default class LotEdit extends Component<LotEditProps> {
                                     // Tell parent component to remove this lot.
                                     if (this.props.delete && this.state.currentPosition) {
                                         this.props.delete(this.state.currentPosition)
+                                        this.setState({lot: undefined})
                                     }
                                 }}
                             />
