@@ -19,6 +19,7 @@ __MACOSX
 .env-prod
 docker-compose.override.yml
 docker-compose-dev.override.yml
+.ash_history
 
 # Node.js
 .config/

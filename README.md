@@ -20,7 +20,8 @@ Draai `(export $(cat .env) && npm run dev)` tijdens development (code wijzigen z
 
 ### Installatie via Docker (development)
 
-Je kunt ook opstarten via docker, via `docker compose up`.
+1. Haal de .env file uit de Vault.
+2. run `docker-compose down && docker-compose build && docker-compose up`.
 
 
 ### Compiling the SCSS
@@ -54,3 +55,4 @@ https://medium.com/coding-blocks/creating-user-database-and-adding-access-on-pos
 
 ### Migrations and database
 For more information check ./migrations.md
+
