@@ -140,7 +140,6 @@ class MarktDetailPage extends React.Component {
                             Conceptindeling (tijdelijk uitgeschakeld)
                         </p >
                     }
-
                 </li>}
 
                 {nietIngedeeld &&
