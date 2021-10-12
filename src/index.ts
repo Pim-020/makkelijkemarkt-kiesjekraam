@@ -639,6 +639,7 @@ app.post(
 
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err);
     if (process.env.APP_ENV === 'production') {
         res.render('ErrorPage', { errorCode: 500, req });
     } else {
