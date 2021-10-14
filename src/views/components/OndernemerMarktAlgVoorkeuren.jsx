@@ -13,7 +13,7 @@ const OndernemerMarktAlgVoorkeuren = ({ markt, sollicitatie, ondernemer, voorkeu
             <a href={blockUrl} className="background-link" />
             <HeaderTitleButton title="Marktprofiel" url={blockUrl} />
             <div className="well">
-                {voorkeur ? (
+                {voorkeur  && branchesObj[voorkeur.brancheId] ? (
                     <dl>
                         <dt>Branche</dt>
                         <dd>{voorkeur.brancheId ? branchesObj[voorkeur.brancheId].description : 'geen'}</dd>

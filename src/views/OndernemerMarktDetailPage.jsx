@@ -9,7 +9,7 @@ const SollicitatieSpecs = require('./components/SollicitatieSpecs');
 const OndernemerMarktVoorkeuren = require('./components/OndernemerMarktVoorkeuren');
 const OndernemerMarktAanwezigheid = require('./components/OndernemerMarktAanwezigheid');
 const OndernemerMarktAlgVoorkeuren = require('./components/OndernemerMarktAlgVoorkeuren');
-const { today, tomorrow, getBreadcrumbsOndernemer } = require('../util.ts');
+const { today, tomorrow, getBreadcrumbsOndernemer, arrayToObject } = require('../util.ts');
 const Alert = require('./components/Alert');
 const Uitslag = require('./components/Uitslag');
 const { filterRsvpList, isExp } = require('../domain-knowledge.js');
@@ -64,6 +64,7 @@ class OndernemerMarktDetailPage extends React.Component {
 
         const absentGemeld = algemeneVoorkeur ? ( algemeneVoorkeur.absentFrom && algemeneVoorkeur.absentUntil )  : false;
         const breadcrumbs = getBreadcrumbsOndernemer(ondernemer, role);
+        const branchesObj = arrayToObject(branches, 'brancheId');
 
         return (
             <Page messages={messages}>
@@ -104,7 +105,7 @@ class OndernemerMarktDetailPage extends React.Component {
                             </span>
                         </Alert>
                     ) : null }
-                    {!voorkeur || !voorkeur.brancheId ? (
+                    {!voorkeur || !voorkeur.brancheId || !branchesObj[voorkeur.brancheId] ? (
                         <Alert type="warning" inline={true}>
                             <span>
                                 U hebt uw <strong>koopwaar</strong> nog niet doorgegeven in het{' '}
@@ -119,7 +120,7 @@ class OndernemerMarktDetailPage extends React.Component {
                                 markt={markt}
                                 sollicitatie={sollicitatie}
                                 rsvpEntries={rsvpEntries}
-                                disabled={ !voorkeur || !voorkeur.brancheId }
+                                disabled={ !voorkeur || !voorkeur.brancheId || !branchesObj[voorkeur.brancheId] }
                             />
                         </div>
                         <div className="col-1-2">
