@@ -75,7 +75,7 @@ const mailAfwijzing = (afwijzingCombined: any, markt: MMMarkt) => {
     let mailTemplate = null;
     let subject = null;
 
-    if (markt.kiesJeKraamFase === 'live') {
+    if (markt.kiesJeKraamFase === 'wenperiode') {
         subject = `Indeling ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`;
         mailTemplate = <EmailWenperiode subject={subject} ondernemer={ondernemer} telefoonnummer={markt.telefoonNummerContact} />;
     }
