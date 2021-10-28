@@ -30,6 +30,41 @@ services:
       - MAILER_URL
       - NODE_ENV
       - ENABLE_CONCEPT_INDELING
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_PASSWORD
+    networks:
+      - bridge
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    volumes:
+      - ./src:/srv/src
+    command: >
+      /usr/bin/npm run concept
+    environment:
+      - API_MMAPPKEY
+      - API_READONLY_PASS
+      - API_READONLY_USER
+      - API_URL
+      - APP_SECRET
+      - DATABASE_URL
+      - IAM_ADMIN_PASS
+      - IAM_ADMIN_USER
+      - IAM_CLIENT_ID
+      - IAM_CLIENT_SECRET
+      - IAM_REALM
+      - IAM_URL
+      - MAILER_FROM
+      - MAILER_URL
+      - NODE_ENV
+      - ENABLE_CONCEPT_INDELING
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_PASSWORD
     networks:
       - bridge
 

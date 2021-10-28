@@ -66,6 +66,7 @@ const apiBase = (
 ): Promise<AxiosResponse> => {
     const api = getApi();
     const getFunction = (url: string, token: string): AxiosResponse => {
+        console.log("## MM API CALL : ", url);
         return api.get(url, {
             headers: {
                 Authorization: `Bearer ${token}`,

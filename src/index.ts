@@ -103,7 +103,8 @@ import {
 
 import {
     conceptIndelingPage,
-    indelingPage
+    indelingPage,
+    indelingWaitingPage
 } from './routes/market-allocation';
 
 const csrfProtection = csrf({ cookie: true });
@@ -209,6 +210,8 @@ app.get('/', (req: Request, res: Response) => {
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
     res.render('EmailPage');
 });
+
+app.get('/job/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingWaitingPage);
 
 app.get(
     '/markt/',
