@@ -67,7 +67,7 @@
     "lint-staged": "8.1.7",
     "lintspaces-cli": "0.7.1",
     "node-dev": "4.0.0",
-    "node-sass": "4.12.0",
+    "node-sass": "4.13.1",
     "npm-check": "5.9.0",
     "prettier": "1.17.1",
     "ts-jest": "23.10.5",
