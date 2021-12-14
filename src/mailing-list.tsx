@@ -39,8 +39,6 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
 
     const { ondernemer, user, toewijzing } = toewijzingenCombined;
 
-    console.log(`Stuur e-mail naar ${user.email} Ondernemer is ingedeeld op plaats ${ toewijzing.plaatsen }`);
-
     let mailTemplate = null;
     let subject = null;
 
@@ -69,8 +67,6 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
 const mailAfwijzing = (afwijzingCombined: any, markt: MMMarkt) => {
 
     const { ondernemer, user, afwijzing } = afwijzingCombined;
-
-    console.log(`Stuur e-mail naar ${user.email} Ondernemer is niet ingedeeld vanwege ${ afwijzing.reason }`);
 
     let mailTemplate = null;
     let subject = null;
