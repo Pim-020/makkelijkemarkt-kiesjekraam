@@ -19,6 +19,12 @@ async function run() {
                         console.error(error);
                     });
                     client.set("RESULT_"+job.id, JSON.stringify(data), conceptQueue.print);
+                    var fs = require('fs');
+                    fs.writeFile ("indeling.json", JSON.stringify(data, null, 2), function(err) {
+                        if (err) throw err;
+                        console.log('indeling saved');
+                        }
+                    );
                     return done(null, data)
                 },
                 (error) => { 

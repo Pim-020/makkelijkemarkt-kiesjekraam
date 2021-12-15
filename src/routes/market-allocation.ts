@@ -10,6 +10,7 @@ import {
 } from '../pakjekraam-api';
 
 import { ConceptQueue } from '../concept-queue';
+import { getCalculationInput } from '../pakjekraam-api';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
@@ -17,21 +18,25 @@ const client = conceptQueue.getClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
-    const job = allocationQueue.createJob({marktId:marktId, marktDate:marktDate});
-    job.save().then(
-        (job: any) => {
-            console.log("allocation job: ", job.id);
-            return res.redirect(`/job/`+job.id+`/`);
-        }
-    ).catch(error => {
-        console.log("job error: ", error);
-        if(!client.connected){
-            res.render("RedisErrorPage.jsx");
-            return;
-        }
-        allocationQueue = conceptQueue.getQueueForDispatcher();
-        return res.redirect(req.originalUrl);
-    });
+    getCalculationInput(marktId, marktDate).then(data => {
+            data = JSON.parse(JSON.stringify(data));
+            console.log(data);
+            const job = allocationQueue.createJob(data);
+            job.save().then(
+                (job: any) => {
+                    console.log("allocation job: ", job.id);
+                    return res.redirect(`/job/`+job.id+`/`);
+                }
+            ).catch(error => {
+                console.log("job error: ", error);
+                if(!client.connected){
+                    res.render("RedisErrorPage.jsx");
+                    return;
+                }
+                allocationQueue = conceptQueue.getQueueForDispatcher();
+                return res.redirect(req.originalUrl);
+            });
+        });
 };
 
 export const indelingPage = (req: GrantedRequest, res: Response, type: string = 'indeling') => {
