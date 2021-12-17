@@ -350,7 +350,6 @@ const Indeling = {
         }, []);
 
         indeling = Indeling.performAllocation(indeling, queue, immediateQueue);
-        console.log("perform calculation.....");
 
         for (let iteration = 2; iteration <= indeling.expansionLimit; iteration++) {
             const contenders = queue.reduce((result, ondernemer) => {

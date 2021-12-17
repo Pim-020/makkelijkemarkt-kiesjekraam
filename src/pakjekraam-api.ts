@@ -99,12 +99,6 @@ export const getAanmeldingen = (marktId: string, marktDate: string): Promise<IRS
             raw: true,
         })
         .then(aanmeldingen => {
-            var fs = require('fs');
-            fs.writeFile ("aanmeldingen.json", JSON.stringify(aanmeldingen, null, 2), function(err) {
-                if (err) throw err;
-                console.log('aanmeldingen saved');
-                }
-            );
             return aanmeldingen
         });
 
@@ -139,12 +133,6 @@ export const getPlaatsvoorkeuren = (marktId: string): Promise<IPlaatsvoorkeur[]>
             raw: true,
         })
         .then(plaatsvoorkeuren => {
-            var fs = require('fs');
-            fs.writeFile ("plaatsvoorkeuren.json", JSON.stringify(plaatsvoorkeuren, null, 2), function(err) {
-                if (err) throw err;
-                console.log('plaatsvoorkeuren saved');
-                }
-            );
             return plaatsvoorkeuren
         });
 
@@ -308,13 +296,6 @@ export const getMarktBasics = (
             // toegevoegd en op `false` gezet, maar aangezien deze nergens werd gecontroleerd
             // (behalve in de indeling), worden de plaatsen nu simpelweg verwijderd.
 
-            var fs = require('fs');
-            fs.writeFile ("maktconfig.json", JSON.stringify(marktConfig, null, 2), function(err) {
-                if (err) throw err;
-                console.log('marktconfig saved');
-                }
-            );
-
             if (geblokkeerdePlaatsen) {
                 const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
                 marktConfig.marktplaatsen = marktConfig.marktplaatsen.filter(({ plaatsId }) =>
@@ -341,12 +322,6 @@ export const getMarktDetails = (
         getOndernemersByMarkt(marktId),
         getVoorkeurenByMarkt(marktId)
     ]).then(([ondernemers, voorkeuren]) => {
-        var fs = require('fs');
-            fs.writeFile ("voorkeuren.json", JSON.stringify(voorkeuren, null, 2), function(err) {
-                if (err) throw err;
-                console.log('voorkeuren saved');
-                }
-            );
         const convertedVoorkeuren = voorkeuren.map(convertVoorkeur);
         return enrichOndernemersWithVoorkeuren(ondernemers, convertedVoorkeuren);
     });
