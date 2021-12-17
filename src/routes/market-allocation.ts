@@ -20,7 +20,6 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
     getCalculationInput(marktId, marktDate).then(data => {
             data = JSON.parse(JSON.stringify(data));
-            console.log(data);
             const job = allocationQueue.createJob(data);
             job.save().then(
                 (job: any) => {
