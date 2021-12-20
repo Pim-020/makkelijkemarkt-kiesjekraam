@@ -1,9 +1,6 @@
 const Queue = require('bee-queue');
 const redis = require("redis");
 
-// Start one worker like this:
-// export $(cat .env) && npm run concept
-
 export class ConceptQueue{
     client: any;
     worker_config: any;
@@ -33,41 +30,29 @@ export class ConceptQueue{
             }
         );
 
-    this.client.on('connect', function(){
-       console.log('Connected to Redis');
-       connected = true;
-    });
-    this.client.on('error', function(err) {
-       console.log('Redis error: ' + err);
-    });
-    this.client.on('reconnecting', function(err) {
-       console.log('Redis try reconnecting..');
-    });
+        this.client.on('connect', function(){
+            console.log('Connected to Redis');
+            connected = true;
+        });
+        this.client.on('error', function(err) {
+            console.log('Redis error: ' + err);
+        });
+        this.client.on('reconnecting', function(err) {
+            console.log('Redis try reconnecting..');
+        });
 
-    this.client.on('end', function() {
-       // we had a redis connection
-       // but redis is down now
-       // exit the server, docker will restart the container
-       // when booted again we will enter the retry strategy
-       console.log('Redis end');
-       if(connected){
-           process.exit(1);
-       }
-    });
+        this.client.on('end', function() {
+            // we had a redis connection
+            // but redis is down now
+            // exit the server, docker will restart the container
+            // when booted again we will enter the retry strategy
+            console.log('Redis end');
+            if(connected){
+                process.exit(1);
+            }
+        });
 
         this.print = redis.print;
-
-        this.worker_config = {
-            prefix: this.prefix,
-            redis: {
-                host: process.env.REDIS_HOST,
-                port: process.env.REDIS_PORT,
-                password: process.env.REDIS_PASSWORD,
-                db: 0,
-                options: {},
-            },
-            isWorker: true,
-        }
 
         this.dispatcher_config = {
             prefix: this.prefix,
@@ -86,11 +71,8 @@ export class ConceptQueue{
         return this.client;
     }
 
-    getQueueForWorker():any{
-        return new Queue(this.name, this.worker_config);
-    }
-
     getQueueForDispatcher():any{
         return new Queue(this.name, this.dispatcher_config);
     }
+
 }

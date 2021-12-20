@@ -59,12 +59,13 @@ export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
 
     allocationQueue.getJob(jobId, function (err, job) {
         if(!job){
+            console.log("error locating job ", jobId)
+            console.log("error ", err)
             res.render("ErrorPage.jsx");
             return;
         }
         
         client.get("RESULT_"+jobId, function(err, reply){
-            console.log("Concept indeling job:", jobId, "| status: ",job.status, "| data: ",job.data, "|");
             if(reply){
                 const type = "concept-indelingslijst";
                 const data = JSON.parse(reply);
@@ -81,6 +82,5 @@ export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
         });
 
     });
-
     
 };
