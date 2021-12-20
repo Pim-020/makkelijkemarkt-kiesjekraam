@@ -56,30 +56,19 @@ export const indelingPage = (req: GrantedRequest, res: Response, type: string = 
 
 export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
-
-    allocationQueue.getJob(jobId, function (err, job) {
-        if(!job){
-            console.log("error locating job ", jobId);
-            res.render("ErrorPage.jsx");
-            return;
+    client.get("RESULT_"+jobId, function(err, reply){
+        if(reply){
+            const type = "concept-indelingslijst";
+            const data = JSON.parse(reply);
+            res.render('IndelingslijstPage.tsx', {
+                ...data,
+                type,
+                datum : data["marktDate"],
+                role  : Roles.MARKTMEESTER,
+                user  : getKeycloakUser(req)
+            });
+        }else{
+            res.render('WaitingPage.jsx');
         }
-        
-        client.get("RESULT_"+jobId, function(err, reply){
-            if(reply){
-                const type = "concept-indelingslijst";
-                const data = JSON.parse(reply);
-                res.render('IndelingslijstPage.tsx', {
-                    ...data,
-                    type,
-                    datum : job.data.marktDate,
-                    role  : Roles.MARKTMEESTER,
-                    user  : getKeycloakUser(req)
-                });
-            }else{
-                res.render('WaitingPage.jsx');
-            }
-        });
-
     });
-    
 };
