@@ -59,8 +59,7 @@ export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
 
     allocationQueue.getJob(jobId, function (err, job) {
         if(!job){
-            console.log("error locating job ", jobId)
-            console.log("error ", err)
+            console.log("error locating job ", jobId);
             res.render("ErrorPage.jsx");
             return;
         }
