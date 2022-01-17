@@ -29,7 +29,6 @@ services:
       - MAILER_FROM
       - MAILER_URL
       - NODE_ENV
-      - ENABLE_CONCEPT_INDELING
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD
@@ -61,7 +60,6 @@ services:
       - MAILER_FROM
       - MAILER_URL
       - NODE_ENV
-      - ENABLE_CONCEPT_INDELING
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD

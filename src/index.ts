@@ -114,8 +114,6 @@ requireEnv('APP_SECRET');
 
 const HTTP_DEFAULT_PORT = 8080;
 
-const enableConceptIndeling = !!process.env.ENABLE_CONCEPT_INDELING;
-
 const isMarktondernemer = (req: GrantedRequest) => {
     const accessToken = req.kauth.grant.access_token.content;
 
@@ -266,13 +264,11 @@ app.get(
         indelingPage(req, res, 'indeling')
 );
 
-if(enableConceptIndeling){
-    app.get(
-        '/markt/:marktId/:marktDate/concept-indelingslijst/',
-        keycloak.protect(Roles.MARKTMEESTER),
-        conceptIndelingPage,
-    );
-}
+app.get(
+    '/markt/:marktId/:marktDate/concept-indelingslijst/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    conceptIndelingPage,
+);
 
 app.get(
     '/markt/:marktId/:datum/vasteplaatshouders/',

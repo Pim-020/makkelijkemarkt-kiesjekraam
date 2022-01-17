@@ -37,8 +37,6 @@ class MarktDetailPage extends React.Component {
         datum: PropTypes.string,
     };
 
-    enableConceptIndeling = !!process.env.ENABLE_CONCEPT_INDELING;
-
     render() {
         const { markt, datum, type, role, user } = this.props;
 
@@ -129,17 +127,12 @@ class MarktDetailPage extends React.Component {
                 <li className="LinkList__item">
                     <a href={`./${date}/indeling/`} className="Link">Indeling</a>
                 </li>}
+
                 {conceptIndeling &&
                 <li className="LinkList__item">
-                    { this.enableConceptIndeling ?
-                        <a href={`./${date}/concept-indelingslijst/`} className="Link">
-                            Conceptindeling
-                        </a>
-                    :
-                        <p className="Link" style={{ color: 'grey' }} >
-                            Conceptindeling (tijdelijk uitgeschakeld)
-                        </p >
-                    }
+                    <a href={`./${date}/concept-indelingslijst/`} className="Link">
+                        Conceptindeling
+                    </a>
                 </li>}
 
                 {nietIngedeeld &&
