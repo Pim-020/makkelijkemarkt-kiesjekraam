@@ -53,6 +53,22 @@ export const indelingPage = (req: GrantedRequest, res: Response, type: string = 
     }, internalServerErrorPage(res));
 };
 
+export const indelingLogsPage = (req: GrantedRequest, res: Response) => {
+    const { jobId } = req.params;
+    client.get("LOGS_"+jobId, function(err, reply){
+        if(reply){
+            const type = "concept-indeling-logs";
+            const data = JSON.parse(reply);
+            res.render('IndelingsLogsPage.tsx', {
+                data,
+                type,
+                datum : data["marktDate"],
+                role  : Roles.MARKTMEESTER,
+                user  : getKeycloakUser(req)
+            });
+        }
+    });
+}
 
 export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
