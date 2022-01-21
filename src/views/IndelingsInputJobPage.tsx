@@ -5,12 +5,6 @@ export default class IndelingsLogsPage extends React.Component {
     public render() {
         const props = this.props;
         var data = props["data"];
-        return (
-            data.map((line, i) => (
-                <LogLine key={"logline"+i} 
-                         type={line["level"]}
-                         message={line["message"]}/>
-            ))
-        );
+        return (<pre>{data}</pre>);
     }
 }

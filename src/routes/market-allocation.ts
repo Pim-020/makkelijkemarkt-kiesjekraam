@@ -70,6 +70,19 @@ export const indelingLogsPage = (req: GrantedRequest, res: Response) => {
     });
 }
 
+export const indelingInputJobPage = (req: GrantedRequest, res: Response) => {
+    const { jobId } = req.params;
+    client.get("JOB_"+jobId, function(err, reply){
+        if(reply){
+            const data = JSON.parse(reply);
+            var jsonPretty = JSON.stringify(data,null,2);
+            res.render('IndelingsInputJobPage.tsx', {
+                data: jsonPretty
+            });
+        }
+    });
+}
+
 export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
     client.get("RESULT_"+jobId, function(err, reply){
