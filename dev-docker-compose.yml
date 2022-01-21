@@ -1,0 +1,29 @@
+version: "3.6"
+services:
+  database:
+    platform: linux/amd64
+    image: postgres:9.5.11-alpine
+    environment:
+      - POSTGRES_DB=pakjekraam
+      - POSTGRES_PASSWORD=insecure
+      - POSTGRES_USER=pakjekraam
+    networks:
+      - bridge
+    ports:
+      - "5432:5432"
+
+  keycloak:
+    platform: linux/amd64
+    image: jboss/keycloak
+    environment:
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_USER=admin
+    networks:
+      - bridge
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./keycloak-add-user.json:/opt/jboss/keycloak/standalone/configuration/keycloak-add-user.json
+
+networks:
+  bridge:

@@ -1,0 +1,10 @@
+version: "3.6"
+
+services:
+  redis:
+    image: "redis"
+    command: redis-server --requirepass Salmagundi
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master
