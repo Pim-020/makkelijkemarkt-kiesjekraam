@@ -83,19 +83,43 @@ export const indelingInputJobPage = (req: GrantedRequest, res: Response) => {
     });
 }
 
+export const indelingErrorStacktracePage = (req: GrantedRequest, res: Response) => {
+    const { jobId } = req.params;
+    client.get("ERROR_"+jobId, function(err, reply){
+        if(reply){
+            res.render('IndelingsInputJobPage.tsx', {
+                data: reply
+            });
+        }
+    });
+}
+
+function allocationHasFailed(resultData: any){
+    let errorString = resultData["error"];
+    return errorString !== undefined;
+}
+
 export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
     client.get("RESULT_"+jobId, function(err, reply){
         if(reply){
             const type = "concept-indelingslijst";
             const data = JSON.parse(reply);
-            res.render('IndelingslijstPage.tsx', {
-                ...data,
-                type,
-                datum : data["marktDate"],
-                role  : Roles.MARKTMEESTER,
-                user  : getKeycloakUser(req)
-            });
+            if(allocationHasFailed(data)){
+                res.render('IndelingsErrorPage.tsx', {
+                    ...data,
+                    role  : Roles.MARKTMEESTER,
+                    user  : getKeycloakUser(req)
+                });
+            }else{
+                res.render('IndelingslijstPage.tsx', {
+                    ...data,
+                    type,
+                    datum : data["marktDate"],
+                    role  : Roles.MARKTMEESTER,
+                    user  : getKeycloakUser(req)
+                });
+            }
         }else{
             res.render('WaitingPage.jsx');
         }
