@@ -5,8 +5,7 @@ const Header = require('./components/Header.jsx');
 
 export default class IndelingsErrorPage extends React.Component {
     public render() {
-        const props = this.props;
-        var data = props;
+        const data = this.props;
         return (
             <Page>
                 <Header hideLogout={true}/>

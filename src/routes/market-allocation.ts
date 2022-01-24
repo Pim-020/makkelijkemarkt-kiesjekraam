@@ -75,7 +75,7 @@ export const indelingInputJobPage = (req: GrantedRequest, res: Response) => {
     client.get("JOB_"+jobId, function(err, reply){
         if(reply){
             const data = JSON.parse(reply);
-            var jsonPretty = JSON.stringify(data,null,2);
+            const jsonPretty = JSON.stringify(data,null,2);
             res.render('IndelingsInputJobPage.tsx', {
                 data: jsonPretty
             });
@@ -95,8 +95,7 @@ export const indelingErrorStacktracePage = (req: GrantedRequest, res: Response) 
 }
 
 function allocationHasFailed(resultData: any){
-    let errorString = resultData["error"];
-    return errorString !== undefined;
+    return resultData["error"] !== undefined;
 }
 
 export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
