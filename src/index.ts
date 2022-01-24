@@ -138,15 +138,8 @@ app.use(cookieParser());
 app.use(express.static('./dist/'));
 
 // serve BewerkDeMarkten React build via static
-app.use('/bdm/static', express.static('build/static', { index: false }));
-app.use(
-    '/bdm/manifest.json',
-    (req: GrantedRequest, res, next) => {
-        console.log(req);
-        next();
-    },
-    express.static('build/manifest.json', { index: false }),
-);
+app.use('/bdm(/|/*/)static', express.static('build/static', { index: false }));
+app.use('/bdm(/|/*/)manifest.json', express.static('build/manifest.json', { index: false }));
 
 app.use(sessionMiddleware());
 app.use(keycloak.middleware({ logout: '/logout' }));
