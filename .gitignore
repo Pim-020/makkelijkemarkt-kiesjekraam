@@ -25,6 +25,7 @@ docker-compose-dev.override.yml
 .config/
 .npm/
 node_modules/
+build/
 
 # Node.js development
 *.err
