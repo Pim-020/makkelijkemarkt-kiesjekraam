@@ -74,6 +74,16 @@ class MarktDetailPage extends React.Component {
                             Kaart {markt.naam}
                         </a>
                     ) : null}
+                    {markt.afkorting ? (
+                        <a
+                            href={`/bdm/market/${markt.afkorting}`}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                            className="Link"
+                        >
+                            Bewerk deze markt
+                        </a>
+                    ) : null}
                 </div>
                 {markt.kiesJeKraamGeblokkeerdePlaatsen ? (
                     <AlertLine
