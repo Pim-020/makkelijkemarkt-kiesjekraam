@@ -132,6 +132,17 @@ app.use(cookieParser());
 // Static files that are public (robots.txt, favicon.ico)
 app.use(express.static('./dist/'));
 
+// serve BewerkDeMarkten React build via static
+app.use('/bdm/static', express.static('build/static', { index: false }));
+app.use(
+    '/bdm/manifest.json',
+    (req: GrantedRequest, res, next) => {
+        console.log(req);
+        next();
+    },
+    express.static('build/manifest.json', { index: false }),
+);
+
 app.use(sessionMiddleware());
 app.use(keycloak.middleware({ logout: '/logout' }));
 
@@ -154,6 +165,11 @@ app.get('/login', keycloak.protect(), (req: GrantedRequest, res: Response) => {
 
 app.get('/', (req: Request, res: Response) => {
     res.render('HomePage');
+});
+
+app.get('/bdm/*', keycloak.protect(Roles.MARKTMEESTER), (req, res) => {
+    console.log(__dirname);
+    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
 });
 
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
