@@ -101,26 +101,27 @@ function allocationHasFailed(resultData: any){
 export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
     client.get("RESULT_"+jobId, function(err, reply){
-        if(reply){
-            const type = "concept-indelingslijst";
-            const data = JSON.parse(reply);
-            if(allocationHasFailed(data)){
-                res.render('IndelingsErrorPage.tsx', {
-                    ...data,
-                    role  : Roles.MARKTMEESTER,
-                    user  : getKeycloakUser(req)
-                });
-            }else{
-                res.render('IndelingslijstPage.tsx', {
-                    ...data,
-                    type,
-                    datum : data["marktDate"],
-                    role  : Roles.MARKTMEESTER,
-                    user  : getKeycloakUser(req)
-                });
-            }
-        }else{
-            res.render('WaitingPage.jsx');
+        if (!reply) {
+            return res.render('WaitingPage.jsx');
         }
+
+        const type = "concept-indelingslijst";
+        const data = JSON.parse(reply);
+
+        if (allocationHasFailed(data)) {
+            return res.render('IndelingsErrorPage.tsx', {
+                ...data,
+                role  : Roles.MARKTMEESTER,
+                user  : getKeycloakUser(req)
+            });
+        }
+
+        return res.render('IndelingslijstPage.tsx', {
+            ...data,
+            type,
+            datum : data["marktDate"],
+            role  : Roles.MARKTMEESTER,
+            user  : getKeycloakUser(req)
+        });
     });
 };
