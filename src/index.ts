@@ -6,6 +6,7 @@ import csrf from 'csurf';
 import morgan from 'morgan';
 import path from 'path';
 import * as reactViews from 'express-react-views';
+import cors from 'cors';
 
 // Util
 // ----
@@ -126,6 +127,13 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(
+    cors({
+        origin: 'http://localhost:3000',
+        methods: ['POST', 'GET'],
+    }),
+);
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -163,6 +171,32 @@ app.get('/', (req: Request, res: Response) => {
 app.get('/bdm/*', keycloak.protect(Roles.MARKTMEESTER), (req, res) => {
     console.log(__dirname);
     res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
+});
+
+app.get('/api/v1/markt', (req, res) => {
+    console.log('/api/v1/markt');
+    res.sendFile(path.join(__dirname, '..', 'temp', 'markt', 'mmarkt.json'));
+});
+
+app.get('/api/v1/markt/:marktId/:fileName', keycloak.protect(Roles.MARKTMEESTER), (req, res) => {
+    const { marktId, fileName } = req.params;
+    console.log({ marktId, fileName });
+    res.sendFile(path.join(__dirname, '..', 'temp', 'markt', marktId, fileName));
+});
+
+app.get('/api/v1/branch', (req, res) => {
+    console.log('/api/v1/branch');
+    res.sendFile(path.join(__dirname, '..', 'temp', 'markt', 'branches.json'));
+});
+
+app.get('/api/v1/obstakeltypes', (req, res) => {
+    console.log('/api/v1/obstakeltypes');
+    res.sendFile(path.join(__dirname, '..', 'temp', 'markt', 'obstakeltypes.json'));
+});
+
+app.get('/api/v1/plaatseigenschappen', (req, res) => {
+    console.log('/api/v1/plaatseigenschappen');
+    res.sendFile(path.join(__dirname, '..', 'temp', 'markt', 'plaatseigenschappen.json'));
 });
 
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
