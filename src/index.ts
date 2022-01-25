@@ -7,6 +7,10 @@ import morgan from 'morgan';
 import path from 'path';
 import * as reactViews from 'express-react-views';
 
+import cors from 'cors';
+import { graphqlHTTP } from 'express-graphql';
+import { buildSchema } from 'graphql';
+
 // Util
 // ----
 
@@ -125,6 +129,58 @@ app.use((req, res, next) => {
     res.header('X-Frame-Options', 'SAMEORIGIN');
     next();
 });
+
+app.use(
+    cors({
+        origin: 'http://localhost:3000',
+        methods: ['POST', 'GET'],
+    }),
+);
+
+const schema = buildSchema(`
+    type Book {
+        title: String!
+        author: String!
+    }
+
+    type Query {
+        books: [Book]
+    }
+`);
+
+const rootValue = {
+    books: () => [
+        {
+            title: 'The Name of the Wind',
+            author: 'Patrick Rothfuss',
+        },
+        {
+            title: "The Wise Man's Fear",
+            author: 'Patrick Rothfuss',
+        },
+    ],
+};
+
+// var schema = buildSchema(`
+//   type Query {
+//     hello: String
+//   }
+// `);
+
+// var rootValue = {
+//     hello: () => {
+//         return 'Hello world!';
+//     },
+// };
+
+app.use(
+    '/graphql',
+    graphqlHTTP({
+        schema,
+        rootValue,
+        graphiql: true,
+    }),
+);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
