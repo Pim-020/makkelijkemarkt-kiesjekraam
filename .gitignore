@@ -31,6 +31,7 @@ build/
 *.err
 *.log
 tmp/
+temp/
 .ash_history
 .env_prod
 dist/style/screen.css
