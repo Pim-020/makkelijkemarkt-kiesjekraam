@@ -1,0 +1,36 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: bewerkdemarkten-service
+spec:
+  selector:
+    app: bewerkdemarkten-service
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bewerkdemarkten
+  labels:
+    app: bewerkdemarkten-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bewerkdemarkten-service
+  template:
+    metadata:
+      labels:
+        app: bewerkdemarkten-service
+    spec:
+      imagePullSecrets:
+      - name: pipeline-docker-registry
+      containers:
+      - name: bewerkdemarkten-service
+        image: ${CICD_IMAGE}:${CICD_EXECUTION_SEQUENCE}
+        ports:
+        - containerPort: 8080
