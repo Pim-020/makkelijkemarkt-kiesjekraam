@@ -168,6 +168,12 @@ app.get('/bdm/*', keycloak.protect(Roles.MARKTMEESTER), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
 });
 
+app.get('/api/markt', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
+    getMarkten(true).then((markten: any) => {
+        res.send(markten);
+    }, internalServerErrorPage(res));
+});
+
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
     res.render('EmailPage');
 });
