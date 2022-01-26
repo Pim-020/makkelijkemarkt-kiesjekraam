@@ -20,7 +20,7 @@ export default class App extends Component {
       <ThemeProvider>
         <GlobalStyle />
         <div className="App">
-          <BrowserRouter basename={process.env.PUBLIC_URL}>
+          <BrowserRouter basename="/bdm">
             <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink="/"/>
             <ul className="menu-item-ul">
               <li className="menu-item-li"><NavLink exact className="menu-item" activeClassName="active" to="/">Home</NavLink></li>
