@@ -1,1 +1,0 @@
-curl -f -X GET "$MMAP_API_URL" -H  "accept: application/json" -H  "MmAppKey: $MMAP_API_KEY" -o /usr/share/nginx/html/data/mmarkt.json
