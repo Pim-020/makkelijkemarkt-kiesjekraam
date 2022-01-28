@@ -1,4 +1,20 @@
+### Bewerk de markten
+FROM node:13.12.0-alpine as bdm_build
 
+COPY bdm/package.json bdm/
+COPY bdm/package-lock.json bdm/
+COPY bdm/public bdm/public
+COPY bdm/src bdm/src
+
+ENV PATH /srv/bdm/node_modules/.bin:$PATH
+
+WORKDIR /bdm
+
+RUN npm ci --loglevel verbose
+RUN npm run build
+
+
+### Kies je kraam
 FROM mhart/alpine-node:12.0.0
 
 # Setup certificates for ADP/Motiv
@@ -91,5 +107,8 @@ ENV \
     NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-cert-adp_rootca.pem
 
 EXPOSE 8080
+
+# Copy React build from Bewerk de markten
+COPY --from=bdm_build /bdm/build /srv/bdm/build
 
 CMD ["npm", "run", "start"]
