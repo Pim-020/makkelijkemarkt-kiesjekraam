@@ -1,18 +1,13 @@
 import React, { createRef, MouseEvent, RefObject, KeyboardEvent, useEffect, useState } from "react"
+import { Tabs, Row, Col } from 'antd'
+
 import Day from "../components/Day"
-// import MarketsService from "../services/service_markets"
 import { Transformer } from "../services/transformer"
-import { Breadcrumb, Tabs, Row, Col, //Button, Upload
-    } from 'antd'
-import { HomeOutlined, //UploadOutlined, FileZipOutlined
-    } from '@ant-design/icons'
-import { Link } from "react-router-dom"
+
 import { AssignedBranche, Branche, IMarktConfiguratie, Geography, Lot, MarketEventDetails, Page, Plan, Rows } from "../models"
-// import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
 import { validateLots } from "../common/validator"
-//import { zipMarket } from "../common/generic"
 
 import MarketDataWrapper, { MarketContext } from '../components/MarketDataWrapper'
 import { SaveButton } from '../components/buttons'
@@ -21,9 +16,6 @@ const { TabPane } = Tabs
 
 class MarketPage extends React.Component {
     static contextType = MarketContext
-    // id: string = ""
-    // router: any
-
     readonly state: {
         lookupBranches?: Branche[],
         marketEventDetails?: MarketEventDetails,
@@ -38,20 +30,13 @@ class MarketPage extends React.Component {
     branchesRef: RefObject<Branches>
     config: Configuration
     dayRef: RefObject<Day>
-
-    // marketsService: MarketsService
     transformer: Transformer
-
-    // lookupBrancheService: BrancheService
 
     constructor(props: any) {
         super(props)
         this.config = new Configuration()
 
         this.transformer = new Transformer()
-        // this.marketsService = new MarketsService()
-        // this.lookupBrancheService = new BrancheService()
-
         this.branchesRef = createRef()
         this.dayRef = createRef()
     }
@@ -107,36 +92,11 @@ class MarketPage extends React.Component {
     }
 
     render() {
-        console.log('MarketPage', this.state)
         return <>
             <h1>{this.context.markt.naam}</h1>
-            <Breadcrumb>
-                <Breadcrumb.Item>
-                    <Link to="/">
-                        <HomeOutlined />
-                    </Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>
-                    <Link to="/markets">
-                        <span>Markten</span>
-                    </Link>
-                </Breadcrumb.Item>
-                {this.context.marktId && <>
-                    <Breadcrumb.Item><Link to={`/market/${this.context.marktId}`}>
-                        <span>{this.context.marktId}</span></Link>
-                    </Breadcrumb.Item>
-                    </>
-                }
-            </Breadcrumb>
             <SaveButton clickHandler={this.save.bind(this)} inProgress={this.context.saveInProgress}>Marktconfiguratie opslaan</SaveButton>
             <Row align="top" gutter={[16, 16]}>
                 <Col>
-                    {/* {this.state.uploadProps &&
-                        <Upload {...this.state.uploadProps}>
-                            <Button icon={<UploadOutlined />}>Kaart uploaden/vervangen</Button>
-                        </Upload>
-                    } */}
-
                 </Col>
              </Row>
             {this.context.genericBranches &&
@@ -154,7 +114,7 @@ class MarketPage extends React.Component {
     }
 }
 
-export default function(props: any) {
+export default function WrappedMarketPage(props: any) {
     return (
         <MarketDataWrapper {...props}>
             <MarketPage />

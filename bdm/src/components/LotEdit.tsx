@@ -1,15 +1,13 @@
-import { Col, Input, Row, Select, Checkbox, Radio, Button } from "antd"
-import { CheckboxChangeEvent } from "antd/lib/checkbox"
 import React, { Component, createRef, CSSProperties, RefObject } from "react"
+import { Col, Input, Row, Select, Checkbox, Radio, Button } from "antd"
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+import { CheckboxChangeEvent } from "antd/lib/checkbox"
+import { RadioChangeEvent } from "antd/lib/radio"
 import { capitalize } from 'lodash'
+
 import { AssignedBranche, INaam, Lot } from "../models"
-// import { LotPropertyService, ObstacleTypeService } from "../services/service_lookup"
 import { MarketContext } from '../components/MarketDataWrapper'
 
-import { //CopyOutlined,
-    DeleteOutlined, PlusOutlined
-} from '@ant-design/icons'
-import { RadioChangeEvent } from "antd/lib/radio"
 
 interface LotEditProps {
     branches: AssignedBranche[],
@@ -23,19 +21,13 @@ export default class LotEdit extends Component<LotEditProps> {
     static contextType = MarketContext
     NameRef: RefObject<Input>
     readonly state: { lot?: Lot, currentPosition?: [number, number, number] } = {}
-    // propertyService: LotPropertyService
-    // obstacleTypeService: ObstacleTypeService
 
     constructor(props: any) {
         super(props)
-        // this.propertyService = new LotPropertyService()
-        // this.obstacleTypeService = new ObstacleTypeService()
         this.NameRef = createRef()
     }
 
-
     onToggle = (e: RadioChangeEvent) => {
-
         let _lot: Lot | undefined = this.state.lot
 
         if (_lot && this.props.changed) {
@@ -60,7 +52,6 @@ export default class LotEdit extends Component<LotEditProps> {
             this.setState({
                 lot: { ...this.state.lot, branches: _branches }
             })
-
         }
     }
 
@@ -331,12 +322,9 @@ export default class LotEdit extends Component<LotEditProps> {
                                         {capitalize(prop.naam)}
                                     </Col>
                                 })}
-
-
                             </Row>
                         </>}
                     <Row gutter={formGutter}>
-
                     </Row>
                 </div>}
         </div>

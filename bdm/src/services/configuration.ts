@@ -1,5 +1,5 @@
 export default class Configuration {
-    MMARKT_URL: string = '/api/markt';
-    API_BASE_URL: string = 'https://bewerkdemarkten.tiltshiftapps.nl/api/v1';
+    MMARKT_URL: string = '';
+    API_BASE_URL: string = '';
     ONLINE: boolean = false;
 }
