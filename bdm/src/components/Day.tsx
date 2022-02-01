@@ -299,7 +299,6 @@ export default class Day extends Component<DayPageProps> {
     }
 
     render() {
-        console.log('DAY', this.state)
         return <>
             <Tabs
                 type="editable-card"
