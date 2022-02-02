@@ -5,6 +5,7 @@
 .idea
 .idea/*
 .vscode/
+.tool-versions
 
 # OS
 .DS_Store
