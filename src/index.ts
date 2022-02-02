@@ -195,12 +195,23 @@ app.get('/api/mm/:markt/:fileName', (req, res) => {
     }
     const _path = path.join(__dirname, '..', 'tmp', 'config', 'markt', markt, blob);
     const content = require(_path);
-    console.log(_path, typeof content);
+    console.log('load from path', _path, typeof content);
     if (!database[markt]) {
         database[markt] = {};
     }
     database[markt][blob] = content;
     res.json(content);
+});
+
+app.put('/api/mm/:markt/:fileName', (req, res) => {
+    const { markt, fileName } = req.params;
+    const blob = `${fileName}.json`;
+    console.log('PUT', markt, blob);
+    if (!database[markt]) {
+        database[markt] = {};
+    }
+    database[markt][blob] = req.body;
+    res.json(req.body);
 });
 
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
