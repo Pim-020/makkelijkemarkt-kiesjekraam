@@ -178,6 +178,10 @@ app.get('/api/markt', (req: GrantedRequest, res: Response) => {
     }, internalServerErrorPage(res));
 });
 
+app.get('/api/zip/:markt/:fileName', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'tmp', 'config', 'markt', req.params.markt, `${req.params.fileName}.json`));
+});
+
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
     res.render('EmailPage');
 });
