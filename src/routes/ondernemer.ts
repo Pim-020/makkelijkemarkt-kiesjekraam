@@ -9,11 +9,11 @@ import { MMSollicitatie } from '../makkelijkemarkt.model';
 
 import {
     getMarkten,
-    getOndernemer
+    getOndernemer,
+    deleteRsvpsByErkenningsnummer
 } from '../makkelijkemarkt-api';
 
 import { deletePlaatsvoorkeurenByErkenningsnummer } from '../model/plaatsvoorkeur.functions';
-import { deleteRsvpsByErkenningsnummer } from '../model/rsvp.functions';
 import { deleteVoorkeurenByErkenningsnummer } from '../model/voorkeur.functions';
 import { getToewijzingenByOndernemer } from '../model/allocation.functions';
 import { getAfwijzingenByOndernemer } from '../model/afwijzing.functions';
@@ -28,6 +28,7 @@ export const deleteUserPage = ( req: GrantedRequest, res: Response, result: stri
     });
 };
 
+//TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
 export const deleteUser = (req: GrantedRequest, res: Response, erkenningsNummer: string) => {
     Promise.all([
         deletePlaatsvoorkeurenByErkenningsnummer(erkenningsNummer),

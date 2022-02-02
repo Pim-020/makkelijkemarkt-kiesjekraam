@@ -44,6 +44,7 @@ import {
     getALijst,
     getMarkt,
     getMarkten,
+    getAanmeldingenByMarktAndDate,
     getOndernemer,
     getOndernemers,
     getOndernemersByMarkt,
@@ -91,32 +92,6 @@ export const groupAllocationRows = (toewijzingen: IToewijzing[], row: Allocation
         return [...toewijzingen, voorkeur];
     }
 };
-
-export const getAanmeldingen = (marktId: string, marktDate: string): Promise<IRSVP[]> =>
-    rsvp
-        .findAll<RSVP>({
-            where: { marktId, marktDate },
-            raw: true,
-        })
-        .then(aanmeldingen => {
-            return aanmeldingen
-        });
-
-export const getAanmeldingenByOndernemerEnMarkt = (marktId: string, erkenningsNummer: string): Promise<IRSVP[]> =>
-    rsvp
-        .findAll<RSVP>({
-            where: { marktId, erkenningsNummer },
-            raw: true,
-        })
-        .then(aanmeldingen => aanmeldingen);
-
-export const getAanmeldingenByOndernemer = (erkenningsNummer: string): Promise<IRSVP[]> =>
-    rsvp
-        .findAll<RSVP>({
-            where: { erkenningsNummer },
-            raw: true,
-        })
-        .then(aanmeldingen => aanmeldingen);
 
 export const getToewijzingen = (marktId: string, marktDate: string): Promise<IToewijzing[]> =>
     allocation
@@ -329,7 +304,7 @@ export const getMarktDetails = (
     return Promise.all([
         marktBasics,
         ondernemersPromise,
-        getAanmeldingen(marktId, marktDate),
+        getAanmeldingenByMarktAndDate(marktId, marktDate),
         getPlaatsvoorkeuren(marktId),
     ]).then(([
         marktBasics,
@@ -435,7 +410,7 @@ export const getSollicitantenlijstInput = (marktId: string, date: string) =>
         getOndernemersByMarkt(marktId).then(ondernemers =>
             ondernemers.filter(({ status }) => !isVast(status)),
         ),
-        getAanmeldingen(marktId, date),
+        getAanmeldingenByMarktAndDate(marktId, date),
         getPlaatsvoorkeuren(marktId),
         getMarkt(marktId),
     ]).then(([ondernemers, aanmeldingen, voorkeuren, markt]) => ({
@@ -448,7 +423,7 @@ export const getSollicitantenlijstInput = (marktId: string, date: string) =>
 export const getVoorrangslijstInput = (marktId: string, marktDate: string) =>
     Promise.all([
         getOndernemersByMarkt(marktId),
-        getAanmeldingen(marktId, marktDate),
+        getAanmeldingenByMarktAndDate(marktId, marktDate),
         getPlaatsvoorkeuren(marktId),
         getMarkt(marktId),
         getALijst(marktId, marktDate),

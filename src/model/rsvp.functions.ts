@@ -1,17 +1,13 @@
 import moment from 'moment-timezone';
 
-import { rsvp } from './index';
-import { RSVP } from './rsvp.model';
 import { IRSVP } from 'markt.model';
 
 import {
     MMMarkt,
-    MMOndernemerStandalone,
     MMSollicitatie
 } from '../makkelijkemarkt.model';
 import {
     isVast,
-    getMarktThresholdDate,
     filterRsvpList
 } from '../domain-knowledge';
 
@@ -80,17 +76,3 @@ export const groupAanmeldingenPerMarktPerWeek = (
     return aanmeldingenPerMarktPerWeek;
 };
 
-export const getAanmeldingenByMarktAndDate = (
-    marktId: string,
-    marktDate: string
-): Promise<IRSVP[]> => {
-    return rsvp.findAll<RSVP>({
-        where: { marktId, marktDate },
-        raw: true,
-    })
-    .then(aanmeldingen => aanmeldingen);
-};
-
-export const deleteRsvpsByErkenningsnummer = (erkenningsNummer: string) => {
-    return rsvp.destroy({ where: { erkenningsNummer } });
-};

@@ -11,10 +11,10 @@ import {
 } from '../keycloak-api';
 import {
     getMarkt,
-    getOndernemer
+    getOndernemer,
+    getAanmeldingenByOndernemerEnMarkt,
 } from '../makkelijkemarkt-api';
 import {
-    getAanmeldingenByOndernemerEnMarkt,
     getDaysClosed,
     getIndelingVoorkeur,
     getMarktBasics,

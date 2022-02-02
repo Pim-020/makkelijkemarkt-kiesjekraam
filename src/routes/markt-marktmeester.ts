@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import {
     getMarkt,
-    getOndernemersByMarkt
+    getOndernemersByMarkt,
+    getAanmeldingenByMarktAndDate
 } from '../makkelijkemarkt-api';
 import {
     getCalculationInput,
@@ -19,7 +20,6 @@ import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
 
 import { filterOndernemersAangemeld } from '../model/ondernemer.functions';
-import { getAanmeldingenByMarktAndDate } from '../model/rsvp.functions';
 import { getToewijzingenByMarktAndDate } from '../model/allocation.functions';
 import { getPlaatsvoorkeurenByMarkt } from '../model/plaatsvoorkeur.functions';
 

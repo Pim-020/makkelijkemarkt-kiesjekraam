@@ -39,17 +39,18 @@ import models from '../model/index';
 import { IRSVP } from '../markt.model';
 
 import {
-    getMarktenForOndernemer,
-    getOndernemer
-} from '../makkelijkemarkt-api';
-import {
-    getAanmeldingenByOndernemer,
-    getMededelingen
-} from '../pakjekraam-api';
-
-import {
     groupAanmeldingenPerMarktPerWeek
 } from '../model/rsvp.functions';
+
+import {
+    updateRsvp,
+    getMarktenForOndernemer,
+    getOndernemer,
+    getAanmeldingenByOndernemer
+} from '../makkelijkemarkt-api';
+import {
+    getMededelingen
+} from '../pakjekraam-api';
 
 import {
     getVoorkeurenByOndernemer
@@ -237,12 +238,8 @@ export const handleAttendanceUpdate = (
 
         const queries = Object.keys(rsvpsByDate).reduce((result, marktDate) => {
             return result.concat(rsvpsByDate[marktDate].map(rsvp => {
-                const { marktId, marktDate } = rsvp;
-                return upsert(
-                    models.rsvp,
-                    { erkenningsNummer, marktId, marktDate },
-                    rsvp
-                );
+                const { marktId, marktDate, attending } = rsvp;
+                return updateRsvp(marktId, marktDate, erkenningsNummer, attending);
             }));
         }, []);
 

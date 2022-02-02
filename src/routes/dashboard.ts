@@ -2,11 +2,11 @@ import { Promise } from 'bluebird';
 import { Response, NextFunction } from 'express';
 import {
     getMarkten,
+    getAanmeldingenByOndernemer,
     getOndernemer
 } from '../makkelijkemarkt-api';
 import {
     getPlaatsvoorkeurenOndernemer,
-    getAanmeldingenByOndernemer,
     getDaysClosed
 } from '../pakjekraam-api';
 import { internalServerErrorPage, getQueryErrors } from '../express-util';

@@ -400,6 +400,7 @@ app.post(
         updateMarketPreferences(req, res, next, getErkenningsNummer(req), Roles.MARKTONDERNEMER),
 );
 
+//TODO: https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
 app.get(
     '/verwijder-ondernemer/',
     keycloak.protect(Roles.MARKTMEESTER),
@@ -413,6 +414,7 @@ app.get(
     },
 );
 
+//TODO: https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
 app.post(
     '/verwijder-ondernemer/',
     keycloak.protect(Roles.MARKTMEESTER),

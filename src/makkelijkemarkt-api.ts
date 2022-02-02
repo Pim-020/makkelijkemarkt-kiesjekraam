@@ -7,9 +7,10 @@ import {
     MMOndernemerStandalone,
     MMSollicitatieStandalone,
     MMOndernemer,
-    MMSollicitatie
+    MMSollicitatie,
 } from './makkelijkemarkt.model';
 import {
+    IRSVP,
     IMarktondernemer
 } from './markt.model';
 
@@ -62,12 +63,22 @@ const login = (api: AxiosInstance) =>
     });
 
 const apiBase = (
-    url: string
+    url: string,
+    requestBody?: string
 ): Promise<AxiosResponse> => {
     const api = getApi();
     const getFunction = (url: string, token: string): AxiosResponse => {
-        console.log("## MM API CALL : ", url);
+        console.log("## MM GET API CALL : ", url);
         return api.get(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    };
+
+    const postFunction = (url: string, token: string): AxiosResponse => {
+        console.log("## MM POST API CALL : ", url);
+        return api.post(url, requestBody, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -118,11 +129,56 @@ const apiBase = (
 
     return session.findByPk(mmConfig.sessionKey)
     .then((sessionRecord: any) => {
+        if ( requestBody ) {
+        return sessionRecord ?
+               postFunction(url, sessionRecord.dataValues.sess.token) :
+               retry(api);
+        } else {
         return sessionRecord ?
                getFunction(url, sessionRecord.dataValues.sess.token) :
                retry(api);
+        }
     });
 };
+
+export const updateRsvp = (
+    marktId: string,
+    marktDate: string,
+    erkenningsNummer: string,
+    attending: boolean,
+): Promise<IRSVP> =>
+    apiBase('rsvp', `{"marktDate": "${marktDate}", "attending": ${attending}, "marktId": ${marktId}, "koopmanErkenningsNummer": "${erkenningsNummer}"}`).then(response => response.data);
+
+//TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
+export const deleteRsvpsByErkenningsnummer = (erkenningsNummer) => null;
+
+export const getAanmeldingenByMarktAndDate = (marktId: string, marktDate: string): Promise<IRSVP[]> =>
+    apiBase(`rsvp/markt/${marktId}/date/${marktDate}`).then(response => {
+        for( let i=0; i < response.data.length; i++) {
+            response.data[i].marktId = response.data[i].markt;
+            response.data[i].erkenningsNummer = response.data[i].koopman;
+        }
+        return response.data;
+
+});
+
+export const getAanmeldingenByOndernemerEnMarkt = (marktId: string, erkenningsNummer: string): Promise<IRSVP[]> =>
+    apiBase(`rsvp/markt/${marktId}/koopman/${erkenningsNummer}`).then(response => {
+        for( let i=0; i < response.data.length; i++) {
+            response.data[i].marktId = response.data[i].markt;
+            response.data[i].erkenningsNummer = response.data[i].koopman;
+        }
+        return response.data;
+});
+
+export const getAanmeldingenByOndernemer = (erkenningsNummer: string): Promise<IRSVP[]> =>
+    apiBase(`rsvp/koopman/${erkenningsNummer}`).then(response => {
+        for( let i=0; i < response.data.length; i++) {
+            response.data[i].marktId = response.data[i].markt;
+            response.data[i].erkenningsNummer = response.data[i].koopman;
+        }
+        return response.data;
+});
 
 export const getMarkt = (
     marktId: string

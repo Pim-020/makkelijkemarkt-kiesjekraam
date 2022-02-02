@@ -66,7 +66,7 @@ export interface IMarktindeling extends IMarkt, IMarktindelingSeed {
 export interface IRSVP {
     // `id` is used by Sequelize
     id?: number;
-    marktId: string;
+    marktId?: string;
     marktDate: string;
     erkenningsNummer: ErkenningsNummer;
     attending: boolean;
