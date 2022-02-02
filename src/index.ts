@@ -8,6 +8,8 @@ import morgan from 'morgan';
 import path from 'path';
 import * as reactViews from 'express-react-views';
 
+const database = {};
+
 // Util
 // ----
 
@@ -180,6 +182,24 @@ app.get('/api/markt', (req: GrantedRequest, res: Response) => {
 
 app.get('/api/zip/:markt/:fileName', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'tmp', 'config', 'markt', req.params.markt, `${req.params.fileName}.json`));
+});
+
+app.get('/api/mm/:markt/:fileName', (req, res) => {
+    const { markt, fileName } = req.params;
+    const blob = `${fileName}.json`;
+    if (database[markt] && database[markt][blob]) {
+        console.log('from cache', markt, blob);
+        res.json(database[markt][blob]);
+        return;
+    }
+    const _path = path.join(__dirname, '..', 'tmp', 'config', 'markt', markt, blob);
+    const content = require(_path);
+    console.log(_path, typeof content);
+    if (!database[markt]) {
+        database[markt] = {};
+    }
+    database[markt][blob] = content;
+    res.json(content);
 });
 
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
