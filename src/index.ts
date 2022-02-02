@@ -185,6 +185,10 @@ app.get('/api/zip/:markt/:fileName', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'tmp', 'config', 'markt', req.params.markt, `${req.params.fileName}.json`));
 });
 
+app.get('/api/mm/:fileName', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'tmp', 'config', 'markt', `${req.params.fileName}.json`));
+});
+
 app.get('/api/mm/:markt/:fileName', (req, res) => {
     const { markt, fileName } = req.params;
     const blob = `${fileName}.json`;
