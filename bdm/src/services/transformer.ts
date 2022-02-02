@@ -1,7 +1,8 @@
 import { getTextColor } from "../common/generic"
-import { AssignedBranche, Assignment, Geography, Lot, MarketEventDetails, MarketLayout, MarketPage, Obstacle, Page, Rows, Stand } from "../models"
+import { AssignedBranche, Assignment, Branche, Geography, Lot, MarketEventDetails, MarketLayout, MarketPage, Obstacle, Page, Rows, Stand } from "../models"
 import { BrancheService } from "./service_lookup"
 import { BranchesService, GeographyService, LotsService, PagesService, RowsService } from "./service_markets"
+import { mmApiService } from "./service_mm_api"
 
 export class Transformer {
     getRow(obstacle: Obstacle, matrix: any[]): [number, number] {
@@ -30,12 +31,19 @@ export class Transformer {
         let rowSets: (Lot | Obstacle)[] = []
         let newBranches: AssignedBranche[] = []
 
-        const _b = await new BranchesService().retrieve(route).then(result => result) // branches.json
-        const _g = await new GeographyService().retrieve(route).then(result => result) // geografie.json
-        const _l = await new LotsService().retrieve(route).then(result => result) // locaties.json
-        const _r = await new RowsService().retrieve(route).then(result => result) // markt.json
-        const _p = await new PagesService().retrieve(route).then(result => result) // paginas.json
-        const _bb = await new BrancheService().retrieve().then(result => result)
+        // const _b = await new BranchesService().retrieve(route).then(result => result) // branches.json
+        // const _g = await new GeographyService().retrieve(route).then(result => result) // geografie.json
+        // const _l = await new LotsService().retrieve(route).then(result => result) // locaties.json
+        // const _r = await new RowsService().retrieve(route).then(result => result) // markt.json
+        // const _p = await new PagesService().retrieve(route).then(result => result) // paginas.json
+        // const _bb = await new BrancheService().retrieve().then(result => result)
+
+        const _b: AssignedBranche[] = await mmApiService(`/${route}/branches`)
+        const _g: Geography = await mmApiService(`/${route}/geografie`)
+        const _l: Lot[] = await mmApiService(`/${route}/locaties`)
+        const _r: Rows = await mmApiService(`/${route}/markt`)
+        const _p: Page[] = await mmApiService(`/${route}/paginas`)
+        const _bb: Branche[] = await mmApiService(`/branches`)
 
         // Add color information to branches
         if (_b && _b.length > 0) {
