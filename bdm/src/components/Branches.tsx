@@ -4,22 +4,22 @@ import { AssignedBranche, Branche } from "../models"
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import CSS from 'csstype'
 import { getTextColor } from "../common/generic"
-import { BranchesService } from "../services/service_markets"
+// import { BranchesService } from "../services/service_markets"
 
 
 export default class Branches extends Component<{ id: string, lookupBranches: Branche[], changed?: (lookupBranches: AssignedBranche[]) => void }> {
     readonly state: { branches?: AssignedBranche[] } = {}
-    branchesService: BranchesService
+    // branchesService: BranchesService
 
     constructor(props: any) {
         super(props)
-        this.branchesService = new BranchesService()
+        // this.branchesService = new BranchesService()
     }
 
     updateStorage = (branches: AssignedBranche[]) => {
         // Tell the parent component this page has changed.
         const _branches = branches.filter(e => e.brancheId !== "")
-        localStorage.setItem(`bwdm_cache_${this.props.id}_branches`, JSON.stringify(_branches))
+        // localStorage.setItem(`bwdm_cache_${this.props.id}_branches`, JSON.stringify(_branches))
         if(this.props.changed){
             this.props.changed(_branches)
         }
