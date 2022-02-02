@@ -134,12 +134,9 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(
-    cors({
-        origin: 'http://localhost:3000',
-        methods: ['POST', 'GET'],
-    }),
-);
+if (process.env.ENABLE_CORS_FOR_ORIGIN) {
+    app.use(cors({ origin: process.env.ENABLE_CORS_FOR_ORIGIN }));
+}
 
 // Static files that are public (robots.txt, favicon.ico)
 app.use(express.static('./dist/'));

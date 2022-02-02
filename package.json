@@ -17,7 +17,7 @@
     "dev-server": "( export $(cat .env) && npm run dev)",
     "start": "ts-node --transpile-only src/index.ts",
     "predev": "npm run build && npm run deploy",
-    "dev": "ts-node-dev --ignore-watch node_modules src/index.ts",
+    "dev": "ENABLE_CORS_FOR_ORIGIN='http://localhost:3000' ts-node-dev --ignore-watch node_modules src/index.ts",
     "allocation": "ts-node src/allocation.ts",
     "concept": "ts-node src/concept-allocation.ts",
     "allocation-env": "( . .env && npm run allocation)",
