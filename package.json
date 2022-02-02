@@ -23,6 +23,7 @@
     "allocation-env": "( . .env && npm run allocation)",
     "migrate": "( . .env && npx sequelize-cli db:migrate)",
     "migrate:undo": "( . .env && npx sequelize-cli db:migrate:undo)",
+    "migrate-rsvp-to-mm-api": "ts-node src/migrate-rsvp.ts",
     "import": "echo 'Import skipped. Temporarily disabled.' && exit 0",
     "tdd": "jest --watch --verbose --rootDir ./src/",
     "test": "jest --verbose --silent --rootDir ./src/",
