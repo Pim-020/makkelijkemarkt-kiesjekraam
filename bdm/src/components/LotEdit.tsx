@@ -1,9 +1,12 @@
 import { Col, Input, Row, Select, Checkbox, Radio, Button } from "antd"
 import { CheckboxChangeEvent } from "antd/lib/checkbox"
 import React, { Component, createRef, CSSProperties, RefObject } from "react"
-import { AssignedBranche, Lot } from "../models"
-import { LotPropertyService, ObstacleTypeService } from "../services/service_lookup"
-import { //CopyOutlined, 
+import { capitalize } from 'lodash'
+import { AssignedBranche, INaam, Lot } from "../models"
+// import { LotPropertyService, ObstacleTypeService } from "../services/service_lookup"
+import { MarketContext } from '../components/MarketDataWrapper'
+
+import { //CopyOutlined,
     DeleteOutlined, PlusOutlined
 } from '@ant-design/icons'
 import { RadioChangeEvent } from "antd/lib/radio"
@@ -17,15 +20,16 @@ interface LotEditProps {
 }
 
 export default class LotEdit extends Component<LotEditProps> {
+    static contextType = MarketContext
     NameRef: RefObject<Input>
-    readonly state: { lot?: Lot, properties: string[], obstacleTypes: string[], currentPosition?: [number, number, number] } = { properties: [], obstacleTypes: [] }
-    propertyService: LotPropertyService
-    obstacleTypeService: ObstacleTypeService
+    readonly state: { lot?: Lot, currentPosition?: [number, number, number] } = {}
+    // propertyService: LotPropertyService
+    // obstacleTypeService: ObstacleTypeService
 
     constructor(props: any) {
         super(props)
-        this.propertyService = new LotPropertyService()
-        this.obstacleTypeService = new ObstacleTypeService()
+        // this.propertyService = new LotPropertyService()
+        // this.obstacleTypeService = new ObstacleTypeService()
         this.NameRef = createRef()
     }
 
@@ -38,29 +42,6 @@ export default class LotEdit extends Component<LotEditProps> {
             _lot.type = e.target.value
             this.props.changed(this.state.lot)
         }
-    }
-
-    componentDidMount = () => {
-        this.propertyService.retrieve().then((properties: string[]) => {
-            properties.sort((a, b) => {
-                if (a < b) { return -1 }
-                if (a > b) { return 1 }
-                return 0
-            })
-            this.setState({
-                properties
-            })
-        })
-        this.obstacleTypeService.retrieve().then((obstacleTypes: string[]) => {
-            obstacleTypes.sort((a, b) => {
-                if (a < b) { return -1 }
-                if (a > b) { return 1 }
-                return 0
-            })
-            this.setState({
-                obstacleTypes
-            })
-        })
     }
 
     isBakPresent = (): boolean => {
@@ -263,8 +244,8 @@ export default class LotEdit extends Component<LotEditProps> {
                                             })
                                         }}
                                     >
-                                        {this.state.obstacleTypes.sort().map((br, i) => {
-                                            return <Select.Option key={i} value={br}>{br}</Select.Option>
+                                        {this.context.obstakel.sort().map((o: INaam) => {
+                                            return <Select.Option key={o.id} value={o.naam}>{o.naam}</Select.Option>
                                         })}
                                     </Select>
                                 </Col>
@@ -343,19 +324,19 @@ export default class LotEdit extends Component<LotEditProps> {
                                 {this.isBakPresent() &&
                                 <Col style={colStyle}><Checkbox checked={this.getBak()} onChange={this.setBak} /><br />Bak</Col>
                                 }
-                                {this.state.properties && this.state.properties.map((prop: string, i: number) => {
-                                    return <Col key={i} style={colStyle}>
-                                        <Checkbox id={prop} checked={this.getProperty(prop)} onChange={this.setProperty} />
+                                {this.context.plaatseigenschap.map((prop: INaam) => {
+                                    return <Col key={prop.id} style={colStyle}>
+                                        <Checkbox id={prop.naam} checked={this.getProperty(prop.naam)} onChange={this.setProperty} />
                                         <br />
-                                        {prop.charAt(0).toUpperCase() + prop.slice(1)}
+                                        {capitalize(prop.naam)}
                                     </Col>
                                 })}
 
-                                
+
                             </Row>
                         </>}
                     <Row gutter={formGutter}>
-                        
+
                     </Row>
                 </div>}
         </div>

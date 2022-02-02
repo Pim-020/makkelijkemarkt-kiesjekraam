@@ -4,22 +4,22 @@ import { AssignedBranche, Branche } from "../models"
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import CSS from 'csstype'
 import { getTextColor } from "../common/generic"
-import { BranchesService } from "../services/service_markets"
+// import { BranchesService } from "../services/service_markets"
 
 
 export default class Branches extends Component<{ id: string, lookupBranches: Branche[], changed?: (lookupBranches: AssignedBranche[]) => void }> {
     readonly state: { branches?: AssignedBranche[] } = {}
-    branchesService: BranchesService
+    // branchesService: BranchesService
 
     constructor(props: any) {
         super(props)
-        this.branchesService = new BranchesService()
+        // this.branchesService = new BranchesService()
     }
 
     updateStorage = (branches: AssignedBranche[]) => {
         // Tell the parent component this page has changed.
         const _branches = branches.filter(e => e.brancheId !== "")
-        localStorage.setItem(`bwdm_cache_${this.props.id}_branches`, JSON.stringify(_branches))
+        // localStorage.setItem(`bwdm_cache_${this.props.id}_branches`, JSON.stringify(_branches))
         if(this.props.changed){
             this.props.changed(_branches)
         }
@@ -31,8 +31,8 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
 
     getStyle = (branche: AssignedBranche): CSS.Properties => {
         return {
-            background: branche.backGroundColor || "#fff",
-            color: branche.color || "#000"
+            background: `#${branche.backGroundColor || "fff"}`,
+            color: `#${branche.color || "000"}`,
         }
     }
 
@@ -51,10 +51,10 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
             placeholder="Selecteer een branche"
             value={branche.brancheId || ""}
             onChange={(e: string) => {
-                const _selectedBranche: Branche = this.props.lookupBranches.filter((item: Branche) => item.brancheId === e)[0]
+                const _selectedBranche: Branche = this.props.lookupBranches.filter((item: Branche) => item.afkorting === e)[0]
                 if (this.state.branches && _selectedBranche) {
                     const _branches = this.state.branches
-                    _branches[i].brancheId = _selectedBranche.brancheId
+                    _branches[i].brancheId = _selectedBranche.afkorting
                     _branches[i].backGroundColor = _selectedBranche.color
                     _branches[i].color = getTextColor(_selectedBranche.color)
                     // Find the color, set the foreground color with the function.
@@ -62,8 +62,8 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
                 }
             }}
         >
-            {this.props.lookupBranches.filter((item: Branche) => _availableBranches.indexOf(item.brancheId) === -1).map((br, i) => {
-                return <Select.Option key={i} value={br.brancheId}>{br.brancheId}</Select.Option>
+            {this.props.lookupBranches.filter((item: Branche) => _availableBranches.indexOf(item.afkorting) === -1).map((br, i) => {
+                return <Select.Option key={i} value={br.afkorting}>{br.afkorting}</Select.Option>
             })}
         </Select>
     }
@@ -145,7 +145,7 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
                                 }} />
                         </td>
                         <td>{branche.allocated && <>{branche.allocated}</>}</td>
-                        
+
                     </tr>
 
                 })}</tbody></table>
