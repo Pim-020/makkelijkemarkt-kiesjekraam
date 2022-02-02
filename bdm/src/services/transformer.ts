@@ -1,7 +1,5 @@
 import { getTextColor } from "../common/generic"
-import { AssignedBranche, Assignment, Geography, Lot, MarketEventDetails, MarketLayout, MarketPage, Obstacle, Page, Rows, Stand } from "../models"
-import { BrancheService } from "./service_lookup"
-import { BranchesService, GeographyService, LotsService, PagesService, RowsService } from "./service_markets"
+import { AssignedBranche, Assignment, Branche, Geography, IMarktConfiguratie, Lot, MarketEventDetails, MarketLayout, MarketPage, Obstacle, Page, Rows, Stand } from "../models"
 
 export class Transformer {
     getRow(obstacle: Obstacle, matrix: any[]): [number, number] {
@@ -25,22 +23,26 @@ export class Transformer {
     /**
      * Convert from the individual files to the model we require for the app to function
      */
-    async encode(route: string): Promise<MarketEventDetails> {
+    async encode(marktConfig: IMarktConfiguratie, genericBranches:Branche[], marketEventDetails?: MarketEventDetails | undefined): Promise<MarketEventDetails> {
         let newPages: MarketPage[] = []
         let rowSets: (Lot | Obstacle)[] = []
         let newBranches: AssignedBranche[] = []
 
-        const _b = await new BranchesService().retrieve(route).then(result => result) // branches.json
-        const _g = await new GeographyService().retrieve(route).then(result => result) // geografie.json
-        const _l = await new LotsService().retrieve(route).then(result => result) // locaties.json
-        const _r = await new RowsService().retrieve(route).then(result => result) // markt.json
-        const _p = await new PagesService().retrieve(route).then(result => result) // paginas.json
-        const _bb = await new BrancheService().retrieve().then(result => result)
+        let { branches: _b, geografie: _g, locaties: _l, marktOpstelling: _r, paginas: _p } = marktConfig;
+        const _bb = genericBranches;
+
+        if (marketEventDetails) {
+            const { pages } = marketEventDetails
+            _l = this.layoutToStands(pages)
+            _r = this.layoutToRows(pages)
+            _g = this.layoutToGeography(pages)
+            _p = this.layoutToPages(pages)
+        }
 
         // Add color information to branches
         if (_b && _b.length > 0) {
             _b.forEach((a: AssignedBranche, i: number) => {
-                const _bbLookupValue = _bb.filter(e => e.brancheId === _b[i].brancheId)
+                const _bbLookupValue = _bb.filter(e => e.afkorting === _b[i].brancheId)
                 if (_bbLookupValue.length === 1 && _bbLookupValue[0].color !== "") {
                     _b[i].backGroundColor = _bbLookupValue[0].color.replace("##", "#")
                     _b[i].color = getTextColor(_bbLookupValue[0].color.replace("##", "#"))
@@ -269,5 +271,24 @@ export class Transformer {
             })
         })
         return final
+    }
+
+    decodeBranches(data: AssignedBranche[]) {
+        // This code copied as-is from bdm/src/common/generic.ts:zipAll() to keep all legacy code in one place
+        let _nBranches: AssignedBranche[] = []
+        if (data) {
+            data.forEach((_nB: AssignedBranche) => {
+                const _tmp: any = {
+                    brancheId: _nB.brancheId,
+                    verplicht: _nB.verplicht || false
+                }
+                if (_nB.maximumPlaatsen && _nB.maximumPlaatsen > -1) {
+                    _tmp.maximumPlaatsen = _nB.maximumPlaatsen
+                }
+                _nBranches.push(_tmp)
+            })
+
+        }
+        return _nBranches
     }
 }

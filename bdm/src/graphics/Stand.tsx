@@ -80,7 +80,7 @@ export default class Stand extends Component<{
             return "#1890ff"
         }
         if (branche && branche.backGroundColor) {
-            return branche.backGroundColor
+            return `#${branche.backGroundColor}`
         }
         return "#fafafa"
     }
@@ -88,7 +88,7 @@ export default class Stand extends Component<{
     getFillColor = () => {
         const { branche } = this.props
         if (branche && branche.backGroundColor) {
-            return branche.backGroundColor
+            return `#${branche.backGroundColor}`
         }
         return "#fafafa"
     }
@@ -98,11 +98,11 @@ export default class Stand extends Component<{
         if (stand && stand.invalid) {
             return '#f00'
         }
-        
+
         if (branche && branche.color) {
-            return branche.color
+            return `#${branche.color}`
         }
-        
+
         return "#000000"
     }
 

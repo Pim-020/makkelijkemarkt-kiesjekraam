@@ -18,7 +18,6 @@ interface DayPageState {
 
 interface DayPageProps {
     id: string,
-    lookupBranches: Branche[]
     changed?: () => void
 }
 export default class Day extends Component<DayPageProps> {
@@ -244,10 +243,10 @@ export default class Day extends Component<DayPageProps> {
             }
         })
         const { pages } = newMarketState
-        localStorage.setItem(`bwdm_cache_${this.props.id}_lots`, JSON.stringify(this.transformer.layoutToStands(pages)))
-        localStorage.setItem(`bwdm_cache_${this.props.id}_rows`, JSON.stringify(this.transformer.layoutToRows(pages)))
-        localStorage.setItem(`bwdm_cache_${this.props.id}_geography`, JSON.stringify(this.transformer.layoutToGeography(pages)))
-        localStorage.setItem(`bwdm_cache_${this.props.id}_pages`, JSON.stringify(this.transformer.layoutToPages(pages)))
+        // localStorage.setItem(`bwdm_cache_${this.props.id}_lots`, JSON.stringify(this.transformer.layoutToStands(pages)))
+        // localStorage.setItem(`bwdm_cache_${this.props.id}_rows`, JSON.stringify(this.transformer.layoutToRows(pages)))
+        // localStorage.setItem(`bwdm_cache_${this.props.id}_geography`, JSON.stringify(this.transformer.layoutToGeography(pages)))
+        // localStorage.setItem(`bwdm_cache_${this.props.id}_pages`, JSON.stringify(this.transformer.layoutToPages(pages)))
 
     }
 
@@ -300,6 +299,7 @@ export default class Day extends Component<DayPageProps> {
     }
 
     render() {
+        console.log('DAY', this.state)
         return <>
             <Tabs
                 type="editable-card"
