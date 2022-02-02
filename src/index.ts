@@ -135,6 +135,7 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 if (process.env.ENABLE_CORS_FOR_ORIGIN) {
     app.use(cors({ origin: process.env.ENABLE_CORS_FOR_ORIGIN }));
