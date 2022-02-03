@@ -129,15 +129,10 @@ const apiBase = (
 
     return session.findByPk(mmConfig.sessionKey)
     .then((sessionRecord: any) => {
-        if ( requestBody ) {
-        return sessionRecord ?
-               postFunction(url, sessionRecord.dataValues.sess.token) :
-               retry(api);
-        } else {
-        return sessionRecord ?
-               getFunction(url, sessionRecord.dataValues.sess.token) :
-               retry(api);
-        }
+        if (!sessionRecord) return retry(api);
+            return requestBody
+                ? postFunction(url, sessionRecord.dataValues.sess.token)
+                : getFunction(url, sessionRecord.dataValues.sess.token);
     });
 };
 
