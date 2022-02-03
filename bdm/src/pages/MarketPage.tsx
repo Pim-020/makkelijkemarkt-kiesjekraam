@@ -160,7 +160,7 @@ export default class MarketPage extends DynamicBase {
                     this.setState({ activeKey: key })
                 }}>
                     <TabPane tab="Marktindeling" key="0">
-                        <Day id={this.id} ref={this.dayRef} lookupBranches={this.state.lookupBranches} changed={this.dayChanged} />
+                        <Day id={this.id} ref={this.dayRef} changed={this.dayChanged} />
                     </TabPane>
                     <TabPane tab="Branche toewijzing" key="1" forceRender={true}>
                         <Branches id={this.id} ref={this.branchesRef} lookupBranches={this.state.lookupBranches} changed={this.updateAssignedBranches} />
