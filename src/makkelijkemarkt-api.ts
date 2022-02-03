@@ -152,33 +152,23 @@ export const updateRsvp = (
 //TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
 export const deleteRsvpsByErkenningsnummer = (erkenningsNummer) => null;
 
-export const getAanmeldingenByMarktAndDate = (marktId: string, marktDate: string): Promise<IRSVP[]> =>
-    apiBase(`rsvp/markt/${marktId}/date/${marktDate}`).then(response => {
+const getAanmeldingen = (url: string): Promise<IRSVP[]> =>
+    apiBase(url).then(response => {
         for( let i=0; i < response.data.length; i++) {
             response.data[i].marktId = response.data[i].markt;
             response.data[i].erkenningsNummer = response.data[i].koopman;
         }
         return response.data;
+    });
 
-});
+export const getAanmeldingenByMarktAndDate = (marktId: string, marktDate: string): Promise<IRSVP[]> =>
+    getAanmeldingen(`rsvp/markt/${marktId}/date/${marktDate}`);
 
 export const getAanmeldingenByOndernemerEnMarkt = (marktId: string, erkenningsNummer: string): Promise<IRSVP[]> =>
-    apiBase(`rsvp/markt/${marktId}/koopman/${erkenningsNummer}`).then(response => {
-        for( let i=0; i < response.data.length; i++) {
-            response.data[i].marktId = response.data[i].markt;
-            response.data[i].erkenningsNummer = response.data[i].koopman;
-        }
-        return response.data;
-});
+    getAanmeldingen(`rsvp/markt/${marktId}/koopman/${erkenningsNummer}`);
 
 export const getAanmeldingenByOndernemer = (erkenningsNummer: string): Promise<IRSVP[]> =>
-    apiBase(`rsvp/koopman/${erkenningsNummer}`).then(response => {
-        for( let i=0; i < response.data.length; i++) {
-            response.data[i].marktId = response.data[i].markt;
-            response.data[i].erkenningsNummer = response.data[i].koopman;
-        }
-        return response.data;
-});
+    getAanmeldingen(`rsvp/koopman/${erkenningsNummer}`);
 
 export const getMarkt = (
     marktId: string
