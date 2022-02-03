@@ -30,6 +30,11 @@ import {
 } from './makkelijkemarkt-api';
 
 import { calcToewijzingen } from './indeling';
+import { ConceptQueue } from './concept-queue';
+
+const conceptQueue = new ConceptQueue();
+let allocationQueue = conceptQueue.getQueueForDispatcher();
+const client = conceptQueue.getClient();
 
 const loadJSON = <T>(path: string, defaultValue: T = null): Promise<T> =>
     new Promise((resolve, reject) => {
@@ -180,6 +185,7 @@ export const getMarktDetails = (
     marktId: string,
     marktDate: string
 ) => {
+    console.log("get marker details: ", marktId, marktDate);
     const marktBasics = getMarktBasics(marktId);
 
     // Populate the `ondernemer.voorkeur` field
@@ -249,41 +255,27 @@ export const getIndelingslijst = (
 export const calculateIndelingslijst = (
     marktId: string,
     date: string,
-    logInput: boolean = false
 ) => {
-    return getCalculationInput(marktId, date)
-    .then(data => {
-        data = JSON.parse(JSON.stringify(data));
-
-        if (!logInput) {
-            return data;
-        } else {
-            return log.create({
-                level: 'debug',
-                msg: `Input indelingsberekening voor '${data.markt.naam}' (${marktId}) op ${date}`,
-                meta: data
-            })
-            .then(() => data);
-        }
-    })
-    .then(data => {
-        const logMessage = `Marktindeling berekenen: ${data.markt.naam}`;
-        console.time(logMessage);
-        const indeling = calcToewijzingen(data);
-        console.timeEnd(logMessage);
-
-        if (!logInput) {
-            return indeling;
-        } else {
-            return log.create({
-                level: 'debug',
-                msg: `Output indelingsberekening voor '${data.markt.naam}' (${marktId}) op ${date}`,
-                meta: indeling
-            })
-            .then(() => indeling);
-        }
-    });
+    console.log(">>>> ", marktId, date);
+    getCalculationInput(marktId, date).then(data => {
+            data = JSON.parse(JSON.stringify(data));
+            console.log("GET CALC INPUT");
+            const job = allocationQueue.createJob(data);
+            job.save().then(
+                (job: any) => {
+                    console.log("allocation job: ", job.id);
+                }
+            ).catch(error => {
+                console.log("job error: ", error);
+                if(!client.connected){
+                    console.log("connetction error: ", error);
+                    return;
+                }
+                allocationQueue = conceptQueue.getQueueForDispatcher();
+            });
+        });
 };
+
 
 export const getToewijzingslijst = (marktId: string, marktDate: string) =>
     Promise.all([

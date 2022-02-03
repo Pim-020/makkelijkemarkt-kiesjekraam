@@ -70,22 +70,23 @@ async function allocate() {
             process.exit(0);
         }
 
-        const indelingen = await Promise.all(markten.map((markt: MMMarkt) =>
-            calculateIndelingslijst(String(markt.id), marktDate, true))
-        );
+        for(var m in markten){
+            let markt = markten[m];
+            calculateIndelingslijst(String(markt.id), marktDate);
+        }
 
-        const toewijzingen = await mapMarktenToToewijzingen(indelingen);
-        const afwijzingen = await mapMarktenToAfwijzingen(indelingen);
+        //const toewijzingen = await mapMarktenToToewijzingen(indelingen);
+        //const afwijzingen = await mapMarktenToAfwijzingen(indelingen);
 
-        const toewijzingenEnriched = await Promise.all(
-            toewijzingen.map(toewijzing => getToewijzingEnriched(toewijzing)
-        ));
+        //const toewijzingenEnriched = await Promise.all(
+        //    toewijzingen.map(toewijzing => getToewijzingEnriched(toewijzing)
+        //));
 
-        const afwijzingenEnriched = await Promise.all(
-            afwijzingen.map(afwijzing => getAfwijzingEnriched(afwijzing)
-        ));
+        //const afwijzingenEnriched = await Promise.all(
+        //    afwijzingen.map(afwijzing => getAfwijzingEnriched(afwijzing)
+        //));
 
-        await destroyAndCreateToewijzingenAfwijzingen(toewijzingenEnriched, afwijzingenEnriched);
+        //await destroyAndCreateToewijzingenAfwijzingen(toewijzingenEnriched, afwijzingenEnriched);
 
         process.exit(0);
     } catch(e) {

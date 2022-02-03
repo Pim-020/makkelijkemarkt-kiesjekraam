@@ -496,6 +496,7 @@ export const getALijst = (
     marktId: string,
     marktDate: string
 ): Promise<MMOndernemer[]> => {
+    console.log("get alijst");
     const day = new Date(marktDate).getDay();
 
     if (A_LIJST_DAYS.includes(day)) {

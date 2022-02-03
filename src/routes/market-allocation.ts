@@ -18,9 +18,11 @@ const client = conceptQueue.getClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
+    console.log(">>>> ", marktId, marktDate);
     getCalculationInput(marktId, marktDate).then(data => {
             data = JSON.parse(JSON.stringify(data));
             const job = allocationQueue.createJob(data);
+            console.log("GET CALC INPUT");
             job.save().then(
                 (job: any) => {
                     console.log("allocation job: ", job.id);
