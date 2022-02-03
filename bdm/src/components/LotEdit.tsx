@@ -2,7 +2,9 @@ import { Col, Input, Row, Select, Checkbox, Radio, Button } from "antd"
 import { CheckboxChangeEvent } from "antd/lib/checkbox"
 import React, { Component, createRef, CSSProperties, RefObject } from "react"
 import { AssignedBranche, Lot } from "../models"
-import { LotPropertyService, ObstacleTypeService } from "../services/service_lookup"
+// import { LotPropertyService, ObstacleTypeService } from "../services/service_lookup"
+import { mmApiService } from "../services/service_mm_api"
+
 import { //CopyOutlined, 
     DeleteOutlined, PlusOutlined
 } from '@ant-design/icons'
@@ -19,13 +21,13 @@ interface LotEditProps {
 export default class LotEdit extends Component<LotEditProps> {
     NameRef: RefObject<Input>
     readonly state: { lot?: Lot, properties: string[], obstacleTypes: string[], currentPosition?: [number, number, number] } = { properties: [], obstacleTypes: [] }
-    propertyService: LotPropertyService
-    obstacleTypeService: ObstacleTypeService
+    // propertyService: LotPropertyService
+    // obstacleTypeService: ObstacleTypeService
 
     constructor(props: any) {
         super(props)
-        this.propertyService = new LotPropertyService()
-        this.obstacleTypeService = new ObstacleTypeService()
+        // this.propertyService = new LotPropertyService()
+        // this.obstacleTypeService = new ObstacleTypeService()
         this.NameRef = createRef()
     }
 
@@ -41,7 +43,7 @@ export default class LotEdit extends Component<LotEditProps> {
     }
 
     componentDidMount = () => {
-        this.propertyService.retrieve().then((properties: string[]) => {
+        mmApiService(`/plaatseigenschappen`).then((properties: string[]) => {
             properties.sort((a, b) => {
                 if (a < b) { return -1 }
                 if (a > b) { return 1 }
@@ -51,7 +53,7 @@ export default class LotEdit extends Component<LotEditProps> {
                 properties
             })
         })
-        this.obstacleTypeService.retrieve().then((obstacleTypes: string[]) => {
+        mmApiService(`/obstakeltypes`).then((obstacleTypes: string[]) => {
             obstacleTypes.sort((a, b) => {
                 if (a < b) { return -1 }
                 if (a > b) { return 1 }
