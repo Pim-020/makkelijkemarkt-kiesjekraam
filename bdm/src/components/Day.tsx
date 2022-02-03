@@ -18,7 +18,6 @@ interface DayPageState {
 
 interface DayPageProps {
     id: string,
-    lookupBranches: Branche[]
     changed?: () => void
 }
 export default class Day extends Component<DayPageProps> {
