@@ -2,6 +2,7 @@ import React, { createRef, MouseEvent, RefObject, KeyboardEvent } from "react"
 import Day from "../components/Day"
 import MarketsService from "../services/service_markets"
 import { Transformer } from "../services/transformer"
+import { mmApiService } from "../services/service_mm_api"
 import { DynamicBase } from "./DynamicBase"
 import { Breadcrumb, Tabs, Row, Col, //Button, Upload
     } from 'antd'
@@ -9,7 +10,7 @@ import { HomeOutlined, //UploadOutlined, FileZipOutlined
     } from '@ant-design/icons'
 import { Link } from "react-router-dom"
 import { AssignedBranche, Branche, MarketEventDetails, Plan } from "../models"
-import { BrancheService } from "../services/service_lookup"
+// import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
 import { validateLots } from "../common/validator"
@@ -36,7 +37,7 @@ export default class MarketPage extends DynamicBase {
     marketsService: MarketsService
     transformer: Transformer
 
-    lookupBrancheService: BrancheService
+    // lookupBrancheService: BrancheService
 
     constructor(props: any) {
         super(props)
@@ -44,7 +45,7 @@ export default class MarketPage extends DynamicBase {
 
         this.transformer = new Transformer()
         this.marketsService = new MarketsService()
-        this.lookupBrancheService = new BrancheService()
+        // this.lookupBrancheService = new BrancheService()
 
         this.branchesRef = createRef()
         this.dayRef = createRef()
@@ -74,7 +75,7 @@ export default class MarketPage extends DynamicBase {
 
     refresh() {
         this.id = (this.props as any).match.params.id
-        this.lookupBrancheService.retrieve().then((lookupBranches: Branche[]) => {
+        mmApiService(`/branches`).then((lookupBranches: Branche[]) => {
             this.setState({
                 lookupBranches
             })
