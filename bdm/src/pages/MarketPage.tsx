@@ -1,6 +1,6 @@
 import React, { createRef, MouseEvent, RefObject, KeyboardEvent } from "react"
 import Day from "../components/Day"
-import MarketsService from "../services/service_markets"
+// import MarketsService from "../services/service_markets"
 import { Transformer } from "../services/transformer"
 import { mmApiService } from "../services/service_mm_api"
 import { DynamicBase } from "./DynamicBase"
@@ -34,7 +34,7 @@ export default class MarketPage extends DynamicBase {
     config: Configuration
     dayRef: RefObject<Day>
 
-    marketsService: MarketsService
+    // marketsService: MarketsService
     transformer: Transformer
 
     // lookupBrancheService: BrancheService
@@ -44,7 +44,7 @@ export default class MarketPage extends DynamicBase {
         this.config = new Configuration()
 
         this.transformer = new Transformer()
-        this.marketsService = new MarketsService()
+        // this.marketsService = new MarketsService()
         // this.lookupBrancheService = new BrancheService()
 
         this.branchesRef = createRef()
