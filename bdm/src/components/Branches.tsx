@@ -19,7 +19,7 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
     updateStorage = (branches: AssignedBranche[]) => {
         // Tell the parent component this page has changed.
         const _branches = branches.filter(e => e.brancheId !== "")
-        localStorage.setItem(`bwdm_cache_${this.props.id}_branches`, JSON.stringify(_branches))
+        // localStorage.setItem(`bwdm_cache_${this.props.id}_branches`, JSON.stringify(_branches))
         if(this.props.changed){
             this.props.changed(_branches)
         }
