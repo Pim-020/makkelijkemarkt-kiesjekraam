@@ -257,7 +257,7 @@ export const calculateIndelingslijst = (
     date: string,
 ) => {
     console.log(">>>> ", marktId, date);
-    getCalculationInput(marktId, date).then(data => {
+    return getCalculationInput(marktId, date).then(data => {
             data = JSON.parse(JSON.stringify(data));
             console.log("GET CALC INPUT");
             const job = allocationQueue.createJob(data);

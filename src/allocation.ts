@@ -70,10 +70,12 @@ async function allocate() {
             process.exit(0);
         }
 
-        const indelingen = await Promise.all(markten.map((markt: MMMarkt) =>
-            calculateIndelingslijst(String(markt.id), marktDate))
+        const indelingen = await Promise.all(markten.map((markt: MMMarkt) => {
+                return calculateIndelingslijst(String(markt.id), marktDate)
+            })
         );
 
+        console.log(indelingen);
 
         //const toewijzingen = await mapMarktenToToewijzingen(indelingen);
         //const afwijzingen = await mapMarktenToAfwijzingen(indelingen);
