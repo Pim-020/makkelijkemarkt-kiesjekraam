@@ -70,10 +70,10 @@ async function allocate() {
             process.exit(0);
         }
 
-        for(var m in markten){
-            let markt = markten[m];
-            calculateIndelingslijst(String(markt.id), marktDate);
-        }
+        const indelingen = await Promise.all(markten.map((markt: MMMarkt) =>
+            calculateIndelingslijst(String(markt.id), marktDate))
+        );
+
 
         //const toewijzingen = await mapMarktenToToewijzingen(indelingen);
         //const afwijzingen = await mapMarktenToAfwijzingen(indelingen);
