@@ -4,16 +4,16 @@ import { AssignedBranche, Branche } from "../models"
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import CSS from 'csstype'
 import { getTextColor } from "../common/generic"
-import { BranchesService } from "../services/service_markets"
+// import { BranchesService } from "../services/service_markets"
 
 
 export default class Branches extends Component<{ id: string, lookupBranches: Branche[], changed?: (lookupBranches: AssignedBranche[]) => void }> {
     readonly state: { branches?: AssignedBranche[] } = {}
-    branchesService: BranchesService
+    // branchesService: BranchesService
 
     constructor(props: any) {
         super(props)
-        this.branchesService = new BranchesService()
+        // this.branchesService = new BranchesService()
     }
 
     updateStorage = (branches: AssignedBranche[]) => {
