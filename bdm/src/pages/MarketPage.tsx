@@ -86,7 +86,7 @@ export default class MarketPage extends DynamicBase {
             this.branchesRef.current?.updateStorage(result.branches)
             this.setState({
                 marketEventDetails: result,
-                activeKey: result.pages.length === 0 ? "1" : "0"
+                activeKey: result.pages.length === 0 ? "1" : "0"  // show branche toewijzing tab instead of marktindeling when no pages in result
             }, () => {
                 this.dayRef.current?.setState({
                     marketEventDetails: result
@@ -126,6 +126,7 @@ export default class MarketPage extends DynamicBase {
     }
 
     render() {
+        console.log('MarketPage', this.state)
         return <>
             <Breadcrumb>
                 <Breadcrumb.Item>
