@@ -71,7 +71,9 @@ async function allocate() {
         }
 
         const indelingen = await Promise.all(markten.map((markt: MMMarkt) => {
-                return calculateIndelingslijst(String(markt.id), marktDate)
+                let prom = calculateIndelingslijst(String(markt.id), marktDate)
+                console.log(prom);
+								return prom;
             })
         );
 
