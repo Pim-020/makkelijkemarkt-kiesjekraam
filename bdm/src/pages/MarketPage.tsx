@@ -73,6 +73,27 @@ export default class MarketPage extends DynamicBase {
         }
     }
 
+    save() {
+        const branches_json = require('../tmp/markt/AC-DI/branches.json')
+        const locaties_json = require('../tmp/markt/AC-DI/locaties.json')
+        const markt_json = require('../tmp/markt/AC-DI/markt.json')
+        const geografie_json = require('../tmp/markt/AC-DI/geografie.json')
+        const paginas_json = require('../tmp/markt/AC-DI/paginas.json')
+        if (this.state.marketEventDetails) {
+            const { pages, branches } = this.state.marketEventDetails
+            const locaties = this.transformer.layoutToStands(pages)
+            const markt = this.transformer.layoutToRows(pages)
+            const geografie = this.transformer.layoutToGeography(pages)
+            const paginas = this.transformer.layoutToPages(pages)
+            console.log('SAVE', { branches, geografie, locaties, markt, paginas })
+            console.log(JSON.stringify(branches_json) === JSON.stringify(branches))
+            console.log(JSON.stringify(locaties_json) === JSON.stringify(locaties))
+            console.log(JSON.stringify(markt_json) === JSON.stringify(markt))
+            console.log(JSON.stringify(geografie_json) === JSON.stringify(geografie))
+            console.log(JSON.stringify(paginas_json) === JSON.stringify(paginas))
+        }
+    }
+
     refresh() {
         this.id = (this.props as any).match.params.id
         mmApiService(`/branches`).then((lookupBranches: Branche[]) => {
@@ -146,6 +167,7 @@ export default class MarketPage extends DynamicBase {
                     </>
                 }
             </Breadcrumb>
+            <button onClick={this.save.bind(this)}>SAVE</button>
             <Row align="top" gutter={[16, 16]}>
                 <Col>
                     {/* {this.state.uploadProps &&
