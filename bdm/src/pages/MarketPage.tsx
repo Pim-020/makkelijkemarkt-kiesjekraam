@@ -73,18 +73,42 @@ export default class MarketPage extends DynamicBase {
         }
     }
 
+    branchesToZip(data: AssignedBranche[]) {
+        // Strip color, allocated and backGroundColor
+        let _nBranches: AssignedBranche[] = []
+        if (data) {
+            data.forEach((_nB: AssignedBranche) => {
+                const _tmp: any = {
+                    brancheId: _nB.brancheId,
+                    verplicht: _nB.verplicht || false
+                }
+                if (_nB.maximumPlaatsen && _nB.maximumPlaatsen > -1) {
+                    _tmp.maximumPlaatsen = _nB.maximumPlaatsen
+                }
+                _nBranches.push(_tmp)
+            })
+
+        }
+        return _nBranches
+    }
+
     save() {
         const branches_json = require('../tmp/markt/AC-DI/branches.json')
         const locaties_json = require('../tmp/markt/AC-DI/locaties.json')
         const markt_json = require('../tmp/markt/AC-DI/markt.json')
         const geografie_json = require('../tmp/markt/AC-DI/geografie.json')
         const paginas_json = require('../tmp/markt/AC-DI/paginas.json')
+
         if (this.state.marketEventDetails) {
-            const { pages, branches } = this.state.marketEventDetails
+            const { pages } = this.state.marketEventDetails
             const locaties = this.transformer.layoutToStands(pages)
             const markt = this.transformer.layoutToRows(pages)
             const geografie = this.transformer.layoutToGeography(pages)
             const paginas = this.transformer.layoutToPages(pages)
+            
+            // const { branches } = this.state.marketEventDetails
+            const branches = this.branchesToZip(this.state.marketEventDetails.branches)
+            
             console.log('SAVE', { branches, geografie, locaties, markt, paginas })
             console.log(JSON.stringify(branches_json) === JSON.stringify(branches))
             console.log(JSON.stringify(locaties_json) === JSON.stringify(locaties))
