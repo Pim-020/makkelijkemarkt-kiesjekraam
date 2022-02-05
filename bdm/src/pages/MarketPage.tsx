@@ -2,7 +2,7 @@ import React, { createRef, MouseEvent, RefObject, KeyboardEvent } from "react"
 import Day from "../components/Day"
 // import MarketsService from "../services/service_markets"
 import { Transformer } from "../services/transformer"
-import { mmApiService } from "../services/service_mm_api"
+import { mmApiService, mmApiSaveService } from "../services/service_mm_api"
 import { DynamicBase } from "./DynamicBase"
 import { Breadcrumb, Tabs, Row, Col, //Button, Upload
     } from 'antd'
@@ -110,11 +110,17 @@ export default class MarketPage extends DynamicBase {
             const branches = this.branchesToZip(this.state.marketEventDetails.branches)
             
             console.log('SAVE', { branches, geografie, locaties, markt, paginas })
-            console.log(JSON.stringify(branches_json) === JSON.stringify(branches))
-            console.log(JSON.stringify(locaties_json) === JSON.stringify(locaties))
-            console.log(JSON.stringify(markt_json) === JSON.stringify(markt))
-            console.log(JSON.stringify(geografie_json) === JSON.stringify(geografie))
-            console.log(JSON.stringify(paginas_json) === JSON.stringify(paginas))
+            console.log('branches', JSON.stringify(branches_json) === JSON.stringify(branches))
+            console.log('locaties', JSON.stringify(locaties_json) === JSON.stringify(locaties))
+            console.log('markt', JSON.stringify(markt_json) === JSON.stringify(markt))
+            console.log('geografie', JSON.stringify(geografie_json) === JSON.stringify(geografie))
+            console.log('paginas', JSON.stringify(paginas_json) === JSON.stringify(paginas))
+
+            mmApiSaveService(`/${this.id}/branches`, branches);
+            mmApiSaveService(`/${this.id}/geografie`, geografie);
+            mmApiSaveService(`/${this.id}/locaties`, locaties);
+            mmApiSaveService(`/${this.id}/markt`, markt);
+            mmApiSaveService(`/${this.id}/paginas`, paginas);
         }
     }
 
