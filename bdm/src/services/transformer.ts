@@ -45,6 +45,8 @@ export class Transformer {
         const _p: Page[] = await mmApiService(`/${route}/paginas`)
         const _bb: Branche[] = await mmApiService(`/branches`)
 
+        console.log({branches: _b, pages: _p, geografie: _g, locaties: _l, markt: _r})
+
         // Add color information to branches
         if (_b && _b.length > 0) {
             _b.forEach((a: AssignedBranche, i: number) => {
