@@ -93,11 +93,11 @@ export default class MarketPage extends DynamicBase {
     }
 
     save() {
-        const branches_json = require('../tmp/markt/AC-DI/branches.json')
-        const locaties_json = require('../tmp/markt/AC-DI/locaties.json')
-        const markt_json = require('../tmp/markt/AC-DI/markt.json')
-        const geografie_json = require('../tmp/markt/AC-DI/geografie.json')
-        const paginas_json = require('../tmp/markt/AC-DI/paginas.json')
+        const branches_json = require(`../tmp/markt/${this.id}/branches.json`)
+        const locaties_json = require(`../tmp/markt/${this.id}/locaties.json`)
+        const markt_json = require(`../tmp/markt/${this.id}/markt.json`)
+        const geografie_json = require(`../tmp/markt/${this.id}/geografie.json`)
+        const paginas_json = require(`../tmp/markt/${this.id}/paginas.json`)
 
         if (this.state.marketEventDetails) {
             const { pages } = this.state.marketEventDetails
