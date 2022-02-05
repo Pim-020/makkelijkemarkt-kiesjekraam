@@ -10,7 +10,7 @@ import * as reactViews from 'express-react-views';
 // Util
 // ----
 
-import { HTTP_INTERNAL_SERVER_ERROR, internalServerErrorPage, getQueryErrors, isAbsoluteUrl } from './express-util';
+import { HTTP_INTERNAL_SERVER_ERROR, internalServerErrorPage, isAbsoluteUrl } from './express-util';
 
 import { requireEnv } from './util';
 
@@ -24,7 +24,7 @@ import { Roles, keycloak, sessionMiddleware } from './authentication';
 // API
 // ---
 
-import { getMarkt, getMarkten } from './makkelijkemarkt-api';
+import { getLatestMarktconfiguratie, getMarkt, getMarkten, createMarktconfiguratie } from './makkelijkemarkt-api';
 
 // Routes
 // ------
@@ -62,6 +62,8 @@ import {
     indelingInputJobPage,
     indelingErrorStacktracePage,
 } from './routes/market-allocation';
+import { MarktConfig } from 'model';
+import { AxiosResponse } from 'axios';
 
 const csrfProtection = csrf({ cookie: true });
 
@@ -132,6 +134,7 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 
 // Static files that are public (robots.txt, favicon.ico)
@@ -485,6 +488,7 @@ app.get(
     },
 );
 
+
 app.post(
     '/upload-markten/zip/',
     keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER) /* ||
@@ -497,6 +501,104 @@ app.post(
         uploadMarktenZip(req, res, next, mostImportantRole);
     },
 );
+
+// TODO: add csrfProtection
+app.post(
+    '/api/markt/:marktId/marktconfiguratie',
+    keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER),
+    ),
+    (req: GrantedRequest, res: Response) => {
+
+        // TODO: add errorhandling
+        createMarktconfiguratie(req.params.marktId, req.body)
+            .then((data)=>res.send(data));
+    },
+);
+
+app.get(
+    '/api/markt/:marktId/marktconfiguratie/latest',
+    keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)
+    ),
+    (req: GrantedRequest, res: Response) => {
+
+        // TODO: add errorhandling
+        getLatestMarktconfiguratie(req.params.marktId)
+            .then((data)=>res.send(data));
+    },
+)
+
+
+/*
+POST
+​/api​/1.1.0​/branche
+Maakt nieuwe Branche aan
+
+GET
+​/api​/1.1.0​/branche​/all
+Vraag alle branches op.
+
+GET
+​/api​/1.1.0​/branche​/{afkorting}
+Vraag branches op met een bracheAfkorting.
+
+PUT
+​/api​/1.1.0​/branche​/{afkorting}
+Past een Branche aan
+*/
+
+
+
+/*
+Obstakel
+
+POST
+​/api​/1.1.0​/obstakel
+Maakt nieuwe Obstakel aan
+
+GET
+​/api​/1.1.0​/obstakel​/all
+Vraag alle obstakels op.
+
+GET
+​/api​/1.1.0​/obstakel​/{id}
+Vraag obstakel op met een id.
+
+PUT
+​/api​/1.1.0​/obstakel​/{id}
+Past een Obstakel aan
+
+DELETE
+​/api​/1.1.0​/obstakel​/{id}
+Verwijdert een obstakel
+
+
+
+Plaatseigenschap
+
+POST
+​/api​/1.1.0​/plaatseigenschap
+Maakt nieuwe Plaatseigenschap aan
+
+GET
+​/api​/1.1.0​/plaatseigenschap​/all
+Vraag alle plaatseigenschappen op.
+
+GET
+​/api​/1.1.0​/plaatseigenschap​/{id}
+Vraag plaatseigenschap op met een id.
+
+PUT
+​/api​/1.1.0​/plaatseigenschap​/{id}
+Past een Plaatseigenschap aan
+
+DELETE
+​/api​/1.1.0​/plaatseigenschap​/{id}
+Verwijdert een plaatseigenschap
+*/
+
+
+
+
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
