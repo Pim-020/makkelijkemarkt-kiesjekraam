@@ -18,7 +18,15 @@ import { validateLots } from "../common/validator"
 
 const { TabPane } = Tabs
 
-export default class MarketPage extends DynamicBase {
+const DataWrapper: React.FC = (props) => {
+    return (
+        <>
+            <MarketPage {...props} />
+        </>
+    )
+}
+
+class MarketPage extends DynamicBase {
     readonly state: {
         lookupBranches?: Branche[],
         marketEventDetails?: MarketEventDetails,
@@ -223,3 +231,5 @@ export default class MarketPage extends DynamicBase {
         </>
     }
 }
+
+export default DataWrapper
