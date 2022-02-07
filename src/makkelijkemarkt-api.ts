@@ -21,6 +21,7 @@ import {
     A_LIJST_DAYS,
     formatOndernemerName
 } from './domain-knowledge';
+import { MarktConfig } from 'model/marktconfig';
 
 const packageJSON = require('../package.json');
 
@@ -47,7 +48,7 @@ const mmConfig = {
     sessionKey      : 'mmsession',
     sessionLifetime : MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * 6,
 };
-const getApi = () =>
+const getApi = (): AxiosInstance =>
     axios.create({
         baseURL: mmConfig.baseUrl,
         headers: {
@@ -62,28 +63,38 @@ const login = (api: AxiosInstance) =>
         clientVersion : mmConfig.clientVersion,
     });
 
+type HttpMethod = "get" | "post";
+
+const createHttpFunction = (api: AxiosInstance, httpMethod: HttpMethod) : ( url: string, token: string, data?) => Promise<AxiosResponse> => {
+
+    switch (httpMethod) {
+        case "get":
+            return (url: string, token: string) => {
+                console.log("## MM API GET CALL: ", url);
+                const headers =  {
+                    Authorization: `Bearer ${token}`,
+                };
+                return api.get(url, { headers });
+        }
+        case "post":
+            return (url: string, token: string, data) => {
+                console.log("## MM API POST CALL: ", url);
+                const headers =  {
+                    Authorization: `Bearer ${token}`,
+                };
+                return api.post(url, data, { headers });
+        }
+    }
+}
+
 const apiBase = (
     url: string,
-    requestBody?: string
+    httpMethod: HttpMethod = "get",
+    requestBody?
 ): Promise<AxiosResponse> => {
     const api = getApi();
-    const getFunction = (url: string, token: string): AxiosResponse => {
-        console.log("## MM GET API CALL : ", url);
-        return api.get(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    };
 
-    const postFunction = (url: string, token: string): AxiosResponse => {
-        console.log("## MM POST API CALL : ", url);
-        return api.post(url, requestBody, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    };
+    const httpFunction = createHttpFunction(api, httpMethod)
 
     let counter50xRetry = 0;
     let counter40xRetry = 0;
@@ -97,7 +108,7 @@ const apiBase = (
                 sess: { 'token': res.data.uuid },
             }).then(() => res.data.uuid);
         }).then((token: string) => {
-            return getFunction(url, token);
+            return httpFunction(url, token, requestBody);
         });
     };
 
@@ -124,15 +135,14 @@ const apiBase = (
             }
         }
         counter40xRetry = 0;
-        return error;
+        throw(error);
     });
 
     return session.findByPk(mmConfig.sessionKey)
     .then((sessionRecord: any) => {
-        if (!sessionRecord) return retry(api);
-            return requestBody
-                ? postFunction(url, sessionRecord.dataValues.sess.token)
-                : getFunction(url, sessionRecord.dataValues.sess.token);
+        return sessionRecord ?
+               httpFunction(url, sessionRecord.dataValues.sess.token, requestBody) :
+               retry(api);
     });
 };
 
@@ -142,7 +152,7 @@ export const updateRsvp = (
     erkenningsNummer: string,
     attending: boolean,
 ): Promise<IRSVP> =>
-    apiBase('rsvp', `{"marktDate": "${marktDate}", "attending": ${attending}, "marktId": ${marktId}, "koopmanErkenningsNummer": "${erkenningsNummer}"}`).then(response => response.data);
+    apiBase('rsvp', "post", `{"marktDate": "${marktDate}", "attending": ${attending}, "marktId": ${marktId}, "koopmanErkenningsNummer": "${erkenningsNummer}"}`).then(response => response.data);
 
 //TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
 export const deleteRsvpsByErkenningsnummer = (erkenningsNummer) => null;
@@ -294,3 +304,18 @@ export const checkLogin = (): Promise<any> => {
         console.log('Login OK'),
     );
 };
+
+export const createMarktconfiguratie = (marktId: number, marktConfig: {}): Promise<AxiosResponse> =>
+    apiBase(`markt/${marktId}/marktconfiguratie`, "post", marktConfig).then(response => {
+        return response.data
+    }).catch(err => {
+        throw(err);
+    });
+
+
+export const getLatestMarktconfiguratie = (marktId: number): Promise<AxiosResponse | void>  =>
+    apiBase(`markt/${marktId}/marktconfiguratie/latest`).then(response => {
+        console.log(response)
+        return response.data
+    }).catch(err => {throw(err)});
+
