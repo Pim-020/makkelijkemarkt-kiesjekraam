@@ -1,7 +1,7 @@
 import React from 'react'
 import { RouteProps } from 'react-router-dom'
 
-export class DynamicBase extends React.Component<RouteProps> {
+export class DynamicBase extends React.Component<RouteProps | any> {
     id: string = ""
     router: any
 

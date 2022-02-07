@@ -1,4 +1,4 @@
-import React, { createRef, MouseEvent, RefObject, KeyboardEvent } from "react"
+import React, { createRef, MouseEvent, RefObject, KeyboardEvent, useEffect, useState } from "react"
 import Day from "../components/Day"
 // import MarketsService from "../services/service_markets"
 import { Transformer } from "../services/transformer"
@@ -9,20 +9,65 @@ import { Breadcrumb, Tabs, Row, Col, //Button, Upload
 import { HomeOutlined, //UploadOutlined, FileZipOutlined 
     } from '@ant-design/icons'
 import { Link } from "react-router-dom"
-import { AssignedBranche, Branche, MarketEventDetails, Plan } from "../models"
+import { AssignedBranche, Branche, Geography, Lot, MarketEventDetails, Page, Plan, Rows } from "../models"
 // import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
 import { validateLots } from "../common/validator"
 //import { zipMarket } from "../common/generic"
+import { useQuery } from 'react-query'
 
 const { TabPane } = Tabs
 
+const USE_QUERY_CONFIG = {
+    // refetchOnWindowFocus: false
+    placeholderData: [],
+    refetchOnWindowFocus: false, //refetch when window comes to focus
+    // refetchOnReconnect: false, //refetch when browser reconnects to server
+    // refetchOnMount: false, //refetch when component mounts
+}
+
+const useGenericBranches = () => {
+    console.log('useGenericBranches hook')
+    const { data } = useQuery('genericBranches', () => {
+        return mmApiService(`/branches`)
+    }, USE_QUERY_CONFIG)
+    return data;
+}
+
+const useTransformer = async () => {
+    console.log('useTransformer hook')
+    // const genericBranches = useGenericBranches()
+    // const genericBranches = await mmApiService(`/branches`)
+    // console.log(genericBranches)
+    return new Transformer().encode('AC-DI')
+}
+
 const DataWrapper: React.FC = (props) => {
+    console.log('DataWrapper')
+    const [clickData, setClickData] = useState(true)
+    const [data, setData] = useState({})
+
+    // const genericBranches = useGenericBranches()
+    useEffect(() => {
+        new Transformer().encode('AC-DI').then
+    })
+    
+    const clickHandler = () => {
+        console.log('clickHandler')
+        setClickData(!clickData)
+    }
+
+    // if (isLoading) console.log('Loading...')
+    // if (error) console.log('An error has occurred: ')
+    // if (data) console.log(data)
+
     return (
-        <>
-            <MarketPage {...props} />
-        </>
+        // <div>
+        //     <h1>Wrapper</h1>
+        //     <button onClick={clickHandler}>CHANGE</button>
+        // </div>
+        <MarketPage {...props} genericBranches={data} />
     )
 }
 
@@ -134,11 +179,11 @@ class MarketPage extends DynamicBase {
 
     refresh() {
         this.id = (this.props as any).match.params.id
-        mmApiService(`/branches`).then((lookupBranches: Branche[]) => {
-            this.setState({
-                lookupBranches
-            })
-        })
+        // mmApiService(`/branches`).then((lookupBranches: Branche[]) => {
+        //     this.setState({
+        //         lookupBranches
+        //     })
+        // })
         //this.getPlan()
         this.transformer.encode(this.id).then(result => {
             validateLots(result)
@@ -216,7 +261,7 @@ class MarketPage extends DynamicBase {
 
                 </Col>
              </Row>
-            {this.state.lookupBranches &&
+            {this.props.genericBranches &&
                 <Tabs activeKey={this.state.activeKey} onTabClick={(key: string, e: MouseEvent | KeyboardEvent) => {
                     this.setState({ activeKey: key })
                 }}>
@@ -224,7 +269,7 @@ class MarketPage extends DynamicBase {
                         <Day id={this.id} ref={this.dayRef} changed={this.dayChanged} />
                     </TabPane>
                     <TabPane tab="Branche toewijzing" key="1" forceRender={true}>
-                        <Branches id={this.id} ref={this.branchesRef} lookupBranches={this.state.lookupBranches} changed={this.updateAssignedBranches} />
+                        <Branches id={this.id} ref={this.branchesRef} lookupBranches={this.props.genericBranches} changed={this.updateAssignedBranches} />
                     </TabPane>
                 </Tabs>}
 
