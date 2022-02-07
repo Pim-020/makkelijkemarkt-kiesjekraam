@@ -27,7 +27,7 @@ import { Roles, keycloak, sessionMiddleware } from './authentication';
 // API
 // ---
 
-import { getMarkt, getMarkten } from './makkelijkemarkt-api';
+import { getLatestMarktconfiguratie, getMarkt, getMarkten, createMarktconfiguratie } from './makkelijkemarkt-api';
 
 // Routes
 // ------
@@ -529,6 +529,7 @@ app.get(
     },
 );
 
+
 app.post(
     '/upload-markten/zip/',
     keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER) /* ||
@@ -539,6 +540,33 @@ app.post(
         const mostImportantRole = token.hasRole(Roles.MARKTMEESTER) ? Roles.MARKTMEESTER : Roles.MARKTBEWERKER;
 
         uploadMarktenZip(req, res, next, mostImportantRole);
+    },
+);
+
+// TODO: add csrfProtection
+app.post(
+    '/api/markt/:marktId/marktconfiguratie',
+    // keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER),
+    // ),
+    (req: GrantedRequest, res: Response) => {
+
+        // TODO: add errorhandling
+        createMarktconfiguratie(req.params.marktId, req.body)
+            .then((data)=>res.send(data))
+            .catch(err => console.log(err.response.status, err.response.statusText, err.response.data));
+    },
+);
+
+app.get(
+    '/api/markt/:marktId/marktconfiguratie/latest',
+    // keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER),
+    // ),
+    (req: GrantedRequest, res: Response) => {
+
+        // TODO: add errorhandling
+        getLatestMarktconfiguratie(req.params.marktId)
+            .then((data)=>res.send(data))
+            .catch(err => console.log(err.response.status, err.response.statusText, err.response.data));
     },
 );
 
