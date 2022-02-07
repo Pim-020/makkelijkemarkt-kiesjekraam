@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import { HomeOutlined } from '@ant-design/icons'
 import { Branche } from "../models"
 import { BrancheService } from "../services/service_lookup"
+import { mmApiService } from "../services/service_mm_api"
 import {
     DeleteOutlined, PlusOutlined, BgColorsOutlined,
     // UploadOutlined 
@@ -57,7 +58,7 @@ export default class BrancheListPage extends Component {
     }
 
     componentDidMount = () => {
-        this.brancheService.retrieve().then((branches: Branche[]) => {
+        mmApiService(`/branches`).then((branches: Branche[]) => {
             const _branches = branches.filter((b: Branche) => b !== null)
             // Make sure there are no empty elements in the branches.
             this.setState({
