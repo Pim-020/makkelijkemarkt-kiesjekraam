@@ -9,7 +9,7 @@ import { Breadcrumb, Tabs, Row, Col, //Button, Upload
 import { HomeOutlined, //UploadOutlined, FileZipOutlined 
     } from '@ant-design/icons'
 import { Link } from "react-router-dom"
-import { AssignedBranche, Branche, MarketEventDetails, Plan } from "../models"
+import { AssignedBranche, Branche, MarketEventDetails, IMarktConfiguratie, Plan } from "../models"
 // import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
@@ -17,6 +17,15 @@ import { validateLots } from "../common/validator"
 //import { zipMarket } from "../common/generic"
 
 const { TabPane } = Tabs
+
+const apiLoad = async(marktId: string) => {
+    const genericBranches: Branche[] = await mmApiService(`/api/mm/branches`);
+
+    const marktConfig: IMarktConfiguratie = await mmApiService(`/api/markt/${marktId}/marktconfiguratie/latest`)
+    console.log(marktConfig);
+    const transformed = new Transformer().encode(marktConfig, genericBranches)
+    return { genericBranches, transformed }
+}
 
 export default class MarketPage extends DynamicBase {
     readonly state: {
@@ -111,45 +120,20 @@ export default class MarketPage extends DynamicBase {
             })
         })
         //this.getPlan()
-        this.transformer.encode(this.id).then(result => {
-            validateLots(result)
-            this.branchesRef.current?.updateStorage(result.branches)
+        apiLoad(this.id).then(({transformed, genericBranches}) => {
+            validateLots(transformed);
+            console.log(transformed);
+            this.branchesRef.current?.updateStorage(transformed.branches)
             this.setState({
-                marketEventDetails: result,
-                activeKey: result.pages.length === 0 ? "1" : "0"  // show branche toewijzing tab instead of marktindeling when no pages in result
+                lookupBranches: genericBranches,
+                marketEventDetails: transformed,
+                activeKey: transformed.pages.length === 0 ? "1" : "0"  // show branche toewijzing tab instead of marktindeling when no pages in result
             }, () => {
                 this.dayRef.current?.setState({
-                    marketEventDetails: result
+                    marketEventDetails: transformed
                 })
             })
-        }).catch((e: Error) => {
-            console.error(`Marktdag bestaat nog niet, ${this.id} wordt nieuw aangemaakt.`)
-            const _newM: MarketEventDetails = {
-                branches: [],
-                pages: [
-                    {
-                        title: "",
-                        layout: [
-                            {
-                                _key: "",
-                                title: "",
-                                class: "block-left",
-                                landmarkBottom: "",
-                                landmarkTop: "",
-                                lots: []
-                            }
-                        ]
-                    }
-                ]
-            }
-            // No result
-            this.setState({
-                marketEventDetails: _newM,
-                activeKey: "1"
-            }, () => {
-                this.dayRef.current?.setState({
-                    marketEventDetails: _newM
-                })
+        })
             })
             this.branchesRef.current?.updateStorage([])
         })
