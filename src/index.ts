@@ -10,7 +10,7 @@ import * as reactViews from 'express-react-views';
 // Util
 // ----
 
-import { HTTP_INTERNAL_SERVER_ERROR, internalServerErrorPage, getQueryErrors, isAbsoluteUrl } from './express-util';
+import { HTTP_INTERNAL_SERVER_ERROR, internalServerErrorPage, isAbsoluteUrl } from './express-util';
 
 import { requireEnv } from './util';
 
@@ -62,6 +62,8 @@ import {
     indelingInputJobPage,
     indelingErrorStacktracePage,
 } from './routes/market-allocation';
+import { MarktConfig } from 'model';
+import { AxiosResponse } from 'axios';
 
 const csrfProtection = csrf({ cookie: true });
 
