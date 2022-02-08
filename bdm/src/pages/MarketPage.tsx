@@ -72,26 +72,6 @@ export default class MarketPage extends DynamicBase {
             })
         }
     }
-
-    branchesToZip(data: AssignedBranche[]) {
-        // Strip color, allocated and backGroundColor
-        let _nBranches: AssignedBranche[] = []
-        if (data) {
-            data.forEach((_nB: AssignedBranche) => {
-                const _tmp: any = {
-                    brancheId: _nB.brancheId,
-                    verplicht: _nB.verplicht || false
-                }
-                if (_nB.maximumPlaatsen && _nB.maximumPlaatsen > -1) {
-                    _tmp.maximumPlaatsen = _nB.maximumPlaatsen
-                }
-                _nBranches.push(_tmp)
-            })
-
-        }
-        return _nBranches
-    }
-
     save() {
         const branches_json = require(`../tmp/markt/AC-DI/branches.json`)
         const locaties_json = require(`../tmp/markt/AC-DI/locaties.json`)
@@ -107,7 +87,7 @@ export default class MarketPage extends DynamicBase {
             const paginas = this.transformer.layoutToPages(pages)
             
             // const { branches } = this.state.marketEventDetails
-            const branches = this.branchesToZip(this.state.marketEventDetails.branches)
+            const branches = this.transformer.decodeBranches(this.state.marketEventDetails.branches)
             
             console.log('SAVE', { branches, geografie, locaties, marktOpstelling, paginas })
             console.log('branches', JSON.stringify(branches_json) === JSON.stringify(branches))
