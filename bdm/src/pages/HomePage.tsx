@@ -54,28 +54,28 @@ export default class HomePage extends Component {
         // Empty the error object and reconstruct it
         systemState.errors = []
 
-        const _marketsCache = localStorage.getItem('bwdm_cache_markets')
-        if (_marketsCache) {
-            const _markets = JSON.parse(_marketsCache)
-            this.setState({
-                markets: _markets
-            }, async () => {
-                const transformer = new Transformer()
-                const _ids = getLocalStorageMarkets()
-                const _errs: Promise<string | undefined>[] = _ids.map(async (m: string) => {
-                    const result: MarketEventDetails = await transformer.encode(m)
-                    return validateLots(result) ? m : undefined
-                })
-                let errs: (string | undefined)[] = await Promise.all(_errs)
-                systemState.errors = (errs as string[]).filter(e => e !== undefined)
-                // Update systemState
-                this.setState({
-                    progress: 100,
-                    progressStatus: "success",
-                    systemState: systemState
-                })
-            })
-        }
+        // const _marketsCache = localStorage.getItem('bwdm_cache_markets')
+        // if (_marketsCache) {
+        //     const _markets = JSON.parse(_marketsCache)
+        //     this.setState({
+        //         markets: _markets
+        //     }, async () => {
+        //         const transformer = new Transformer()
+        //         const _ids = getLocalStorageMarkets()
+        //         const _errs: Promise<string | undefined>[] = _ids.map(async (m: string) => {
+        //             const result: MarketEventDetails = await transformer.encode(m)
+        //             return validateLots(result) ? m : undefined
+        //         })
+        //         let errs: (string | undefined)[] = await Promise.all(_errs)
+        //         systemState.errors = (errs as string[]).filter(e => e !== undefined)
+        //         // Update systemState
+        //         this.setState({
+        //             progress: 100,
+        //             progressStatus: "success",
+        //             systemState: systemState
+        //         })
+        //     })
+        // }
     }
 
     componentDidMount() {
