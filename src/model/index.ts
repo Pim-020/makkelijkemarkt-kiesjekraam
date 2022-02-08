@@ -18,6 +18,7 @@ requireEnv('DATABASE_URL');
 const databaseURL = new URL(process.env.DATABASE_URL);
 const config = {
     host: databaseURL.hostname,
+    port: parseInt(databaseURL.port),
     database: path.basename(databaseURL.pathname),
     username: databaseURL.username,
     password: databaseURL.password,

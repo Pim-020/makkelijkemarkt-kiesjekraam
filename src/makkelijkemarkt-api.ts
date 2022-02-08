@@ -33,15 +33,13 @@ const MAX_RETRY_40X = 10;
 
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
-requireEnv('API_READONLY_USER');
-requireEnv('API_READONLY_PASS');
+requireEnv('API_KEY');
 
 const mmConfig = {
     baseUrl         : process.env.API_URL,
     appKey          : process.env.API_MMAPPKEY,
-    loginUrl        : 'login/basicUsername/',
-    username        : process.env.API_READONLY_USER,
-    password        : process.env.API_READONLY_PASS,
+    loginUrl        : 'login/apiKey/',
+    apiKey          : process.env.API_KEY,
     clientApp       : packageJSON.name,
     clientVersion   : packageJSON.version,
     sessionKey      : 'mmsession',
@@ -56,8 +54,7 @@ const getApi = () =>
     });
 const login = (api: AxiosInstance) =>
     api.post(mmConfig.loginUrl, {
-        username      : mmConfig.username,
-        password      : mmConfig.password,
+        apiKey        : mmConfig.apiKey,
         clientApp     : mmConfig.clientApp,
         clientVersion : mmConfig.clientVersion,
     });
