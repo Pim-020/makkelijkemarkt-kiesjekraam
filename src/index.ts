@@ -502,27 +502,29 @@ app.post(
 // TODO: add csrfProtection
 app.post(
     '/api/markt/:marktId/marktconfiguratie',
-    keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER),
-    ),
+    // keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER),
+    // ),
     (req: GrantedRequest, res: Response) => {
 
         // TODO: add errorhandling
         createMarktconfiguratie(req.params.marktId, req.body)
-            .then((data)=>res.send(data));
+            .then((data)=>res.send(data))
+            .catch(err => console.log(err.response.status, err.response.statusText, err.response.data));
     },
 );
 
 app.get(
     '/api/markt/:marktId/marktconfiguratie/latest',
-    keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)
-    ),
+    // keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER),
+    // ),
     (req: GrantedRequest, res: Response) => {
 
         // TODO: add errorhandling
         getLatestMarktconfiguratie(req.params.marktId)
-            .then((data)=>res.send(data));
+            .then((data)=>res.send(data))
+            .catch(err => console.log(err.response.status, err.response.statusText, err.response.data));
     },
-)
+);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
