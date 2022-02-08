@@ -288,4 +288,23 @@ export class Transformer {
         })
         return final
     }
+
+    decodeBranches(data: AssignedBranche[]) {
+        // This code copied as-is from bdm/src/common/generic.ts:zipAll() to keep all legacy code in one place
+        let _nBranches: AssignedBranche[] = []
+        if (data) {
+            data.forEach((_nB: AssignedBranche) => {
+                const _tmp: any = {
+                    brancheId: _nB.brancheId,
+                    verplicht: _nB.verplicht || false
+                }
+                if (_nB.maximumPlaatsen && _nB.maximumPlaatsen > -1) {
+                    _tmp.maximumPlaatsen = _nB.maximumPlaatsen
+                }
+                _nBranches.push(_tmp)
+            })
+
+        }
+        return _nBranches
+    }
 }
