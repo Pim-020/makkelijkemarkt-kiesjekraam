@@ -4,7 +4,7 @@ export const mmApiService = url => fetch(`${MM_API_BASE_URL}${url}`).then(r => r
 
 export const mmApiSaveService = (url, data) => {
     fetch(`${MM_API_BASE_URL}${url}`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
