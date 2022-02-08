@@ -191,7 +191,10 @@ app.post(
         // TODO: add errorhandling
         createMarktconfiguratie(req.params.marktId, req.body)
             .then((data)=>res.send(data))
-            .catch(err => console.log(err.response.status, err.response.statusText, err.response.data));
+            .catch(err => {
+                console.log(err.response.status, err.response.statusText, err.response.data);
+                res.send(err.response.status)
+            });
     },
 );
 
@@ -214,6 +217,22 @@ app.get('/api/zip/:markt/:fileName', (req, res) => {
 
 app.get('/api/mm/:fileName', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'tmp', 'config', 'markt', `${req.params.fileName}.json`));
+});
+
+app.post('/api/upload/:marktId', (req, res) => {
+    const marktPath = path.join(__dirname, '..', 'tmp', 'config', 'markt', req.body.shortName);
+    const payload = {};
+    // const fileNames = ['branches', 'geografie', 'locaties', 'markt', 'paginas'];
+    ['branches', 'geografie', 'locaties', 'markt', 'paginas'].forEach((fileName: string) => {
+        payload[fileName] = require(path.join(marktPath, `${fileName}.json`))
+    })
+    console.log(payload)
+    createMarktconfiguratie(req.params.marktId, payload)
+        .then((data)=>res.send(data))
+        .catch(err => {
+            console.log(err.response.status, err.response.statusText, err.response.data);
+            res.send(err.response.status)
+        });
 });
 
 app.get('/api/mm/:markt/:fileName', (req, res) => {
