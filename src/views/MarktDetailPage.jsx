@@ -72,6 +72,9 @@ class MarktDetailPage extends React.Component {
                             Kaart {markt.naam}
                         </a>
                     ) : null}
+                    <a href={`/bdm/market/${markt.id}`} className="Link">
+                        Bewerk deze markt
+                    </a>
                 </div>
                 {markt.kiesJeKraamGeblokkeerdePlaatsen ? (
                     <AlertLine
