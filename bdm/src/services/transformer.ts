@@ -31,19 +31,27 @@ export class Transformer {
         let rowSets: (Lot | Obstacle)[] = []
         let newBranches: AssignedBranche[] = []
 
-        // const _b = await new BranchesService().retrieve(route).then(result => result) // branches.json
-        // const _g = await new GeographyService().retrieve(route).then(result => result) // geografie.json
-        // const _l = await new LotsService().retrieve(route).then(result => result) // locaties.json
-        // const _r = await new RowsService().retrieve(route).then(result => result) // markt.json
-        // const _p = await new PagesService().retrieve(route).then(result => result) // paginas.json
-        // const _bb = await new BrancheService().retrieve().then(result => result)
+        interface IMarktConfiguratie {
+            branches: AssignedBranche[]
+            geografie: Geography
+            locaties: Lot[]
+            marktOpstelling: Rows
+            paginas: Page[]
+            // aanmaakDatumtijd
+            // id
+            // marktId
+        }
 
-        const _b: AssignedBranche[] = await mmApiService(`/${route}/branches`)
-        const _g: Geography = await mmApiService(`/${route}/geografie`)
-        const _l: Lot[] = await mmApiService(`/${route}/locaties`)
-        const _r: Rows = await mmApiService(`/${route}/markt`)
-        const _p: Page[] = await mmApiService(`/${route}/paginas`)
-        const _bb: Branche[] = await mmApiService(`/branches`)
+        const marktConfig: IMarktConfiguratie = await mmApiService(`/api/markt/${route}/marktconfiguratie/latest`)
+        console.log(marktConfig)
+
+        const { branches: _b } = marktConfig;
+        const { geografie: _g } = marktConfig;
+        const { locaties: _l } = marktConfig;
+        const { marktOpstelling: _r } = marktConfig;
+        const { paginas: _p } = marktConfig;
+
+        const _bb: Branche[] = await mmApiService(`/api/mm/branches`)
 
         console.log({branches: _b, pages: _p, geografie: _g, locaties: _l, markt: _r})
 

@@ -58,7 +58,7 @@ export default class BrancheListPage extends Component {
     }
 
     componentDidMount = () => {
-        mmApiService(`/branches`).then((branches: Branche[]) => {
+        mmApiService(`/api/mm/branches`).then((branches: Branche[]) => {
             const _branches = branches.filter((b: Branche) => b !== null)
             // Make sure there are no empty elements in the branches.
             this.setState({

@@ -43,7 +43,7 @@ export default class LotEdit extends Component<LotEditProps> {
     }
 
     componentDidMount = () => {
-        mmApiService(`/plaatseigenschappen`).then((properties: string[]) => {
+        mmApiService(`/api/mm/plaatseigenschappen`).then((properties: string[]) => {
             properties.sort((a, b) => {
                 if (a < b) { return -1 }
                 if (a > b) { return 1 }
@@ -53,7 +53,7 @@ export default class LotEdit extends Component<LotEditProps> {
                 properties
             })
         })
-        mmApiService(`/obstakeltypes`).then((obstacleTypes: string[]) => {
+        mmApiService(`/api/mm/obstakeltypes`).then((obstacleTypes: string[]) => {
             obstacleTypes.sort((a, b) => {
                 if (a < b) { return -1 }
                 if (a > b) { return 1 }

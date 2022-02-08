@@ -126,7 +126,7 @@ export default class MarketPage extends DynamicBase {
 
     refresh() {
         this.id = (this.props as any).match.params.id
-        mmApiService(`/branches`).then((lookupBranches: Branche[]) => {
+        mmApiService(`/api/mm/branches`).then((lookupBranches: Branche[]) => {
             this.setState({
                 lookupBranches
             })
