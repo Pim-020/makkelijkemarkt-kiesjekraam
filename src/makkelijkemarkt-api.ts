@@ -135,7 +135,7 @@ const apiBase = (
             }
         }
         counter40xRetry = 0;
-        return error;
+        throw(error);
     });
 
     return session.findByPk(mmConfig.sessionKey)
@@ -306,9 +306,16 @@ export const checkLogin = (): Promise<any> => {
 };
 
 export const createMarktconfiguratie = (marktId: number, marktConfig: JSON): Promise<AxiosResponse> =>
-    apiBase(`markt/${marktId}/marktconfiguratie`, "post", marktConfig).then(response => response.data);
+    apiBase(`markt/${marktId}/marktconfiguratie`, "post", marktConfig).then(response => {
+        return response.data
+    }).catch(err => {
+        throw(err);
+    });
 
 
 export const getLatestMarktconfiguratie = (marktId: number): Promise<AxiosResponse | void>  =>
-    apiBase(`markt/${marktId}/marktconfiguratie/latest`).then(response => response.data);
+    apiBase(`markt/${marktId}/marktconfiguratie/latest`).then(response => {
+        console.log(response)
+        return response.data
+    }).catch(err => {throw(err)});
 
