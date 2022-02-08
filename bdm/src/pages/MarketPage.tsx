@@ -93,34 +93,33 @@ export default class MarketPage extends DynamicBase {
     }
 
     save() {
-        const branches_json = require(`../tmp/markt/${this.id}/branches.json`)
-        const locaties_json = require(`../tmp/markt/${this.id}/locaties.json`)
-        const markt_json = require(`../tmp/markt/${this.id}/markt.json`)
-        const geografie_json = require(`../tmp/markt/${this.id}/geografie.json`)
-        const paginas_json = require(`../tmp/markt/${this.id}/paginas.json`)
+        const branches_json = require(`../tmp/markt/AC-DI/branches.json`)
+        const locaties_json = require(`../tmp/markt/AC-DI/locaties.json`)
+        const markt_json = require(`../tmp/markt/AC-DI/markt.json`)
+        const geografie_json = require(`../tmp/markt/AC-DI/geografie.json`)
+        const paginas_json = require(`../tmp/markt/AC-DI/paginas.json`)
 
         if (this.state.marketEventDetails) {
             const { pages } = this.state.marketEventDetails
             const locaties = this.transformer.layoutToStands(pages)
-            const markt = this.transformer.layoutToRows(pages)
+            const marktOpstelling = this.transformer.layoutToRows(pages)
             const geografie = this.transformer.layoutToGeography(pages)
             const paginas = this.transformer.layoutToPages(pages)
             
             // const { branches } = this.state.marketEventDetails
             const branches = this.branchesToZip(this.state.marketEventDetails.branches)
             
-            console.log('SAVE', { branches, geografie, locaties, markt, paginas })
+            console.log('SAVE', { branches, geografie, locaties, marktOpstelling, paginas })
             console.log('branches', JSON.stringify(branches_json) === JSON.stringify(branches))
             console.log('locaties', JSON.stringify(locaties_json) === JSON.stringify(locaties))
-            console.log('markt', JSON.stringify(markt_json) === JSON.stringify(markt))
+            console.log('markt', JSON.stringify(markt_json) === JSON.stringify(marktOpstelling))
             console.log('geografie', JSON.stringify(geografie_json) === JSON.stringify(geografie))
             console.log('paginas', JSON.stringify(paginas_json) === JSON.stringify(paginas))
 
-            mmApiSaveService(`/${this.id}/branches`, branches);
-            mmApiSaveService(`/${this.id}/geografie`, geografie);
-            mmApiSaveService(`/${this.id}/locaties`, locaties);
-            mmApiSaveService(`/${this.id}/markt`, markt);
-            mmApiSaveService(`/${this.id}/paginas`, paginas);
+            const marktConfiguratie = {branches, locaties, marktOpstelling, geografie, paginas}
+            console.log(marktConfiguratie)
+
+            mmApiSaveService(`/api/markt/${this.id}/marktconfiguratie`, marktConfiguratie)
         }
     }
 
