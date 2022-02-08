@@ -1,4 +1,4 @@
-const MM_API_BASE_URL = `${process.env.REACT_APP_KJK_API_ORIGIN}`;
+const MM_API_BASE_URL = process.env.REACT_APP_KJK_API_ORIGIN || ''
 
 export const mmApiService = url => fetch(`${MM_API_BASE_URL}${url}`).then(r => r.json());
 
