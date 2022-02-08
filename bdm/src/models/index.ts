@@ -128,6 +128,14 @@ export interface MarketEventDetails {
     pages: MarketPage[]
 }
 
+export interface IMarktConfiguratie {
+    branches: AssignedBranche[]
+    geografie: Geography
+    locaties: Lot[]
+    marktOpstelling: Rows
+    paginas: Page[]
+}
+
 export interface DayOfWeek {
     id: number
     name: string
