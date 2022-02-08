@@ -189,7 +189,9 @@ app.post(
     (req: GrantedRequest, res: Response) => {
 
         // TODO: add errorhandling
-        createMarktconfiguratie(req.params.marktId, req.body)
+        const payload = {...req.body};
+        payload['markt'] = req.body.marktOpstelling;  // temp patch because endpoint expects markt instead of marktOpstelling
+        createMarktconfiguratie(req.params.marktId, payload)
             .then((data)=>res.send(data))
             .catch(err => {
                 console.log(err.response.status, err.response.statusText, err.response.data);
