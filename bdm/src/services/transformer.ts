@@ -1,5 +1,5 @@
 import { getTextColor } from "../common/generic"
-import { AssignedBranche, Assignment, Branche, Geography, Lot, MarketEventDetails, MarketLayout, MarketPage, Obstacle, Page, Rows, Stand } from "../models"
+import { AssignedBranche, Assignment, Branche, Geography, IMarktConfiguratie, Lot, MarketEventDetails, MarketLayout, MarketPage, Obstacle, Page, Rows, Stand } from "../models"
 import { BrancheService } from "./service_lookup"
 import { BranchesService, GeographyService, LotsService, PagesService, RowsService } from "./service_markets"
 import { mmApiService } from "./service_mm_api"
@@ -26,24 +26,13 @@ export class Transformer {
     /**
      * Convert from the individual files to the model we require for the app to function
      */
-    async encode(route: string): Promise<MarketEventDetails> {
+    encode(marktConfig: IMarktConfiguratie, genericBranches: Branche[]): MarketEventDetails {
         let newPages: MarketPage[] = []
         let rowSets: (Lot | Obstacle)[] = []
         let newBranches: AssignedBranche[] = []
 
-        interface IMarktConfiguratie {
-            branches: AssignedBranche[]
-            geografie: Geography
-            locaties: Lot[]
-            marktOpstelling: Rows
-            paginas: Page[]
-            // aanmaakDatumtijd
-            // id
-            // marktId
-        }
-
-        const marktConfig: IMarktConfiguratie = await mmApiService(`/api/markt/${route}/marktconfiguratie/latest`)
-        console.log(marktConfig)
+        // const marktConfig: IMarktConfiguratie = await mmApiService(`/api/markt/${route}/marktconfiguratie/latest`)
+        // console.log(marktConfig)
 
         const { branches: _b } = marktConfig;
         const { geografie: _g } = marktConfig;
@@ -51,9 +40,10 @@ export class Transformer {
         const { marktOpstelling: _r } = marktConfig;
         const { paginas: _p } = marktConfig;
 
-        const _bb: Branche[] = await mmApiService(`/api/mm/branches`)
+        // const _bb: Branche[] = await mmApiService(`/api/mm/branches`)
+        const _bb = genericBranches
 
-        console.log({branches: _b, pages: _p, geografie: _g, locaties: _l, markt: _r})
+        console.log({branches: _b, pages: _p, geografie: _g, locaties: _l, markt: _r, genericBranches: _bb})
 
         // Add color information to branches
         if (_b && _b.length > 0) {
