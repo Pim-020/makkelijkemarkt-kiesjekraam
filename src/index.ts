@@ -132,6 +132,7 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 
 // Static files that are public (robots.txt, favicon.ico)
