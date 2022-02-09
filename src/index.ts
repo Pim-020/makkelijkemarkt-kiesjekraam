@@ -26,10 +26,8 @@ import { Roles, keycloak, sessionMiddleware } from './authentication';
 
 import {
     callApiGeneric,
-    getLatestMarktconfiguratie,
     getMarkt,
     getMarkten,
-    createMarktconfiguratie,
     HttpMethod
 } from './makkelijkemarkt-api';
 
@@ -82,7 +80,8 @@ const HTTP_DEFAULT_PORT = 8080;
 const genericApiRoutes = [
     'branche',
     'obstakel',
-    'plaatseigenschap'
+    'plaatseigenschap',
+    'markt/:marktId/marktconfiguratie'
 ];
 
 const isMarktondernemer = (req: GrantedRequest) => {
@@ -516,30 +515,9 @@ app.post(
 );
 
 // TODO: add csrfProtection
-app.post(
-    '/api/markt/:marktId/marktconfiguratie',
-    keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER),
-    ),
-    (req: GrantedRequest, res: Response) => {
 
-        // TODO: add errorhandling
-        createMarktconfiguratie(req.params.marktId, req.body)
-            .then((data)=>res.send(data));
-    },
-);
-
-app.get(
-    '/api/markt/:marktId/marktconfiguratie/latest',
-    keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)
-    ),
-    (req: GrantedRequest, res: Response) => {
-
-        // TODO: add errorhandling
-        getLatestMarktconfiguratie(req.params.marktId)
-            .then((data)=>res.send(data));
-    },
-);
-
+// This creates routes for everything under /branche, /obstakel, /plaatseigenschap and /markt/{id}/marktconfiguratie
+// It forwards the route to the API directly.
 genericApiRoutes.forEach((genericApiRoute: string) => {
     app.all(
         `/api/${genericApiRoute}/*`,

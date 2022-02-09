@@ -323,13 +323,6 @@ export const checkLogin = (): Promise<any> => {
     );
 };
 
-export const createMarktconfiguratie = (marktId: number, marktConfig: JSON): Promise<AxiosResponse> =>
-    apiBase(`markt/${marktId}/marktconfiguratie`, 'post', marktConfig).then(response => response.data);
-
-
-export const getLatestMarktconfiguratie = (marktId: number): Promise<AxiosResponse | void>  =>
-    apiBase(`markt/${marktId}/marktconfiguratie/latest`).then(response => response.data);
-
 export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON): Promise<AxiosResponse> => {
     const result = await apiBase(endpoint, method, body);
 
