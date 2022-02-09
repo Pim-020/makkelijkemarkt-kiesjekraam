@@ -54,7 +54,7 @@ const getApi = () =>
     });
 const login = (api: AxiosInstance) =>
     api.post(mmConfig.loginUrl, {
-        apiKey        : mmConfig.apiKey,
+        api_key        : mmConfig.apiKey,
         clientApp     : mmConfig.clientApp,
         clientVersion : mmConfig.clientVersion,
     });
