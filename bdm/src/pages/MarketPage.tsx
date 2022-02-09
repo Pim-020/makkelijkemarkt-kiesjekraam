@@ -1,7 +1,7 @@
 import React, { createRef, MouseEvent, RefObject, KeyboardEvent } from "react"
 import Day from "../components/Day"
 // import MarketsService from "../services/service_markets"
-import { Transformer } from "../services/transformer"
+import { Transformer, store } from "../services/transformer"
 import { mmApiService, mmApiSaveService } from "../services/service_mm_api"
 import { DynamicBase } from "./DynamicBase"
 import { Breadcrumb, Tabs, Row, Col, //Button, Upload
@@ -9,7 +9,7 @@ import { Breadcrumb, Tabs, Row, Col, //Button, Upload
 import { HomeOutlined, //UploadOutlined, FileZipOutlined 
     } from '@ant-design/icons'
 import { Link } from "react-router-dom"
-import { AssignedBranche, Branche, MarketEventDetails, Plan } from "../models"
+import { AssignedBranche, Branche, IMarktConfiguratie, MarketEventDetails, Plan } from "../models"
 // import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
@@ -104,12 +104,32 @@ export default class MarketPage extends DynamicBase {
     }
 
     refresh() {
+        const apiLoad = async() => {
+
         this.id = (this.props as any).match.params.id
         mmApiService(`/api/mm/branches`).then((lookupBranches: Branche[]) => {
             this.setState({
                 lookupBranches
             })
         })
+        
+        const marktConfig: IMarktConfiguratie = await mmApiService(`/api/markt/${this.id}/marktconfiguratie/latest`)
+        console.log(marktConfig)
+
+        const { branches: _b } = marktConfig;
+        const { geografie: _g } = marktConfig;
+        const { locaties: _l } = marktConfig;
+        const { marktOpstelling: _r } = marktConfig;
+        const { paginas: _p } = marktConfig;
+
+        store['_b'] = _b
+        store['_g'] = _g
+        store['_l'] = _l
+        store['_r'] = _r
+        store['_p'] = _p
+
+        console.log(store)
+
         //this.getPlan()
         this.transformer.encode(this.id).then(result => {
             validateLots(result)
@@ -153,6 +173,8 @@ export default class MarketPage extends DynamicBase {
             })
             this.branchesRef.current?.updateStorage([])
         })
+    }
+    apiLoad();
     }
 
     render() {
