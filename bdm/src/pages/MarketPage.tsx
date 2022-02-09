@@ -61,10 +61,10 @@ export default class MarketPage extends DynamicBase {
     }
 
     dayChanged = () => {
-        this.transformer.encode(this.id).then(result => {
-            validateLots(result)
-            this.branchesRef.current?.updateStorage(result.branches)
-        })
+        // this.transformer.encode(this.id).then(result => {
+        //     validateLots(result)
+        //     this.branchesRef.current?.updateStorage(result.branches)
+        // })
     }
 
     updateAssignedBranches = (branches: AssignedBranche[]) => {
@@ -114,12 +114,13 @@ export default class MarketPage extends DynamicBase {
 
     refresh() {
         this.id = (this.props as any).match.params.id
-        mmApiService(`/api/mm/branches`).then((lookupBranches: Branche[]) => {
-            this.setState({
-                lookupBranches
-            })
-        })
+        // mmApiService(`/api/mm/branches`).then((lookupBranches: Branche[]) => {
+        //     this.setState({
+        //         lookupBranches
+        //     })
+        // })
         //this.getPlan()
+
         apiLoad(this.id).then(({transformed, genericBranches}) => {
             validateLots(transformed);
             console.log(transformed);
@@ -134,9 +135,49 @@ export default class MarketPage extends DynamicBase {
                 })
             })
         })
-            })
-            this.branchesRef.current?.updateStorage([])
-        })
+
+        // this.transformer.encode(this.id).then(result => {
+        //     validateLots(result)
+        //     this.branchesRef.current?.updateStorage(result.branches)
+        //     this.setState({
+        //         marketEventDetails: result,
+        //         activeKey: result.pages.length === 0 ? "1" : "0"  // show branche toewijzing tab instead of marktindeling when no pages in result
+        //     }, () => {
+        //         this.dayRef.current?.setState({
+        //             marketEventDetails: result
+        //         })
+        //     })
+        // }).catch((e: Error) => {
+        //     console.error(`Marktdag bestaat nog niet, ${this.id} wordt nieuw aangemaakt.`)
+        //     const _newM: MarketEventDetails = {
+        //         branches: [],
+        //         pages: [
+        //             {
+        //                 title: "",
+        //                 layout: [
+        //                     {
+        //                         _key: "",
+        //                         title: "",
+        //                         class: "block-left",
+        //                         landmarkBottom: "",
+        //                         landmarkTop: "",
+        //                         lots: []
+        //                     }
+        //                 ]
+        //             }
+        //         ]
+        //     }
+        //     // No result
+        //     this.setState({
+        //         marketEventDetails: _newM,
+        //         activeKey: "1"
+        //     }, () => {
+        //         this.dayRef.current?.setState({
+        //             marketEventDetails: _newM
+        //         })
+        //     })
+        //     this.branchesRef.current?.updateStorage([])
+        // })
     }
 
     render() {
