@@ -1,4 +1,4 @@
-import React, { createRef, MouseEvent, RefObject, KeyboardEvent } from "react"
+import React, { createRef, MouseEvent, RefObject, KeyboardEvent, useEffect, useState } from "react"
 import Day from "../components/Day"
 // import MarketsService from "../services/service_markets"
 import { Transformer } from "../services/transformer"
@@ -9,14 +9,54 @@ import { Breadcrumb, Tabs, Row, Col, //Button, Upload
 import { HomeOutlined, //UploadOutlined, FileZipOutlined 
     } from '@ant-design/icons'
 import { Link } from "react-router-dom"
-import { AssignedBranche, Branche, MarketEventDetails, Plan } from "../models"
+import { AssignedBranche, Branche, Geography, Lot, MarketEventDetails, Page, Plan, Rows } from "../models"
 // import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
 import { validateLots } from "../common/validator"
 //import { zipMarket } from "../common/generic"
+import { useQuery } from 'react-query'
 
 const { TabPane } = Tabs
+
+const USE_QUERY_CONFIG = {
+    // refetchOnWindowFocus: false
+    // placeholderData: [],
+    refetchOnWindowFocus: false, //refetch when window comes to focus
+    // refetchOnReconnect: false, //refetch when browser reconnects to server
+    // refetchOnMount: false, //refetch when component mounts
+}
+
+const useGenericBranches = () => {
+    console.log('useGenericBranches hook')
+    const { data, isLoading, error } = useQuery('genericBranches', () => {
+        return mmApiService(`/api/mm/branches`)
+    }, USE_QUERY_CONFIG)
+    return [data, isLoading, error];
+}
+
+const DataWrapper: React.FC = (props) => {
+    const [genericBranches, isLoading, error] = useGenericBranches()
+    console.log({isLoading, error})
+
+    if (isLoading) {
+        return (
+            <h1>Loading</h1>
+        )
+    }
+    if (error) {
+        return (
+            <h1>ERROR</h1>
+        )
+    }
+
+    return (
+        <div>
+            <h1>Wrapper</h1>
+        </div>
+        // <MarketPage {...props} genericBranches={data} />
+    )
+}
 
 class MarketPage extends React.Component {
     id: string = ""
@@ -205,3 +245,5 @@ class MarketPage extends React.Component {
         </>
     }
 }
+
+export default DataWrapper;
