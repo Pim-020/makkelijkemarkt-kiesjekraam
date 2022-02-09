@@ -1,8 +1,5 @@
 import { getTextColor } from "../common/generic"
-import { AssignedBranche, Assignment, Branche, Geography, Lot, MarketEventDetails, MarketLayout, MarketPage, Obstacle, Page, Rows, Stand } from "../models"
-import { BrancheService } from "./service_lookup"
-import { BranchesService, GeographyService, LotsService, PagesService, RowsService } from "./service_markets"
-import { mmApiService } from "./service_mm_api"
+import { AssignedBranche, Assignment, Branche, Geography, IMarktConfiguratie, Lot, MarketEventDetails, MarketLayout, MarketPage, Obstacle, Page, Rows, Stand } from "../models"
 
 export class Transformer {
     getRow(obstacle: Obstacle, matrix: any[]): [number, number] {
@@ -26,30 +23,13 @@ export class Transformer {
     /**
      * Convert from the individual files to the model we require for the app to function
      */
-    async encode(route: string, marketEventDetails?: MarketEventDetails | undefined): Promise<MarketEventDetails> {
+    async encode(marktConfig: IMarktConfiguratie, genericBranches:Branche[], marketEventDetails?: MarketEventDetails | undefined): Promise<MarketEventDetails> {
         let newPages: MarketPage[] = []
         let rowSets: (Lot | Obstacle)[] = []
         let newBranches: AssignedBranche[] = []
 
-        interface IMarktConfiguratie {
-            branches: AssignedBranche[]
-            geografie: Geography
-            locaties: Lot[]
-            marktOpstelling: Rows
-            paginas: Page[]
-            // aanmaakDatumtijd
-            // id
-            // marktId
-        }
-
-        const marktConfig: IMarktConfiguratie = await mmApiService(`/api/markt/${route}/marktconfiguratie/latest`)
-        console.log(marktConfig)
-
-        let { branches: _b } = marktConfig;
-        let { geografie: _g } = marktConfig;
-        let { locaties: _l } = marktConfig;
-        let { marktOpstelling: _r } = marktConfig;
-        let { paginas: _p } = marktConfig;
+        let { branches: _b, geografie: _g, locaties: _l, marktOpstelling: _r, paginas: _p } = marktConfig;
+        const _bb = genericBranches;
 
         if (marketEventDetails) {
             const { pages } = marketEventDetails
@@ -58,10 +38,6 @@ export class Transformer {
             _g = this.layoutToGeography(pages)
             _p = this.layoutToPages(pages)
         }
-
-        const _bb: Branche[] = await mmApiService(`/api/mm/branches`)
-
-        console.log({branches: _b, pages: _p, geografie: _g, locaties: _l, markt: _r})
 
         // Add color information to branches
         if (_b && _b.length > 0) {
