@@ -10,7 +10,6 @@ import BrancheListPage from './pages/BrancheListPage'
 import AnnouncementListPage from './pages/AnnouncementListPage'
 import ObstacleListPage from './pages/ObstacleListPage'
 import PropertyListPage from './pages/PropertyListPage'
-import HomePage from './pages/HomePage'
 
 const {Footer } = Layout
 const queryClient = new QueryClient()
@@ -43,7 +42,6 @@ export default class App extends Component {
                   <Route path="/obstacles" component={ObstacleListPage} />
                   <Route path="/properties" component={PropertyListPage} />
                   <Route path="/market/:id" exact component={MarketPage} />
-                  <Route path="/" exact component={HomePage} />
                 </Switch>
               </div>
             </BrowserRouter>
