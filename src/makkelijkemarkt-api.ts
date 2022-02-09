@@ -111,7 +111,6 @@ const apiBase = (
     const api = getApi();
 
     const httpFunction = createHttpFunction(api, httpMethod);
-    console.log(httpFunction);
 
     let counter50xRetry = 0;
     let counter40xRetry = 0;
