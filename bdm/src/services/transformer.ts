@@ -26,7 +26,7 @@ export class Transformer {
     /**
      * Convert from the individual files to the model we require for the app to function
      */
-    async encode(route: string): Promise<MarketEventDetails> {
+    async encode(route: string, marketEventDetails?: MarketEventDetails | undefined): Promise<MarketEventDetails> {
         let newPages: MarketPage[] = []
         let rowSets: (Lot | Obstacle)[] = []
         let newBranches: AssignedBranche[] = []
@@ -45,11 +45,19 @@ export class Transformer {
         const marktConfig: IMarktConfiguratie = await mmApiService(`/api/markt/${route}/marktconfiguratie/latest`)
         console.log(marktConfig)
 
-        const { branches: _b } = marktConfig;
-        const { geografie: _g } = marktConfig;
-        const { locaties: _l } = marktConfig;
-        const { marktOpstelling: _r } = marktConfig;
-        const { paginas: _p } = marktConfig;
+        let { branches: _b } = marktConfig;
+        let { geografie: _g } = marktConfig;
+        let { locaties: _l } = marktConfig;
+        let { marktOpstelling: _r } = marktConfig;
+        let { paginas: _p } = marktConfig;
+
+        if (marketEventDetails) {
+            const { pages } = marketEventDetails
+            _l = this.layoutToStands(pages)
+            _r = this.layoutToRows(pages)
+            _g = this.layoutToGeography(pages)
+            _p = this.layoutToPages(pages)
+        }
 
         const _bb: Branche[] = await mmApiService(`/api/mm/branches`)
 

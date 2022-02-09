@@ -52,7 +52,7 @@ export default class MarketPage extends DynamicBase {
     }
 
     dayChanged = () => {
-        this.transformer.encode(this.id).then(result => {
+        this.transformer.encode(this.id, this.state.marketEventDetails).then(result => {
             validateLots(result)
             this.branchesRef.current?.updateStorage(result.branches)
         })
