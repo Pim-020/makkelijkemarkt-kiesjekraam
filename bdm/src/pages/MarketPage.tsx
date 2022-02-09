@@ -18,7 +18,10 @@ import { validateLots } from "../common/validator"
 
 const { TabPane } = Tabs
 
-export default class MarketPage extends DynamicBase {
+class MarketPage extends React.Component {
+    id: string = ""
+    router: any
+
     readonly state: {
         lookupBranches?: Branche[],
         marketEventDetails?: MarketEventDetails,
@@ -103,7 +106,7 @@ export default class MarketPage extends DynamicBase {
         }
     }
 
-    refresh() {
+    componentDidMount() {
         this.id = (this.props as any).match.params.id
         mmApiService(`/api/mm/branches`).then((lookupBranches: Branche[]) => {
             this.setState({
