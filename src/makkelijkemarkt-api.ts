@@ -60,7 +60,7 @@ const login = (api: AxiosInstance) =>
         clientVersion : mmConfig.clientVersion,
     });
 
-type HttpMethod = "get" | "post";
+export type HttpMethod = 'get' | 'post' | 'put' | 'delete';
 
 const createHttpFunction = (api: AxiosInstance, httpMethod: HttpMethod) : ( url: string, token: string, data?) => Promise<AxiosResponse> => {
 
@@ -81,6 +81,25 @@ const createHttpFunction = (api: AxiosInstance, httpMethod: HttpMethod) : ( url:
                 };
                 return api.post(url, data, { headers });
         }
+
+        case "put":
+            return (url: string, token: string, data) => {
+                console.log("## MM API POST CALL: ", url);
+                const headers =  {
+                    Authorization: `Bearer ${token}`,
+                };
+                return api.put(url, data, { headers });
+            }
+
+
+        case "delete":
+            return (url: string, token: string, data) => {
+                console.log("## MM API POST CALL: ", url);
+                const headers =  {
+                    Authorization: `Bearer ${token}`,
+                };
+                return api.delete(url, { headers });
+            }
     }
 }
 
@@ -91,7 +110,8 @@ const apiBase = (
 ): Promise<AxiosResponse> => {
     const api = getApi();
 
-    const httpFunction = createHttpFunction(api, httpMethod)
+    const httpFunction = createHttpFunction(api, httpMethod);
+    console.log(httpFunction);
 
     let counter50xRetry = 0;
     let counter40xRetry = 0;
@@ -134,6 +154,7 @@ const apiBase = (
         counter40xRetry = 0;
         return error;
     });
+
 
     return session.findByPk(mmConfig.sessionKey)
     .then((sessionRecord: any) => {
@@ -303,9 +324,14 @@ export const checkLogin = (): Promise<any> => {
 };
 
 export const createMarktconfiguratie = (marktId: number, marktConfig: JSON): Promise<AxiosResponse> =>
-    apiBase(`markt/${marktId}/marktconfiguratie`, "post", marktConfig).then(response => response.data);
+    apiBase(`markt/${marktId}/marktconfiguratie`, 'post', marktConfig).then(response => response.data);
 
 
 export const getLatestMarktconfiguratie = (marktId: number): Promise<AxiosResponse | void>  =>
     apiBase(`markt/${marktId}/marktconfiguratie/latest`).then(response => response.data);
 
+export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON): Promise<AxiosResponse> => {
+    const result = await apiBase(endpoint, method, body);
+
+    return result.data;
+};

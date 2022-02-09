@@ -24,7 +24,14 @@ import { Roles, keycloak, sessionMiddleware } from './authentication';
 // API
 // ---
 
-import { getLatestMarktconfiguratie, getMarkt, getMarkten, createMarktconfiguratie } from './makkelijkemarkt-api';
+import {
+    callApiGeneric,
+    getLatestMarktconfiguratie,
+    getMarkt,
+    getMarkten,
+    createMarktconfiguratie,
+    HttpMethod
+} from './makkelijkemarkt-api';
 
 // Routes
 // ------
@@ -71,6 +78,12 @@ requireEnv('DATABASE_URL');
 requireEnv('APP_SECRET');
 
 const HTTP_DEFAULT_PORT = 8080;
+
+const genericApiRoutes = [
+    'branche',
+    'obstakel',
+    'plaatseigenschap'
+];
 
 const isMarktondernemer = (req: GrantedRequest) => {
     const accessToken = req.kauth.grant.access_token.content;
@@ -525,80 +538,23 @@ app.get(
         getLatestMarktconfiguratie(req.params.marktId)
             .then((data)=>res.send(data));
     },
-)
+);
 
+genericApiRoutes.forEach((genericApiRoute: string) => {
+    app.all(
+        `/api/${genericApiRoute}/*`,
+        keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)),
+        async (req: GrantedRequest, res: Response) => {
+            const result = await callApiGeneric(
+                req.url.replace('/api/', ''),
+                req.method.toLowerCase() as HttpMethod,
+                req.body
+            );
 
-/*
-POST
-​/api​/1.1.0​/branche
-Maakt nieuwe Branche aan
-
-GET
-​/api​/1.1.0​/branche​/all
-Vraag alle branches op.
-
-GET
-​/api​/1.1.0​/branche​/{afkorting}
-Vraag branches op met een bracheAfkorting.
-
-PUT
-​/api​/1.1.0​/branche​/{afkorting}
-Past een Branche aan
-*/
-
-
-
-/*
-Obstakel
-
-POST
-​/api​/1.1.0​/obstakel
-Maakt nieuwe Obstakel aan
-
-GET
-​/api​/1.1.0​/obstakel​/all
-Vraag alle obstakels op.
-
-GET
-​/api​/1.1.0​/obstakel​/{id}
-Vraag obstakel op met een id.
-
-PUT
-​/api​/1.1.0​/obstakel​/{id}
-Past een Obstakel aan
-
-DELETE
-​/api​/1.1.0​/obstakel​/{id}
-Verwijdert een obstakel
-
-
-
-Plaatseigenschap
-
-POST
-​/api​/1.1.0​/plaatseigenschap
-Maakt nieuwe Plaatseigenschap aan
-
-GET
-​/api​/1.1.0​/plaatseigenschap​/all
-Vraag alle plaatseigenschappen op.
-
-GET
-​/api​/1.1.0​/plaatseigenschap​/{id}
-Vraag plaatseigenschap op met een id.
-
-PUT
-​/api​/1.1.0​/plaatseigenschap​/{id}
-Past een Plaatseigenschap aan
-
-DELETE
-​/api​/1.1.0​/plaatseigenschap​/{id}
-Verwijdert een plaatseigenschap
-*/
-
-
-
-
+            return res.send(result);
+        }
+    );
+});
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
