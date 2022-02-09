@@ -17,10 +17,9 @@ class AanmeldPage extends React.Component {
             <Page>
                 <Header />
                 <Content>
+                    <p>API_KEY: {process.env.API_KEY}</p>
                     <p>API_MMAPPKEY: {process.env.API_MMAPPKEY}</p>
                     <p>API_URL: {process.env.API_URL}</p>
-                    <p>API_READONLY_USER: {process.env.API_READONLY_USER}</p>
-                    <p>API_READONLY_PASS: {process.env.API_READONLY_PASS}</p>
                     <p>APP_SECRET: {process.env.APP_SECRET}</p>
                     <p>DATABASE_URL: {process.env.DATABASE_URL}</p>
                     <p>IAM_ADMIN_PASS: {process.env.IAM_ADMIN_PASS}</p>

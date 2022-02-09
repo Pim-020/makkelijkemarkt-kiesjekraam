@@ -14,9 +14,8 @@ services:
     command: >
       /usr/bin/npm run dev
     environment:
+      - API_KEY
       - API_MMAPPKEY
-      - API_READONLY_PASS
-      - API_READONLY_USER
       - API_URL
       - APP_SECRET
       - DATABASE_URL
@@ -45,9 +44,8 @@ services:
     command: >
       /usr/bin/npm run concept
     environment:
+      - API_KEY
       - API_MMAPPKEY
-      - API_READONLY_PASS
-      - API_READONLY_USER
       - API_URL
       - APP_SECRET
       - DATABASE_URL
