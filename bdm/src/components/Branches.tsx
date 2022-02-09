@@ -7,8 +7,11 @@ import { getTextColor } from "../common/generic"
 // import { BranchesService } from "../services/service_markets"
 
 
-export default class Branches extends Component<{ id: string, lookupBranches: Branche[], changed?: (lookupBranches: AssignedBranche[]) => void }> {
-    readonly state: { branches?: AssignedBranche[] } = {}
+export default class Branches extends Component<{
+        id: string, lookupBranches: Branche[], changed?: (lookupBranches: AssignedBranche[]) => void,
+        setBranches: any, branches: AssignedBranche[]
+    }> {
+    // readonly state: { branches?: AssignedBranche[] } = {}
     // branchesService: BranchesService
 
     constructor(props: any) {
@@ -20,13 +23,14 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
         // Tell the parent component this page has changed.
         const _branches = branches.filter(e => e.brancheId !== "")
         // localStorage.setItem(`bwdm_cache_${this.props.id}_branches`, JSON.stringify(_branches))
-        if(this.props.changed){
-            this.props.changed(_branches)
-        }
+        // if(this.props.changed){
+        //     this.props.changed(_branches)
+        // }
 
-        this.setState({
-            branches
-        })
+        // this.setState({
+        //     branches
+        // })
+        this.props.setBranches(branches);
     }
 
     getStyle = (branche: AssignedBranche): CSS.Properties => {
@@ -41,8 +45,8 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
         if (branche.brancheId) {
             return branche.brancheId
         }
-        if (this.state.branches) {
-            _availableBranches = this.state.branches?.map(e => e.brancheId)
+        if (this.props.branches) {
+            _availableBranches = this.props.branches?.map(e => e.brancheId)
         }
 
         return <Select
@@ -52,8 +56,8 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
             value={branche.brancheId || ""}
             onChange={(e: string) => {
                 const _selectedBranche: Branche = this.props.lookupBranches.filter((item: Branche) => item.brancheId === e)[0]
-                if (this.state.branches && _selectedBranche) {
-                    const _branches = this.state.branches
+                if (this.props.branches && _selectedBranche) {
+                    const _branches = this.props.branches
                     _branches[i].brancheId = _selectedBranche.brancheId
                     _branches[i].backGroundColor = _selectedBranche.color
                     _branches[i].color = getTextColor(_selectedBranche.color)
@@ -100,20 +104,20 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
     }
 
     render() {
-        return <>{this.state.branches && <><table>
+        return <>{this.props.branches && <><table>
             <thead>
                 <tr><th></th><th>Code</th><th>Omschrijving</th><th>Verplicht</th><th>Maximum</th><th>Toegewezen</th><th></th></tr>
             </thead>
             <tbody>
-                {this.state.branches.map((branche, i) => {
+                {this.props.branches.map((branche, i) => {
                     return <tr key={i} className={this.getClass(branche)}>
                         <td style={this.getStyle(branche)}><Button
                             danger
                             type="primary"
                             icon={<DeleteOutlined/>}
                             onClick={() => {
-                                if (this.state.branches) {
-                                    let _branches = this.state.branches
+                                if (this.props.branches) {
+                                    let _branches = this.props.branches
                                     delete _branches[i]
                                     _branches = _branches.filter(() => true)
                                     this.updateStorage(_branches)
@@ -128,8 +132,8 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
                         }
                         <td>{this.getBrancheId(branche, i)}</td>
                         <td><Switch checked={branche.verplicht} onChange={(checked: boolean) => {
-                            if (this.state.branches) {
-                                const _branches = this.state.branches
+                            if (this.props.branches) {
+                                const _branches = this.props.branches
                                 _branches[i].verplicht = checked
                                 this.updateStorage(_branches)
                             }
@@ -137,8 +141,8 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
                         <td>
                             <InputNumber min={0} max={999} value={branche.maximumPlaatsen || 0}
                                 onChange={(value: string | number | undefined) => {
-                                    if ((value && this.state.branches) || (value === 0 && this.state.branches)) {
-                                        const _branches = this.state.branches
+                                    if ((value && this.props.branches) || (value === 0 && this.props.branches)) {
+                                        const _branches = this.props.branches
                                         _branches[i].maximumPlaatsen = parseInt(value.toString())
                                         this.updateStorage(_branches)
                                     }
@@ -151,7 +155,7 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
                 })}</tbody></table>
             <Button
                 onClick={() => {
-                    const _branches = this.state.branches || []
+                    const _branches = this.props.branches || []
                     _branches.push({
                         brancheId: "",
                         verplicht: false,

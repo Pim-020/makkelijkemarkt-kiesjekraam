@@ -30,6 +30,7 @@ const apiLoad = async(marktId: string) => {
 export default class MarketPage extends DynamicBase {
     readonly state: {
         lookupBranches?: Branche[],
+        branches: AssignedBranche[],
         marketEventDetails?: MarketEventDetails,
         activeKey: string,
         plan?: Plan,
@@ -37,7 +38,8 @@ export default class MarketPage extends DynamicBase {
         pdfSelected?: File
         uploadProps?: any
     } = {
-            activeKey: "0"
+            activeKey: "0",
+            branches: [],
         }
     branchesRef: RefObject<Branches>
     config: Configuration
@@ -111,7 +113,9 @@ export default class MarketPage extends DynamicBase {
             mmApiSaveService(`/api/markt/${this.id}/marktconfiguratie`, marktConfiguratie)
         }
     }
-
+    setBranches(branches: AssignedBranche[]) {
+        this.setState({ branches });
+    }
     refresh() {
         this.id = (this.props as any).match.params.id
         // mmApiService(`/api/mm/branches`).then((lookupBranches: Branche[]) => {
@@ -124,9 +128,10 @@ export default class MarketPage extends DynamicBase {
         apiLoad(this.id).then(({transformed, genericBranches}) => {
             validateLots(transformed);
             console.log(transformed);
-            this.branchesRef.current?.updateStorage(transformed.branches)
+            // this.branchesRef.current?.updateStorage(transformed.branches)
             this.setState({
                 lookupBranches: genericBranches,
+                branches: transformed.branches,
                 marketEventDetails: transformed,
                 activeKey: transformed.pages.length === 0 ? "1" : "0"  // show branche toewijzing tab instead of marktindeling when no pages in result
             }, () => {
@@ -220,7 +225,13 @@ export default class MarketPage extends DynamicBase {
                         <Day id={this.id} ref={this.dayRef} changed={this.dayChanged} />
                     </TabPane>
                     <TabPane tab="Branche toewijzing" key="1" forceRender={true}>
-                        <Branches id={this.id} ref={this.branchesRef} lookupBranches={this.state.lookupBranches} changed={this.updateAssignedBranches} />
+                        {/* <Branches id={this.id} ref={this.branchesRef} lookupBranches={this.state.lookupBranches} changed={this.updateAssignedBranches} /> */}
+                        <Branches 
+                            id={this.id} 
+                            lookupBranches={this.state.lookupBranches}
+                            setBranches={this.setBranches.bind(this)}
+                            branches={this.state.branches}
+                        />
                     </TabPane>
                 </Tabs>}
 
