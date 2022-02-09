@@ -108,7 +108,7 @@ class MarketPage extends React.Component<{genericBranches: any, marktConfig: any
     }
 
     dayChanged = () => {
-        this.transformer.encode(this.props.marktId, this.state.marketEventDetails).then(result => {
+        this.transformer.encode(this.props.marktConfig, this.props.genericBranches, this.state.marketEventDetails).then(result => {
             validateLots(result)
             this.branchesRef.current?.updateStorage(result.branches)
         })
@@ -168,7 +168,7 @@ class MarketPage extends React.Component<{genericBranches: any, marktConfig: any
         //     })
         // })
         //this.getPlan()
-        this.transformer.encode(this.props.marktId).then(result => {
+        this.transformer.encode(this.props.marktConfig, this.props.genericBranches).then(result => {
             validateLots(result)
             this.branchesRef.current?.updateStorage(result.branches)
             this.setState({
