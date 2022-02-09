@@ -29,38 +29,51 @@ const USE_QUERY_CONFIG = {
 
 const useGenericBranches = () => {
     console.log('useGenericBranches hook')
-    const { data, isLoading, error } = useQuery('genericBranches', () => {
+    return useQuery('genericBranches', () => {
         return mmApiService(`/api/mm/branches`)
     }, USE_QUERY_CONFIG)
-    return [data, isLoading, error];
 }
 
-const DataWrapper: React.FC = (props) => {
-    const [genericBranches, isLoading, error] = useGenericBranches()
-    console.log({isLoading, error})
+const useMarktConfig = (marktId: string) => {
+    console.log('useMarktConfig hook')
+    return useQuery('marktconfig', () => {
+        return mmApiService(`/api/markt/${marktId}/marktconfiguratie/latest`)
+    }, USE_QUERY_CONFIG)
+}
 
-    if (isLoading) {
+const DataWrapper = (props: {match: any}) => {
+    console.log(props)
+    const marktId = props.match.params.id
+
+    const genericBranches = useGenericBranches()
+    const marktConfig = useMarktConfig(marktId)
+
+    // console.log({genericBranches, marktConfig})
+    const data = [genericBranches, marktConfig]
+
+    if (data.some(item => item.isLoading)) {
         return (
             <h1>Loading</h1>
         )
     }
-    if (error) {
+    if (data.some(item => item.error)) {
         return (
             <h1>ERROR</h1>
         )
     }
 
-    return (
-        <div>
-            <h1>Wrapper</h1>
-        </div>
-        // <MarketPage {...props} genericBranches={data} />
-    )
+    if (data.every(item => item.isSuccess)) {
+        console.log(genericBranches.data, marktConfig.data)
+        return (
+            <MarketPage marktId={marktId} genericBranches={genericBranches.data} marktConfig={marktConfig.data} />
+        )
+    }
+    return null;
 }
 
-class MarketPage extends React.Component {
-    id: string = ""
-    router: any
+class MarketPage extends React.Component<{genericBranches: any, marktConfig: any, marktId: string}> {
+    // id: string = ""
+    // router: any
 
     readonly state: {
         lookupBranches?: Branche[],
@@ -95,7 +108,7 @@ class MarketPage extends React.Component {
     }
 
     dayChanged = () => {
-        this.transformer.encode(this.id, this.state.marketEventDetails).then(result => {
+        this.transformer.encode(this.props.marktId, this.state.marketEventDetails).then(result => {
             validateLots(result)
             this.branchesRef.current?.updateStorage(result.branches)
         })
@@ -142,19 +155,20 @@ class MarketPage extends React.Component {
             const marktConfiguratie = {branches, locaties, marktOpstelling, geografie, paginas}
             console.log(marktConfiguratie)
 
-            mmApiSaveService(`/api/markt/${this.id}/marktconfiguratie`, marktConfiguratie)
+            mmApiSaveService(`/api/markt/${this.props.marktId}/marktconfiguratie`, marktConfiguratie)
         }
     }
 
     componentDidMount() {
-        this.id = (this.props as any).match.params.id
-        mmApiService(`/api/mm/branches`).then((lookupBranches: Branche[]) => {
-            this.setState({
-                lookupBranches
-            })
-        })
+        // this.id = (this.props as any).match.params.id
+
+        // mmApiService(`/branches`).then((lookupBranches: Branche[]) => {
+        //     this.setState({
+        //         lookupBranches
+        //     })
+        // })
         //this.getPlan()
-        this.transformer.encode(this.id).then(result => {
+        this.transformer.encode(this.props.marktId).then(result => {
             validateLots(result)
             this.branchesRef.current?.updateStorage(result.branches)
             this.setState({
@@ -166,7 +180,7 @@ class MarketPage extends React.Component {
                 })
             })
         }).catch((e: Error) => {
-            console.error(`Marktdag bestaat nog niet, ${this.id} wordt nieuw aangemaakt.`)
+            console.error(`Marktdag bestaat nog niet, ${this.props.marktId} wordt nieuw aangemaakt.`)
             const _newM: MarketEventDetails = {
                 branches: [],
                 pages: [
@@ -212,9 +226,9 @@ class MarketPage extends React.Component {
                         <span>Markten</span>
                     </Link>
                 </Breadcrumb.Item>
-                {this.id && <>
-                    <Breadcrumb.Item><Link to={`/market/${this.id}`}>
-                        <span>{this.id}</span></Link>
+                {this.props.marktId && <>
+                    <Breadcrumb.Item><Link to={`/market/${this.props.marktId}`}>
+                        <span>{this.props.marktId}</span></Link>
                     </Breadcrumb.Item>
                     </>
                 }
@@ -230,15 +244,15 @@ class MarketPage extends React.Component {
 
                 </Col>
              </Row>
-            {this.state.lookupBranches &&
+            {this.props.genericBranches &&
                 <Tabs activeKey={this.state.activeKey} onTabClick={(key: string, e: MouseEvent | KeyboardEvent) => {
                     this.setState({ activeKey: key })
                 }}>
                     <TabPane tab="Marktindeling" key="0">
-                        <Day id={this.id} ref={this.dayRef} changed={this.dayChanged} />
+                        <Day id={this.props.marktId} ref={this.dayRef} changed={this.dayChanged} />
                     </TabPane>
                     <TabPane tab="Branche toewijzing" key="1" forceRender={true}>
-                        <Branches id={this.id} ref={this.branchesRef} lookupBranches={this.state.lookupBranches} changed={this.updateAssignedBranches} />
+                        <Branches id={this.props.marktId} ref={this.branchesRef} lookupBranches={this.props.genericBranches} changed={this.updateAssignedBranches} />
                     </TabPane>
                 </Tabs>}
 
