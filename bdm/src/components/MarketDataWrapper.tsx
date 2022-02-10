@@ -23,7 +23,12 @@ const MarketDataWrapper: React.FC<{match: any}> = (props) => {
     }
     if (some(data, item => item.isError)) {
         console.log(data)
- 
+        // if (markt.error?.status === 404) {
+        //     return (<h1>Markt bestaat helemaal niet</h1>)
+        // }
+        if (marktConfig.error?.status === 404) {
+            return (<h1>MarktConfig bestaat niet - nieuwe aanmaken</h1>)
+        }
         return (
             <h1>ERROR</h1>
         )
