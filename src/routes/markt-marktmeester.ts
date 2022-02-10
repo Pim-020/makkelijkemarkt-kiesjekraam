@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import {
     getMarkt,
     getOndernemersByMarkt,
+    getPlaatsvoorkeurenByMarkt,
+    getIndelingVoorkeuren,
     getAanmeldingenByMarktAndDate
 } from '../makkelijkemarkt-api';
 import {
@@ -9,7 +11,6 @@ import {
     getSollicitantenlijstInput,
     getVoorrangslijstInput,
     getToewijzingslijst,
-    getIndelingVoorkeuren,
 } from '../pakjekraam-api';
 import { internalServerErrorPage } from '../express-util';
 
@@ -19,9 +20,7 @@ import { Roles } from '../authentication';
 import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
 
-import { filterOndernemersAangemeld } from '../model/ondernemer.functions';
 import { getToewijzingenByMarktAndDate } from '../model/allocation.functions';
-import { getPlaatsvoorkeurenByMarkt } from '../model/plaatsvoorkeur.functions';
 
 export const vasteplaatshoudersPage = (req: GrantedRequest, res: Response) => {
     const datum = req.params.datum;
