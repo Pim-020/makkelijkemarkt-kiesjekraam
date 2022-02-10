@@ -1,12 +1,12 @@
-import { Sequelize, Op } from 'sequelize';
+import { Op } from 'sequelize';
 
-import { ddmmyyyyToDate } from '../util';
 import { isVast } from '../domain-knowledge';
 
 import {
     IMarktondernemerVoorkeur,
     IMarktondernemerVoorkeurRow
 } from '../markt.model';
+
 import { MMSollicitatie } from '../makkelijkemarkt.model';
 import { Voorkeur } from './voorkeur.model';
 
@@ -28,17 +28,6 @@ export const voorkeurenFormData = (
     const minimum = typeof body.minimum === 'string' ? parseInt(body.minimum, 10) || null : null;
     const maximum = typeof body.maximum === 'string' ? parseInt(body.maximum, 10) || null : null;
 
-    let absentFromDate = null;
-    let absentUntilDate = null;
-
-    if (absentFrom) {
-        absentFromDate = ddmmyyyyToDate(absentFrom);
-    }
-
-    if (absentUntil) {
-        absentUntilDate = ddmmyyyyToDate(absentUntil);
-    }
-
     const voorkeur = {
         erkenningsNummer,
         marktId: marktId || null,
@@ -49,8 +38,8 @@ export const voorkeurenFormData = (
         brancheId: brancheId || null,
         parentBrancheId: parentBrancheId || null,
         inrichting: inrichting || null,
-        absentFrom: absentFromDate || null,
-        absentUntil: absentUntilDate || null,
+        absentFrom: absentFrom || null,
+        absentUntil: absentUntil || null,
     };
     return voorkeur;
 };
