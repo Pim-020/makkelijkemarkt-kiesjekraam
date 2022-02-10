@@ -216,8 +216,35 @@ const obstakel = [
     }
 ]
 
-app.get('/api/obstakel', (req: GrantedRequest, res: Response) => {
+app.get('/api/obstakel/latest', (req: GrantedRequest, res: Response) => {
     res.send(obstakel);
+});
+
+const plaatseigenschap = [
+    {
+        "id": 1,
+        "naam": "bankje"
+    },
+    {
+        "id": 2,
+        "naam": "boom"
+    },
+    {
+        "id": 3,
+        "naam": "electra"
+    },
+    {
+        "id": 4,
+        "naam": "lantaarnpaal"
+    },
+    {
+        "id": 5,
+        "naam": "water"
+    }
+]
+
+app.get('/api/plaatseigenschap/latest', (req: GrantedRequest, res: Response) => {
+    res.send(plaatseigenschap);
 });
 
 // TODO: add csrfProtection
