@@ -1,7 +1,4 @@
 import {
-    MMSollicitatieStandalone
-} from '../makkelijkemarkt.model';
-import {
     IMarktondernemer,
     IMarktondernemerVoorkeur,
     IRSVP,
@@ -11,12 +8,9 @@ import {
 import { today } from '../util';
 
 import {
-    getOndernemersByMarkt
+    getOndernemersByMarkt,
+    getVoorkeurenByMarkt,
 } from '../makkelijkemarkt-api';
-
-import {
-    getVoorkeurenAbsentByMarkt
-} from './voorkeur.functions';
 
 export const ondernemerIsAfgemeld = (ondernemer: IMarktondernemer, aanmeldingen: IRSVP[], currentMarktDate: String): Boolean => {
 
@@ -135,7 +129,7 @@ export const vphIsUitgebreid = (ondernemer: IMarktondernemer, toewijzingen: IToe
 
 export const getOndernemersLangdurigAfgemeldByMarkt = (marktId: string) => {
     return Promise.all([
-        getVoorkeurenAbsentByMarkt(marktId),
+        getVoorkeurenByMarkt(marktId),
         getOndernemersByMarkt(marktId)
     ])
     .then( ([voorkeuren, ondernemers]) => {
