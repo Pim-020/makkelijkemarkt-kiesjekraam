@@ -13,18 +13,18 @@ import {
     getMarkt,
     getOndernemer,
     getAanmeldingenByOndernemerEnMarkt,
+    getVoorkeurByMarktEnOndernemer,
+    getIndelingVoorkeur,
+    getPlaatsvoorkeurenOndernemer,
 } from '../makkelijkemarkt-api';
 import {
     getDaysClosed,
-    getIndelingVoorkeur,
     getMarktBasics,
     getMededelingen,
-    getPlaatsvoorkeurenOndernemer,
 } from '../pakjekraam-api';
 
 import { getToewijzingenByOndernemerEnMarkt } from '../model/allocation.functions';
 import { getOndernemersLangdurigAfgemeldByMarkt } from '../model/ondernemer.functions';
-import { getVoorkeurByMarktEnOndernemer } from '../model/voorkeur.functions';
 import { getAfwijzingenByOndernemerAndMarkt } from '../model/afwijzing.functions';
 
 export const langdurigAfgemeld = (
