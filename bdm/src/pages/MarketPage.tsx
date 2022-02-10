@@ -9,6 +9,7 @@ import { Breadcrumb, Tabs, Row, Col, //Button, Upload
 import { HomeOutlined, //UploadOutlined, FileZipOutlined 
     } from '@ant-design/icons'
 import { Link } from "react-router-dom"
+import { some, every} from 'lodash'
 import { AssignedBranche, Branche, Geography, Lot, MarketEventDetails, Page, Plan, Rows } from "../models"
 // import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
@@ -51,18 +52,18 @@ const DataWrapper = (props: {match: any}) => {
     // console.log({genericBranches, marktConfig})
     const data = [genericBranches, marktConfig]
 
-    if (data.some(item => item.isLoading)) {
+    if (some(data, item => item.isLoading)) {
         return (
             <h1>Loading</h1>
         )
     }
-    if (data.some(item => item.error)) {
+    if (some(data, item => item.error)) {
         return (
             <h1>ERROR</h1>
         )
     }
 
-    if (data.every(item => item.isSuccess)) {
+    if (every(data, item => item.isSuccess)) {
         console.log(genericBranches.data, marktConfig.data)
         return (
             <MarketPage marktId={marktId} genericBranches={genericBranches.data} marktConfig={marktConfig.data} />
