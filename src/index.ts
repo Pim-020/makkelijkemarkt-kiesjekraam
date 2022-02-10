@@ -189,6 +189,12 @@ app.get('/api/markt', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest
     }, internalServerErrorPage(res));
 });
 
+app.get('/api/markt/:marktId', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
+    getMarkt(req.params.marktId).then((markt: any) => {
+        res.send(markt);
+    }, internalServerErrorPage(res));
+});
+
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
     res.render('EmailPage');
 });
