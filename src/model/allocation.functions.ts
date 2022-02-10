@@ -1,7 +1,9 @@
 import { allocation } from './index';
 import { IToewijzing, IMarkt } from 'markt.model';
-import { getVoorkeurByMarktEnOndernemer  } from './voorkeur.functions';
-import { getPlaatsvoorkeurenByMarktEnOndernemer  } from './plaatsvoorkeur.functions';
+import {
+    getPlaatsvoorkeurenByMarktEnOndernemer,
+    getVoorkeurByMarktEnOndernemer,
+} from '../makkelijkemarkt-api';
 
 import { Allocation } from './allocation.model';
 import { groupAllocationRows } from '../pakjekraam-api';
