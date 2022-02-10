@@ -2,30 +2,29 @@ import { NextFunction, Request, Response } from 'express';
 import { GrantedRequest } from 'keycloak-connect';
 import moment from 'moment';
 
-import { upsert } from '../sequelize-util.js';
 import {
     internalServerErrorPage,
     HTTP_CREATED_SUCCESS,
-    getQueryErrors
+    getQueryErrors,
 } from '../express-util';
 
 import {
     getKeycloakUser
 } from '../keycloak-api';
-import {
-    getMarkt,
-    getOndernemer
-} from '../makkelijkemarkt-api';
-import {
-    getMarktBasics
-} from '../pakjekraam-api';
 
-import { IMarktondernemerVoorkeurRow } from '../markt.model';
-import models from '../model/index';
-import { Voorkeur } from '../model/voorkeur.model';
 import {
     getVoorkeurByMarktEnOndernemer,
-    voorkeurenFormData
+    getOndernemer,
+    updateMarktVoorkeur,
+} from '../makkelijkemarkt-api';
+
+import {
+    getMarktBasics,
+    convertVoorkeur,
+} from '../pakjekraam-api';
+
+import {
+    voorkeurenFormData,
 } from '../model/voorkeur.functions';
 
 
@@ -59,19 +58,8 @@ export const updateMarketPreferences = (req: Request, res: Response, next: NextF
         return res.redirect(`./?error=${formError}`);
     }
 
-    const { marktId } = data;
-
-    upsert(
-        models.voorkeur,
-        {
-            erkenningsNummer,
-            marktId,
-        },
-        data,
-    ).then(
-        () => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/'),
-        internalServerErrorPage(res),
-    );
+    updateMarktVoorkeur(convertVoorkeur(data));
+    res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/')
 };
 
 export const marketPreferencesPage = (
