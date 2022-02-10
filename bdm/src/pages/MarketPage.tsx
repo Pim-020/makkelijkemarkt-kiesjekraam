@@ -129,36 +129,6 @@ class MarketPage extends React.Component {
                     marketEventDetails: result
                 })
             })
-        }).catch((e: Error) => {
-            console.error(`Marktdag bestaat nog niet, ${this.context.marktId} wordt nieuw aangemaakt.`)
-            const _newM: MarketEventDetails = {
-                branches: [],
-                pages: [
-                    {
-                        title: "",
-                        layout: [
-                            {
-                                _key: "",
-                                title: "",
-                                class: "block-left",
-                                landmarkBottom: "",
-                                landmarkTop: "",
-                                lots: []
-                            }
-                        ]
-                    }
-                ]
-            }
-            // No result
-            this.setState({
-                marketEventDetails: _newM,
-                activeKey: "1"
-            }, () => {
-                this.dayRef.current?.setState({
-                    marketEventDetails: _newM
-                })
-            })
-            this.branchesRef.current?.updateStorage([])
         })
     }
 
