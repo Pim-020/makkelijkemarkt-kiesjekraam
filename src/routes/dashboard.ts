@@ -1,16 +1,14 @@
 import { Promise } from 'bluebird';
 import { Response, NextFunction } from 'express';
+
 import {
     getMarkten,
     getAanmeldingenByOndernemer,
+    getPlaatsvoorkeurenOndernemer,
     getOndernemer
 } from '../makkelijkemarkt-api';
-import {
-    getPlaatsvoorkeurenOndernemer,
-    getDaysClosed
-} from '../pakjekraam-api';
+
 import { internalServerErrorPage, getQueryErrors } from '../express-util';
-import { tomorrow, nextWeek } from '../util';
 
 import { Roles } from '../authentication';
 
