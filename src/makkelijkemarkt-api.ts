@@ -2,18 +2,23 @@ import {type} from "os";
 
 const axios = require('axios');
 import { AxiosInstance, AxiosResponse } from 'axios';
-import { addDays, MONDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, requireEnv } from './util';
+import { addDays, MONDAY, THURSDAY, requireEnv } from './util';
 
 import {
     MMMarkt,
     MMOndernemerStandalone,
     MMSollicitatieStandalone,
     MMOndernemer,
-    MMSollicitatie,
+    MMMarktPlaatsvoorkeuren,
+    MMarktondernemerVoorkeur,
 } from './makkelijkemarkt.model';
+
 import {
     IRSVP,
-    IMarktondernemer
+    IMarktondernemer,
+    IPlaatsvoorkeur,
+    IMarktondernemerVoorkeur,
+    IMarktondernemerVoorkeurRow,
 } from './markt.model';
 
 import { session } from './model/index';
@@ -21,9 +26,14 @@ import { upsert } from './sequelize-util';
 
 import {
     A_LIJST_DAYS,
-    formatOndernemerName
+    formatOndernemerName,
 } from './domain-knowledge';
 import { MarktConfig } from 'model/marktconfig';
+
+import {
+    indelingVoorkeurMerge,
+    indelingVoorkeurSort,
+} from './pakjekraam-api';
 
 const packageJSON = require('../package.json');
 
@@ -33,6 +43,7 @@ const MINUTES_IN_HOUR = 60;
 
 const MAX_RETRY_50X = 10;
 const MAX_RETRY_40X = 10;
+const EMPTY_BRANCH = "000-EMPTY"
 
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
@@ -170,6 +181,219 @@ export const getAanmeldingenByOndernemerEnMarkt = (marktId: string, erkenningsNu
 
 export const getAanmeldingenByOndernemer = (erkenningsNummer: string): Promise<IRSVP[]> =>
     getAanmeldingen(`rsvp/koopman/${erkenningsNummer}`);
+
+const convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray = (
+    plaatsvoorkeuren: MMMarktPlaatsvoorkeuren[]
+): IPlaatsvoorkeur[] => {
+    let result = [];
+    plaatsvoorkeuren.forEach( (pv) => {
+        result = result.concat(
+            pv.plaatsen.map( (plaats, index) => ({
+                "marktId": pv.markt,
+                "erkenningsNummer": pv.koopman,
+                "plaatsId": plaats,
+                "priority": plaatsvoorkeuren.length - index,
+            }))
+        )
+    })
+    return result;
+}
+
+const convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren = (
+    plaatsvoorkeuren: IPlaatsvoorkeur[]
+): MMMarktPlaatsvoorkeuren => {
+    if( plaatsvoorkeuren.length < 1 ) {
+        console.log("empty call to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren");
+        return null;
+    }
+
+    let markt = plaatsvoorkeuren[0].marktId;
+    let koopman = plaatsvoorkeuren[0].erkenningsNummer;
+
+    plaatsvoorkeuren.reverse().forEach( (pv) => {
+        if(pv.marktId !== markt || pv.erkenningsNummer !== koopman) {
+            console.log("call to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren has wrong input data");
+            return null;
+        }
+    })
+
+    plaatsvoorkeuren.sort( (a, b) => b.priority - a.priority );
+
+    return {
+        "markt": plaatsvoorkeuren[0].marktId,
+        "koopman": plaatsvoorkeuren[0].erkenningsNummer,
+        "plaatsen": plaatsvoorkeuren.map( (pv) => parseInt(pv.plaatsId) ),
+    }
+}
+
+export const getPlaatsvoorkeuren = (
+    marktId: string
+): Promise<IPlaatsvoorkeur[]> =>
+    getPlaatsvoorkeurenByMarkt(marktId);
+
+export const getPlaatsvoorkeurenOndernemer = (
+    erkenningsNummer: string
+): Promise<IPlaatsvoorkeur[]> =>
+    apiBase(`plaatsvoorkeur/koopman/${erkenningsNummer}`).then(
+        response => convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data)
+);
+
+//TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
+export const deletePlaatsvoorkeurenByErkenningsnummer = (erkenningsNummer: string) => null;
+
+export const getPlaatsvoorkeurenByMarkt = (
+    marktId: string
+): Promise<IPlaatsvoorkeur[]> =>
+    apiBase(`plaatsvoorkeur/markt/${marktId}`).then(
+        response => convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data)
+);
+
+export const getPlaatsvoorkeurenByMarktEnOndernemer = (
+    marktId: string, erkenningsNummer: string
+): Promise<IPlaatsvoorkeur[]> =>
+    apiBase(`plaatsvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then(
+        response => convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data)
+);
+
+export const updatePlaatsvoorkeur = (
+    plaatsvoorkeuren: IPlaatsvoorkeur[]
+): Promise<IPlaatsvoorkeur> => {
+    let pv =  convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren(plaatsvoorkeuren);
+    return apiBase('plaatsvoorkeur', JSON.stringify(pv) ).then(response => response.data);
+}
+
+const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
+    marktvoorkeuren: MMarktondernemerVoorkeur[]
+): IMarktondernemerVoorkeur[] => {
+    let result = [];
+
+    marktvoorkeuren.forEach( (vk) => {
+        let branches = [];
+        let inrichting = [];
+
+        if (vk.hasInrichting) {
+            inrichting = ['eigen-materieel'];
+        }
+
+        if (vk.branche) {
+            branches.push(vk.branche);
+        }
+
+        if (vk.isBak) {
+            branches.push('bak');
+        }
+
+        result.push( {
+            erkenningsNummer: vk.koopman,
+            marktId: vk.markt,
+            marktDate: null,
+            minimum: vk.minimum,
+            maximum: vk.maximum,
+            krachtStroom: null,
+            kraaminrichting: inrichting,
+            anywhere: vk.anywhere,
+            absentFrom: vk.absentFrom || null,
+            absentUntil: vk.absentUntil || null,
+            branches: branches,
+            verkoopinrichting: inrichting,
+        })
+    })
+
+    return result;
+}
+
+const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
+    marktvoorkeur: IMarktondernemerVoorkeur
+): MMarktondernemerVoorkeur => {
+    let isBak = false;
+    let branche = EMPTY_BRANCH;
+    if(marktvoorkeur.branches !== null ){
+        if (marktvoorkeur.branches.includes("bak")) isBak = true;
+        branche = marktvoorkeur.branches[0];
+    }
+
+    let hasInrichting = marktvoorkeur.verkoopinrichting || marktvoorkeur.kraaminrichting ? true: false;
+
+    let result: MMarktondernemerVoorkeur = {
+        "koopman": marktvoorkeur.erkenningsNummer,
+        "markt": marktvoorkeur.marktId,
+        "anywhere": marktvoorkeur.anywhere,
+        "minimum": marktvoorkeur.minimum,
+        "maximum": marktvoorkeur.maximum,
+        "hasInrichting": hasInrichting,
+        "isBak": isBak,
+        "branche": branche
+    }
+
+    if (marktvoorkeur.absentFrom) result.absentFrom = marktvoorkeur.absentFrom;
+    if (marktvoorkeur.absentUntil) result.absentUntil = marktvoorkeur.absentUntil;
+
+    return result;
+}
+
+export const updateMarktVoorkeur = (
+    marktvoorkeur: IMarktondernemerVoorkeur
+): Promise<MMarktondernemerVoorkeur> =>
+    apiBase(
+        'marktvoorkeur',
+        JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur))
+).then(response => response.data);
+
+export const getIndelingVoorkeur = (
+    erkenningsNummer: string,
+    marktId: string = null,
+    marktDate: string = null,
+): Promise<IMarktondernemerVoorkeur> =>
+    apiBase(
+        `marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`
+).then(response =>
+    convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)
+        .sort(indelingVoorkeurSort)
+        .reduce(indelingVoorkeurMerge, null)
+);
+
+export const getIndelingVoorkeuren = (
+    marktId: string,
+    marktDate: string = null,
+): Promise<IMarktondernemerVoorkeur[]> =>
+    getVoorkeurenByMarkt(marktId)
+
+//TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
+export const deleteVoorkeurenByErkenningsnummer = ( erkenningsNummer: string ) => null;
+
+export const convertVoorkeurRowToVoorkeur = (
+    obj: IMarktondernemerVoorkeur
+): IMarktondernemerVoorkeurRow => ({
+    ...obj,
+    brancheId: obj.branches[0] || EMPTY_BRANCH,
+    parentBrancheId: obj.branches.includes('bak') ? 'bak' : '',
+    inrichting: obj.verkoopinrichting[0] || '',
+});
+
+export const getVoorkeurByMarktEnOndernemer = (
+    marktId: string,
+    erkenningsNummer: string
+): Promise<IMarktondernemerVoorkeurRow> =>
+    apiBase(`marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`
+).then(response =>
+    convertVoorkeurRowToVoorkeur( convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)[0] )
+);
+
+export const getVoorkeurenByMarkt = (
+    marktId: string
+): Promise<IMarktondernemerVoorkeur[]> =>
+    apiBase(`marktvoorkeur/markt/${marktId}`
+).then(response =>
+    convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)
+);
+
+export const getVoorkeurenByOndernemer = (
+    erkenningsNummer: string
+): Promise<IMarktondernemerVoorkeur[]> =>
+    apiBase(`marktvoorkeur/koopman/${erkenningsNummer}`
+).then(response =>
+    convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)
+);
 
 export const getMarkt = (
     marktId: string
