@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { GrantedRequest } from 'keycloak-connect';
 
 import { getQueryErrors, internalServerErrorPage } from '../express-util';
@@ -10,11 +10,11 @@ import { MMSollicitatie } from '../makkelijkemarkt.model';
 import {
     getMarkten,
     getOndernemer,
+    deletePlaatsvoorkeurenByErkenningsnummer,
+    deleteVoorkeurenByErkenningsnummer,
     deleteRsvpsByErkenningsnummer
 } from '../makkelijkemarkt-api';
 
-import { deletePlaatsvoorkeurenByErkenningsnummer } from '../model/plaatsvoorkeur.functions';
-import { deleteVoorkeurenByErkenningsnummer } from '../model/voorkeur.functions';
 import { getToewijzingenByOndernemer } from '../model/allocation.functions';
 import { getAfwijzingenByOndernemer } from '../model/afwijzing.functions';
 
