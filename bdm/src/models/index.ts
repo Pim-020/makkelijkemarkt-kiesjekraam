@@ -143,6 +143,16 @@ export interface IMarktConfiguratie {
     paginas: Page[]
 }
 
+export interface IMarketContext {
+    marktId: string
+    genericBranches: Branche[],
+    marktConfig: IMarktConfiguratie,
+}
+
+export interface IApiError extends Error {
+    status: number;
+}
+
 export const WeekDays: DayOfWeek[] = [
     {id: 0, name: "Maandag", abbreviation: "MA"},
     {id: 1, name: "Dinsdag", abbreviation: "DI"},
