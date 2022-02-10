@@ -1,7 +1,10 @@
 import { useQuery } from 'react-query'
+
+import { Branche, IApiError, IMarktConfiguratie } from '../models'
 import { mmApiService, mmApiSaveService } from "../services/service_mm_api"
 
 const USE_QUERY_CONFIG = {
+    retry: 1,
     // refetchOnWindowFocus: false
     // placeholderData: [],
     refetchOnWindowFocus: false, //refetch when window comes to focus
@@ -11,14 +14,21 @@ const USE_QUERY_CONFIG = {
 
 export const useGenericBranches = () => {
     console.log('useGenericBranches hook')
-    return useQuery('genericBranches', () => {
+    return useQuery<Branche[], IApiError>('genericBranches', () => {
         return mmApiService(`/api/mm/branches`)
     }, USE_QUERY_CONFIG)
 }
 
 export const useMarktConfig = (marktId: string) => {
     console.log('useMarktConfig hook')
-    return useQuery('marktconfig', () => {
+    return useQuery<IMarktConfiguratie, IApiError>('marktconfig', () => {
         return mmApiService(`/api/markt/${marktId}/marktconfiguratie/latest`)
     }, USE_QUERY_CONFIG)
 }
+
+// export const useMarkt = (marktId: string) => {
+//     console.log('useMarkt hook')
+//     return useQuery('markt', () => {
+//         return mmApiService(`/api/markt/${marktId}`)
+//     }, USE_QUERY_CONFIG)
+// }
