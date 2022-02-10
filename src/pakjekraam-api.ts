@@ -1,54 +1,33 @@
 import * as fs from 'fs';
 
-import Sequelize from 'sequelize';
-
-import { numberSort, stringSort } from './util';
-import { formatOndernemerName, isVast } from './domain-knowledge.js';
+import { numberSort } from './util';
+import { isVast } from './domain-knowledge.js';
 
 import {
     allocation,
-    plaatsvoorkeur,
-    rsvp,
-    log
+    log,
 } from './model/index';
+
 import {
-    MMMarkt,
-    MMOndernemerStandalone
-} from './makkelijkemarkt.model';
-import {
-    IMarkt,
-    IBranche,
-    IMarktProperties,
     IMarktondernemer,
     IMarktondernemerVoorkeur,
     IMarktondernemerVoorkeurRow,
-    IMarktplaats,
-    IObstakelBetween,
-    IPlaatsvoorkeur,
-    IRSVP,
     IToewijzing,
 } from './markt.model';
-import {
-    IAllocationPrintout,
-    IAllocationPrintoutPage,
-    IMarketRow
-} from './model/printout.model';
-import { RSVP } from './model/rsvp.model';
+
 import { Allocation } from './model/allocation.model';
-import { Plaatsvoorkeur } from './model/plaatsvoorkeur.model';
-import { Voorkeur } from './model/voorkeur.model';
 
 import { MarktConfig } from './model/marktconfig';
 
 import {
     getALijst,
     getMarkt,
-    getMarkten,
     getAanmeldingenByMarktAndDate,
-    getOndernemer,
-    getOndernemers,
     getOndernemersByMarkt,
+    getPlaatsvoorkeuren,
+    getIndelingVoorkeuren,
 } from './makkelijkemarkt-api';
+
 import {
     getVoorkeurenByMarkt
 } from './model/voorkeur.functions';
@@ -101,23 +80,13 @@ export const getToewijzingen = (marktId: string, marktDate: string): Promise<ITo
         })
         .then(toewijzingen => toewijzingen.reduce(groupAllocationRows, []));
 
-export const getPlaatsvoorkeuren = (marktId: string): Promise<IPlaatsvoorkeur[]> =>
-    plaatsvoorkeur
-        .findAll<Plaatsvoorkeur>({
-            where: { marktId },
-            raw: true,
-        })
-        .then(plaatsvoorkeuren => {
-            return plaatsvoorkeuren
-        });
-
 const indelingVoorkeurPrio = (voorkeur: IMarktondernemerVoorkeur): number =>
     (voorkeur.marktId ? 1 : 0) | (voorkeur.marktDate ? 2 : 0);
 
-const indelingVoorkeurSort = (a: IMarktondernemerVoorkeur, b: IMarktondernemerVoorkeur) =>
-    numberSort(indelingVoorkeurPrio(a), indelingVoorkeurPrio(b));
+export const indelingVoorkeurSort = (a: IMarktondernemerVoorkeur, b: IMarktondernemerVoorkeur) =>
+    numberSort(indelingVoorkeurPrio(b), indelingVoorkeurPrio(a));
 
-const indelingVoorkeurMerge = (
+export const indelingVoorkeurMerge = (
     a: IMarktondernemerVoorkeurRow,
     b: IMarktondernemerVoorkeurRow,
 ): IMarktondernemerVoorkeurRow => {
@@ -150,29 +119,7 @@ const indelingVoorkeurMerge = (
     return merged;
 };
 
-const groupByErkenningsNummer = (
-    groups: IMarktondernemerVoorkeur[][],
-    voorkeur: IMarktondernemerVoorkeur,
-): IMarktondernemerVoorkeur[][] => {
-    let group;
-
-    for (let i = groups.length; i--;) {
-        if (groups[i][0].erkenningsNummer === voorkeur.erkenningsNummer) {
-            group = groups[i];
-            break;
-        }
-    }
-
-    if (group) {
-        group.push(voorkeur);
-    } else {
-        groups.push([voorkeur]);
-    }
-
-    return groups;
-};
-
-const convertVoorkeur = (obj: IMarktondernemerVoorkeurRow): IMarktondernemerVoorkeur => ({
+export const convertVoorkeur = (obj: IMarktondernemerVoorkeurRow): IMarktondernemerVoorkeur => ({
     ...obj,
     branches: [obj.brancheId, obj.parentBrancheId].filter(Boolean),
     verkoopinrichting: obj.inrichting ? [obj.inrichting] : [],
@@ -196,60 +143,6 @@ const enrichOndernemersWithVoorkeuren = (ondernemers: IMarktondernemer[], voorke
         };
     });
 };
-
-export const getIndelingVoorkeur = (
-    erkenningsNummer: string,
-    marktId: string = null,
-    marktDate: string = null,
-): Promise<IMarktondernemerVoorkeur> => {
-    const where = {
-        erkenningsNummer,
-        [Sequelize.Op.and]: [
-            { [Sequelize.Op.or]: [{ marktId }, { marktId: null }] },
-            { [Sequelize.Op.or]: [{ marktDate }, { marktDate: null }] },
-        ],
-    };
-
-    return Voorkeur
-        .findAll<Voorkeur>({
-            where,
-            raw: true,
-        })
-        .then(voorkeuren => voorkeuren.sort(indelingVoorkeurSort).reduce(indelingVoorkeurMerge, null));
-};
-
-export const getIndelingVoorkeuren = (
-    marktId: string,
-    marktDate: string = null,
-): Promise<IMarktondernemerVoorkeur[]> => {
-    const where = {
-        [Sequelize.Op.and]: [
-            {
-                [Sequelize.Op.or]: marktId ? [{ marktId }, { marktId: null }] : [{ marktId: null }],
-            },
-            {
-                [Sequelize.Op.or]: marktDate ? [{ marktDate }, { marktDate: null }] : [{ marktDate: null }],
-            },
-        ],
-    };
-
-    return Voorkeur
-        .findAll<Voorkeur>({
-            where,
-            raw: true,
-        })
-        .then(voorkeuren =>
-            voorkeuren
-                .sort((a, b) => indelingVoorkeurSort(a, b) || stringSort(a.erkenningsNummer, b.erkenningsNummer))
-                .reduce(groupByErkenningsNummer, [])
-                .map(arr => arr.reduce(indelingVoorkeurMerge)),
-        );
-};
-
-export const getPlaatsvoorkeurenOndernemer = (erkenningsNummer: string): Promise<IPlaatsvoorkeur[]> =>
-    plaatsvoorkeur.findAll<Plaatsvoorkeur>({
-        where: { erkenningsNummer },
-    });
 
 export const getMededelingen = (): Promise<any> =>
     loadJSON('./config/markt/mededelingen.json', {});
