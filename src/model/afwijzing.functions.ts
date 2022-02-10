@@ -8,8 +8,10 @@ import {
     MARKET_FULL
 } from '../allocation/afwijzing';
 
-import { getVoorkeurByMarktEnOndernemer  } from './voorkeur.functions';
-import { getPlaatsvoorkeurenByMarktEnOndernemer  } from './plaatsvoorkeur.functions';
+import {
+    getPlaatsvoorkeurenByMarktEnOndernemer,
+    getVoorkeurByMarktEnOndernemer,
+} from '../makkelijkemarkt-api';
 
 export const convertAfwijzingForDB = (afwijzing: any, markt: IMarkt, marktDate: string) => {
     return {
@@ -50,8 +52,6 @@ export const getAfwijzingEnriched = (afwijzing: IAfwijzing): Promise<IAfwijzing>
         afwijzing.bak = voorkeuren ? !!(voorkeuren.parentBrancheId === 'bak') : null;
         afwijzing.eigenMaterieel = voorkeuren ? !!(voorkeuren.inrichting === 'eigen-materieel') : null;
         afwijzing.brancheId = voorkeuren ? voorkeuren.brancheId : null;
-
-        // console.log(afwijzing);
 
         return afwijzing;
     });
