@@ -195,7 +195,7 @@ app.post(
             .then((data)=>res.send(data))
             .catch(err => {
                 console.log(err.response.status, err.response.statusText, err.response.data);
-                res.send(err.response.status)
+                res.status(err.response.status).send({statusText: err.response.statusText, message: err.response.data})
             });
     },
 );
@@ -209,7 +209,10 @@ app.get(
         // TODO: add errorhandling
         getLatestMarktconfiguratie(req.params.marktId)
             .then((data)=>res.send(data))
-            .catch(err => console.log(err.response.status, err.response.statusText, err.response.data));
+            .catch(err => {
+                console.log(err.response.status, err.response.statusText, err.response.data);
+                res.status(err.response.status).send({statusText: err.response.statusText, message: err.response.data})
+            });
     },
 );
 
