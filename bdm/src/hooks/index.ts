@@ -26,6 +26,13 @@ export const useMarktConfig = (marktId: string) => {
     }, USE_QUERY_CONFIG)
 }
 
+export const useObstakel = () => {
+    console.log('useObstakel hook')
+    return useQuery<{id: number, naam: string}[], IApiError>('obstakel', () => {
+        return mmApiService(`/api/obstakel`)
+    }, USE_QUERY_CONFIG)
+}
+
 // export const useMarkt = (marktId: string) => {
 //     console.log('useMarkt hook')
 //     return useQuery('markt', () => {

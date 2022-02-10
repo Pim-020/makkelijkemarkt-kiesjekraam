@@ -181,6 +181,45 @@ app.get('/api/markt', (req: GrantedRequest, res: Response) => {
     }, internalServerErrorPage(res));
 });
 
+const obstakel = [
+    {
+        "id": 1,
+        "naam": "electra"
+    },
+    {
+        "id": 2,
+        "naam": "water"
+    },
+    {
+        "id": 3,
+        "naam": "bankje"
+    },
+    {
+        "id": 4,
+        "naam": "doorloop"
+    },
+    {
+        "id": 5,
+        "naam": "lantaarnpaal"
+    },
+    {
+        "id": 6,
+        "naam": "loopje"
+    },
+    {
+        "id": 7,
+        "naam": "loopjediedichtmag"
+    },
+    {
+        "id": 8,
+        "naam": "boom"
+    }
+]
+
+app.get('/api/obstakel', (req: GrantedRequest, res: Response) => {
+    res.send(obstakel);
+});
+
 // TODO: add csrfProtection
 app.post(
     '/api/markt/:marktId/marktconfiguratie',
