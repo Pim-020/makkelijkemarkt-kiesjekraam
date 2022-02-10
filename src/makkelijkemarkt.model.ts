@@ -101,3 +101,24 @@ export interface MMSollicitatie {
 export interface MMSollicitatieStandalone extends MMSollicitatie {
     koopman: MMOndernemer;
 }
+
+export interface MMMarktPlaatsvoorkeuren {
+    markt: string,
+    koopman: string,
+    plaatsen: number[],
+}
+
+export interface MMarktondernemerVoorkeur {
+    id?: number,
+    anywhere?: boolean,
+    minimum?: number,
+    maximum?: number,
+    hasInrichting?: boolean,
+    isBak?: boolean,
+    absentFrom?: Date,
+    absentUntil?: Date,
+    branche: string,
+    markt: string,
+    koopman: string,
+}
+
