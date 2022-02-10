@@ -3,23 +3,14 @@ moment.locale('nl');
 
 import {
     NextFunction,
-    Request,
     Response
 } from 'express';
-import {
-    httpErrorPage,
-    internalServerErrorPage,
-    HTTP_CREATED_SUCCESS,
-    HTTP_FORBIDDEN_ERROR,
-    getQueryErrors
-} from '../express-util';
 
 import {
-    flatten,
-    nextWeek,
-    LF,
-    today
-} from '../util';
+    internalServerErrorPage,
+    HTTP_CREATED_SUCCESS,
+} from '../express-util';
+
 import {
     getMarktThresholdDate
 } from '../domain-knowledge';
@@ -27,15 +18,15 @@ import {
 import {
     GrantedRequest
 } from 'keycloak-connect';
+
 import {
     getKeycloakUser
 } from '../keycloak-api';
+
 import {
     Roles
 } from '../authentication';
 
-import { upsert } from '../sequelize-util';
-import models from '../model/index';
 import { IRSVP } from '../markt.model';
 
 import {
@@ -46,15 +37,13 @@ import {
     updateRsvp,
     getMarktenForOndernemer,
     getOndernemer,
-    getAanmeldingenByOndernemer
+    getAanmeldingenByOndernemer,
+    getVoorkeurenByOndernemer
 } from '../makkelijkemarkt-api';
+
 import {
     getMededelingen
 } from '../pakjekraam-api';
-
-import {
-    getVoorkeurenByOndernemer
-} from '../model/voorkeur.functions';
 
 interface RSVPFormData {
     marktId: string;
