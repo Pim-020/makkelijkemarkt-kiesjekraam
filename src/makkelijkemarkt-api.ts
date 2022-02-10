@@ -62,46 +62,21 @@ const login = (api: AxiosInstance) =>
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'delete';
 
-const createHttpFunction = (api: AxiosInstance, httpMethod: HttpMethod) : ( url: string, token: string, data?) => Promise<AxiosResponse> => {
+const createHttpFunction = (api: AxiosInstance, httpMethod: HttpMethod): ( url: string, token: string, data?) => Promise<AxiosResponse> => {
+    return (url: string, token: string, data?: JSON): Promise<AxiosResponse> => {
+        console.log(`## MM API ${httpMethod} CALL: `, url);
+        const headers =  {
+            Authorization: `Bearer ${token}`,
+        };
 
-    switch (httpMethod) {
-        case "get":
-            return (url: string, token: string) => {
-                console.log("## MM API GET CALL: ", url);
-                const headers =  {
-                    Authorization: `Bearer ${token}`,
-                };
-                return api.get(url, { headers });
+        switch (httpMethod) {
+            case 'get': return api.get(url, { headers });
+            case 'post': return api.post(url, data,{ headers });
+            case 'put': return api.put(url, data,{ headers });
+            case 'delete': return api.delete(url, { headers });
         }
-        case "post":
-            return (url: string, token: string, data) => {
-                console.log("## MM API POST CALL: ", url);
-                const headers =  {
-                    Authorization: `Bearer ${token}`,
-                };
-                return api.post(url, data, { headers });
-        }
-
-        case "put":
-            return (url: string, token: string, data) => {
-                console.log("## MM API POST CALL: ", url);
-                const headers =  {
-                    Authorization: `Bearer ${token}`,
-                };
-                return api.put(url, data, { headers });
-            }
-
-
-        case "delete":
-            return (url: string, token: string, data) => {
-                console.log("## MM API POST CALL: ", url);
-                const headers =  {
-                    Authorization: `Bearer ${token}`,
-                };
-                return api.delete(url, { headers });
-            }
-    }
-}
+    };
+};
 
 const apiBase = (
     url: string,

@@ -77,7 +77,7 @@ requireEnv('APP_SECRET');
 
 const HTTP_DEFAULT_PORT = 8080;
 
-const genericApiRoutes = [
+const genericMMApiRoutes = [
     'branche',
     'obstakel',
     'plaatseigenschap',
@@ -518,7 +518,7 @@ app.post(
 
 // This creates routes for everything under /branche, /obstakel, /plaatseigenschap and /markt/{id}/marktconfiguratie
 // It forwards the route to the API directly.
-genericApiRoutes.forEach((genericApiRoute: string) => {
+genericMMApiRoutes.forEach((genericApiRoute: string) => {
     app.all(
         `/api/${genericApiRoute}/*`,
         keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)),
