@@ -1,12 +1,8 @@
 import { some, every} from 'lodash'
 import React from 'react'
-import { useGenericBranches, useMarktConfig } from '../hooks'
 
-interface IMarketContext {
-    marktId: string
-    genericBranches: [],
-    marktConfig: [],
-}
+import { IMarketContext } from '../models'
+import { useGenericBranches, useMarktConfig } from '../hooks'
 
 export const MarketContext = React.createContext<Partial<IMarketContext>>({});
 
@@ -14,26 +10,28 @@ const MarketDataWrapper: React.FC<{match: any}> = (props) => {
     console.log(props)
     const marktId = props.match.params.id
 
-    const genericBranches = useGenericBranches()
     const marktConfig = useMarktConfig(marktId)
+    // const markt = useMarkt(marktId)
+    const genericBranches = useGenericBranches()
 
-    // console.log({genericBranches, marktConfig})
-    const data = [genericBranches, marktConfig]
+    const data = [marktConfig, genericBranches]
 
     if (some(data, item => item.isLoading)) {
         return (
             <h1>Loading</h1>
         )
     }
-    if (some(data, item => item.error)) {
+    if (some(data, item => item.isError)) {
+        console.log(data)
+ 
         return (
             <h1>ERROR</h1>
         )
     }
 
     if (every(data, item => item.isSuccess)) {
-        console.log(genericBranches.data, marktConfig.data)
-        const marketContext: IMarketContext = {
+        console.log(genericBranches, marktConfig)
+        const marketContext: Partial<IMarketContext> = {
             marktId,
             genericBranches: genericBranches.data,
             marktConfig: marktConfig.data,
@@ -41,7 +39,6 @@ const MarketDataWrapper: React.FC<{match: any}> = (props) => {
         return (
             <MarketContext.Provider value={marketContext}>
                 {props.children}
-                {/* <MarketPage marktId={marktId}  /> */}
             </MarketContext.Provider>
         )
     }
