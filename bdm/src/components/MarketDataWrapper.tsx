@@ -2,7 +2,7 @@ import { some, every} from 'lodash'
 import React from 'react'
 
 import { IMarketContext } from '../models'
-import { useGenericBranches, useMarktConfig, useObstakel } from '../hooks'
+import { useGenericBranches, useMarktConfig, useObstakel, usePlaatseigenschap } from '../hooks'
 
 export const MarketContext = React.createContext<Partial<IMarketContext>>({});
 
@@ -14,8 +14,9 @@ const MarketDataWrapper: React.FC<{match: any}> = (props) => {
     // const markt = useMarkt(marktId)
     const genericBranches = useGenericBranches()
     const obstakel = useObstakel()
+    const plaatseigenschap = usePlaatseigenschap()
 
-    const data = [marktConfig, genericBranches, obstakel]
+    const data = [marktConfig, genericBranches, obstakel, plaatseigenschap]
 
     if (some(data, item => item.isLoading)) {
         return (

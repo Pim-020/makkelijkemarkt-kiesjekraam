@@ -1,4 +1,5 @@
 import { useQuery } from 'react-query'
+import { sortBy } from 'lodash'
 
 import { Branche, IApiError, IMarktConfiguratie } from '../models'
 import { mmApiService, mmApiSaveService } from "../services/service_mm_api"
@@ -28,8 +29,17 @@ export const useMarktConfig = (marktId: string) => {
 
 export const useObstakel = () => {
     console.log('useObstakel hook')
-    return useQuery<{id: number, naam: string}[], IApiError>('obstakel', () => {
-        return mmApiService(`/api/obstakel`)
+    return useQuery<{id: number, naam: string}[], IApiError>('obstakel', async() => {
+        const obstakel = await mmApiService(`/api/obstakel/latest`)
+        return sortBy(obstakel, 'naam');
+    }, USE_QUERY_CONFIG)
+}
+
+export const usePlaatseigenschap = () => {
+    console.log('usePlaatseigenschap hook')
+    return useQuery<{id: number, naam: string}[], IApiError>('plaatseigenschap', async() => {
+        const plaatseigenschap = await mmApiService(`/api/plaatseigenschap/latest`)
+        return sortBy(plaatseigenschap, 'naam');
     }, USE_QUERY_CONFIG)
 }
 
