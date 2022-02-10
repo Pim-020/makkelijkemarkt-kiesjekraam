@@ -2,7 +2,7 @@ import React, { createRef, MouseEvent, RefObject, KeyboardEvent, useEffect, useS
 import Day from "../components/Day"
 // import MarketsService from "../services/service_markets"
 import { Transformer } from "../services/transformer"
-import { mmApiService, mmApiSaveService } from "../services/service_mm_api"
+import { mmApiSaveService } from "../services/service_mm_api"
 import { DynamicBase } from "./DynamicBase"
 import { Breadcrumb, Tabs, Row, Col, //Button, Upload
     } from 'antd'
@@ -16,31 +16,10 @@ import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
 import { validateLots } from "../common/validator"
 //import { zipMarket } from "../common/generic"
-import { useQuery } from 'react-query'
+import { useGenericBranches, useMarktConfig } from '../hooks'
+
 
 const { TabPane } = Tabs
-
-const USE_QUERY_CONFIG = {
-    // refetchOnWindowFocus: false
-    // placeholderData: [],
-    refetchOnWindowFocus: false, //refetch when window comes to focus
-    // refetchOnReconnect: false, //refetch when browser reconnects to server
-    // refetchOnMount: false, //refetch when component mounts
-}
-
-const useGenericBranches = () => {
-    console.log('useGenericBranches hook')
-    return useQuery('genericBranches', () => {
-        return mmApiService(`/api/mm/branches`)
-    }, USE_QUERY_CONFIG)
-}
-
-const useMarktConfig = (marktId: string) => {
-    console.log('useMarktConfig hook')
-    return useQuery('marktconfig', () => {
-        return mmApiService(`/api/markt/${marktId}/marktconfiguratie/latest`)
-    }, USE_QUERY_CONFIG)
-}
 
 const DataWrapper = (props: {match: any}) => {
     console.log(props)
