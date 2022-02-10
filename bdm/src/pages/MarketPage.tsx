@@ -9,49 +9,19 @@ import { Breadcrumb, Tabs, Row, Col, //Button, Upload
 import { HomeOutlined, //UploadOutlined, FileZipOutlined 
     } from '@ant-design/icons'
 import { Link } from "react-router-dom"
-import { some, every} from 'lodash'
 import { AssignedBranche, Branche, Geography, Lot, MarketEventDetails, Page, Plan, Rows } from "../models"
 // import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
 import { validateLots } from "../common/validator"
 //import { zipMarket } from "../common/generic"
-import { useGenericBranches, useMarktConfig } from '../hooks'
 
+import MarketDataWrapper, { MarketContext } from '../components/MarketDataWrapper'
 
 const { TabPane } = Tabs
 
-const DataWrapper = (props: {match: any}) => {
-    console.log(props)
-    const marktId = props.match.params.id
-
-    const genericBranches = useGenericBranches()
-    const marktConfig = useMarktConfig(marktId)
-
-    // console.log({genericBranches, marktConfig})
-    const data = [genericBranches, marktConfig]
-
-    if (some(data, item => item.isLoading)) {
-        return (
-            <h1>Loading</h1>
-        )
-    }
-    if (some(data, item => item.error)) {
-        return (
-            <h1>ERROR</h1>
-        )
-    }
-
-    if (every(data, item => item.isSuccess)) {
-        console.log(genericBranches.data, marktConfig.data)
-        return (
-            <MarketPage marktId={marktId} genericBranches={genericBranches.data} marktConfig={marktConfig.data} />
-        )
-    }
-    return null;
-}
-
-class MarketPage extends React.Component<{genericBranches: any, marktConfig: any, marktId: string}> {
+class MarketPage extends React.Component {
+    static contextType = MarketContext
     // id: string = ""
     // router: any
 
@@ -88,7 +58,7 @@ class MarketPage extends React.Component<{genericBranches: any, marktConfig: any
     }
 
     dayChanged = () => {
-        this.transformer.encode(this.props.marktConfig, this.props.genericBranches, this.state.marketEventDetails).then(result => {
+        this.transformer.encode(this.context.marktConfig, this.context.genericBranches, this.state.marketEventDetails).then(result => {
             validateLots(result)
             this.branchesRef.current?.updateStorage(result.branches)
         })
@@ -135,7 +105,7 @@ class MarketPage extends React.Component<{genericBranches: any, marktConfig: any
             const marktConfiguratie = {branches, locaties, marktOpstelling, geografie, paginas}
             console.log(marktConfiguratie)
 
-            mmApiSaveService(`/api/markt/${this.props.marktId}/marktconfiguratie`, marktConfiguratie)
+            mmApiSaveService(`/api/markt/${this.context.marktId}/marktconfiguratie`, marktConfiguratie)
         }
     }
 
@@ -148,7 +118,7 @@ class MarketPage extends React.Component<{genericBranches: any, marktConfig: any
         //     })
         // })
         //this.getPlan()
-        this.transformer.encode(this.props.marktConfig, this.props.genericBranches).then(result => {
+        this.transformer.encode(this.context.marktConfig, this.context.genericBranches).then(result => {
             validateLots(result)
             this.branchesRef.current?.updateStorage(result.branches)
             this.setState({
@@ -160,7 +130,7 @@ class MarketPage extends React.Component<{genericBranches: any, marktConfig: any
                 })
             })
         }).catch((e: Error) => {
-            console.error(`Marktdag bestaat nog niet, ${this.props.marktId} wordt nieuw aangemaakt.`)
+            console.error(`Marktdag bestaat nog niet, ${this.context.marktId} wordt nieuw aangemaakt.`)
             const _newM: MarketEventDetails = {
                 branches: [],
                 pages: [
@@ -206,9 +176,9 @@ class MarketPage extends React.Component<{genericBranches: any, marktConfig: any
                         <span>Markten</span>
                     </Link>
                 </Breadcrumb.Item>
-                {this.props.marktId && <>
-                    <Breadcrumb.Item><Link to={`/market/${this.props.marktId}`}>
-                        <span>{this.props.marktId}</span></Link>
+                {this.context.marktId && <>
+                    <Breadcrumb.Item><Link to={`/market/${this.context.marktId}`}>
+                        <span>{this.context.marktId}</span></Link>
                     </Breadcrumb.Item>
                     </>
                 }
@@ -224,20 +194,25 @@ class MarketPage extends React.Component<{genericBranches: any, marktConfig: any
 
                 </Col>
              </Row>
-            {this.props.genericBranches &&
+            {this.context.genericBranches &&
                 <Tabs activeKey={this.state.activeKey} onTabClick={(key: string, e: MouseEvent | KeyboardEvent) => {
                     this.setState({ activeKey: key })
                 }}>
                     <TabPane tab="Marktindeling" key="0">
-                        <Day id={this.props.marktId} ref={this.dayRef} changed={this.dayChanged} />
+                        <Day id={this.context.marktId} ref={this.dayRef} changed={this.dayChanged} />
                     </TabPane>
                     <TabPane tab="Branche toewijzing" key="1" forceRender={true}>
-                        <Branches id={this.props.marktId} ref={this.branchesRef} lookupBranches={this.props.genericBranches} changed={this.updateAssignedBranches} />
+                        <Branches id={this.context.marktId} ref={this.branchesRef} lookupBranches={this.context.genericBranches} changed={this.updateAssignedBranches} />
                     </TabPane>
                 </Tabs>}
-
         </>
     }
 }
 
-export default DataWrapper;
+export default function(props: any) {
+    return (
+        <MarketDataWrapper {...props}>
+            <MarketPage />
+        </MarketDataWrapper>
+    )
+};
