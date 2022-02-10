@@ -1,7 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import { getMarkt, getOndernemer } from '../makkelijkemarkt-api';
+
 import {
+    getOndernemer,
+    getPlaatsvoorkeurenByMarktEnOndernemer,
+    updatePlaatsvoorkeur,
     getIndelingVoorkeur,
+    updateMarktVoorkeur,
+} from '../makkelijkemarkt-api';
+
+import {
     getMarktBasics,
     getMededelingen,
 } from '../pakjekraam-api';
@@ -9,9 +16,7 @@ import {
 const { isExp } = require('../domain-knowledge.js');
 
 import { getQueryErrors, internalServerErrorPage, HTTP_CREATED_SUCCESS } from '../express-util';
-import { upsert } from '../sequelize-util.js';
 import { IPlaatsvoorkeurRow } from '../markt.model';
-import { getPlaatsvoorkeurenByMarktEnOndernemer } from '../model/plaatsvoorkeur.functions';
 import models from '../model/index';
 import { getKeycloakUser } from '../keycloak-api';
 import { GrantedRequest } from 'keycloak-connect';
@@ -116,7 +121,7 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
                 )
                 .filter(ignoreEmptyVoorkeur);
 
-            return models.plaatsvoorkeur.bulkCreate(voorkeuren);
+            return updatePlaatsvoorkeur(voorkeuren);
         } else {
             return null;
         }
@@ -126,22 +131,21 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
     const insertAlgVoorkeurFormData = () => {
         console.log('algemene voorkeuren opslaan...');
 
-        return upsert(
-            models.voorkeur,
+
+        console.log(req.body)
+        let vk = (
             {
                 erkenningsNummer,
-                marktDate: req.body.marktDate || null,
                 marktId,
-            },
-            {
-                anywhere: !!req.body.anywhere,
                 minimum: req.body.minimum,
+                branches: null,
                 maximum: req.body.maximum,
-            },
+                anywhere: !!req.body.anywhere,
+            }
         );
+        return updateMarktVoorkeur(vk);
     };
 
-    // TODO: Remove and insert in one transaction
     removeExisting()
         .then(insertFormData)
         .then(insertAlgVoorkeurFormData)
