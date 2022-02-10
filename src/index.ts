@@ -531,7 +531,7 @@ genericMMApiRoutes.forEach((genericApiRoute: string) => {
         async (req: GrantedRequest, res: Response) => {
             try {
                 const result = await callApiGeneric(
-                    req.url.replace('/api/', ''),
+                    req.url.replace('/api/', '').replace(/\/$/, ''),
                     req.method.toLowerCase() as HttpMethod,
                     req.body
                 );
