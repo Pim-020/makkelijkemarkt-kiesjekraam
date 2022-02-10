@@ -1,3 +1,5 @@
+import {type} from "os";
+
 const axios = require('axios');
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { addDays, MONDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, requireEnv } from './util';
@@ -21,6 +23,7 @@ import {
     A_LIJST_DAYS,
     formatOndernemerName
 } from './domain-knowledge';
+import { MarktConfig } from 'model/marktconfig';
 
 const packageJSON = require('../package.json');
 
@@ -45,7 +48,7 @@ const mmConfig = {
     sessionKey      : 'mmsession',
     sessionLifetime : MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * 6,
 };
-const getApi = () =>
+const getApi = (): AxiosInstance =>
     axios.create({
         baseURL: mmConfig.baseUrl,
         headers: {
@@ -59,28 +62,33 @@ const login = (api: AxiosInstance) =>
         clientVersion : mmConfig.clientVersion,
     });
 
+export type HttpMethod = 'get' | 'post' | 'put' | 'delete';
+
+const createHttpFunction = (api: AxiosInstance, httpMethod: HttpMethod): ( url: string, token: string, data?) => Promise<AxiosResponse> => {
+    return (url: string, token: string, data?: JSON): Promise<AxiosResponse> => {
+        console.log(`## MM API ${httpMethod} CALL: `, url);
+        const headers =  {
+            Authorization: `Bearer ${token}`,
+        };
+
+        switch (httpMethod) {
+            case 'get': return api.get(url, { headers });
+            case 'post': return api.post(url, data,{ headers });
+            case 'put': return api.put(url, data,{ headers });
+            case 'delete': return api.delete(url, { headers });
+        }
+    };
+};
+
 const apiBase = (
     url: string,
-    requestBody?: string
+    httpMethod: HttpMethod = "get",
+    requestBody?,
+    throwError: boolean = false
 ): Promise<AxiosResponse> => {
     const api = getApi();
-    const getFunction = (url: string, token: string): AxiosResponse => {
-        console.log("## MM GET API CALL : ", url);
-        return api.get(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    };
 
-    const postFunction = (url: string, token: string): AxiosResponse => {
-        console.log("## MM POST API CALL : ", url);
-        return api.post(url, requestBody, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    };
+    const httpFunction = createHttpFunction(api, httpMethod);
 
     let counter50xRetry = 0;
     let counter40xRetry = 0;
@@ -94,7 +102,7 @@ const apiBase = (
                 sess: { 'token': res.data.uuid },
             }).then(() => res.data.uuid);
         }).then((token: string) => {
-            return getFunction(url, token);
+            return httpFunction(url, token, requestBody);
         });
     };
 
@@ -121,15 +129,16 @@ const apiBase = (
             }
         }
         counter40xRetry = 0;
+        if (throwError) throw error;
         return error;
     });
 
+
     return session.findByPk(mmConfig.sessionKey)
     .then((sessionRecord: any) => {
-        if (!sessionRecord) return retry(api);
-            return requestBody
-                ? postFunction(url, sessionRecord.dataValues.sess.token)
-                : getFunction(url, sessionRecord.dataValues.sess.token);
+        return sessionRecord ?
+               httpFunction(url, sessionRecord.dataValues.sess.token, requestBody) :
+               retry(api);
     });
 };
 
@@ -139,7 +148,7 @@ export const updateRsvp = (
     erkenningsNummer: string,
     attending: boolean,
 ): Promise<IRSVP> =>
-    apiBase('rsvp', `{"marktDate": "${marktDate}", "attending": ${attending}, "marktId": ${marktId}, "koopmanErkenningsNummer": "${erkenningsNummer}"}`).then(response => response.data);
+    apiBase('rsvp', "post", `{"marktDate": "${marktDate}", "attending": ${attending}, "marktId": ${marktId}, "koopmanErkenningsNummer": "${erkenningsNummer}"}`).then(response => response.data);
 
 //TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
 export const deleteRsvpsByErkenningsnummer = (erkenningsNummer) => null;
@@ -290,4 +299,10 @@ export const checkLogin = (): Promise<any> => {
     return login(api).then((res: AxiosResponse) =>
         console.log('Login OK'),
     );
+};
+
+export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON): Promise<AxiosResponse> => {
+    const result = await apiBase(endpoint, method, body, true);
+
+    return result.data;
 };
