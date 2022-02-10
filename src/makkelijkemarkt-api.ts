@@ -1,3 +1,5 @@
+import {type} from "os";
+
 const axios = require('axios');
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { addDays, MONDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, requireEnv } from './util';
@@ -81,7 +83,8 @@ const createHttpFunction = (api: AxiosInstance, httpMethod: HttpMethod): ( url: 
 const apiBase = (
     url: string,
     httpMethod: HttpMethod = "get",
-    requestBody?
+    requestBody?,
+    throwError: boolean = false
 ): Promise<AxiosResponse> => {
     const api = getApi();
 
@@ -126,6 +129,7 @@ const apiBase = (
             }
         }
         counter40xRetry = 0;
+        if (throwError) throw error;
         return error;
     });
 
@@ -298,7 +302,7 @@ export const checkLogin = (): Promise<any> => {
 };
 
 export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON): Promise<AxiosResponse> => {
-    const result = await apiBase(endpoint, method, body);
+    const result = await apiBase(endpoint, method, body, true);
 
     return result.data;
 };

@@ -68,7 +68,7 @@ import {
     indelingErrorStacktracePage,
 } from './routes/market-allocation';
 import { MarktConfig } from 'model';
-import { AxiosResponse } from 'axios';
+import {AxiosError, AxiosResponse} from 'axios';
 
 const csrfProtection = csrf({ cookie: true });
 
@@ -529,13 +529,18 @@ genericMMApiRoutes.forEach((genericApiRoute: string) => {
         `/api/${genericApiRoute}/*`,
         keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)),
         async (req: GrantedRequest, res: Response) => {
-            const result = await callApiGeneric(
-                req.url.replace('/api/', ''),
-                req.method.toLowerCase() as HttpMethod,
-                req.body
-            );
+            try {
+                const result = await callApiGeneric(
+                    req.url.replace('/api/', ''),
+                    req.method.toLowerCase() as HttpMethod,
+                    req.body
+                );
 
-            return res.send(result);
+                return res.send(result);
+            } catch (error) {
+                res.status( error.response.status);
+                return res.send({ statusText: error.response.statusText, message: error.response.data });
+            }
         }
     );
 });
