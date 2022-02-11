@@ -44,7 +44,7 @@ const MINUTES_IN_HOUR = 60;
 
 const MAX_RETRY_50X = 10;
 const MAX_RETRY_40X = 10;
-const EMPTY_BRANCH = "000-EMPTY"
+const EMPTY_BRANCH: BrancheId = "000-EMPTY"
 
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
@@ -363,11 +363,11 @@ export const getIndelingVoorkeuren = (
 //TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
 export const deleteVoorkeurenByErkenningsnummer = ( erkenningsNummer: string ) => null;
 
-export const convertVoorkeurRowToVoorkeur = (
+export const convertVoorkeurToVoorkeurRow = (
     obj: IMarktondernemerVoorkeur
 ): IMarktondernemerVoorkeurRow => ({
     ...obj,
-    brancheId: obj.branches[0] || EMPTY_BRANCH,
+    brancheId: obj.branches[0] as BrancheId || EMPTY_BRANCH,
     parentBrancheId: obj.branches.includes('bak') ? 'bak' : '',
     inrichting: obj.verkoopinrichting[0] || '',
 });
@@ -378,7 +378,9 @@ export const getVoorkeurByMarktEnOndernemer = (
 ): Promise<IMarktondernemerVoorkeurRow> =>
     apiBase(`marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`
 ).then(response =>
-    convertVoorkeurRowToVoorkeur( convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)[0] )
+    convertVoorkeurToVoorkeurRow(
+        convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)[0]
+    )
 );
 
 export const getVoorkeurenByMarkt = (

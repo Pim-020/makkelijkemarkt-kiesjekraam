@@ -105,7 +105,7 @@ class OndernemerMarktDetailPage extends React.Component {
                             </span>
                         </Alert>
                     ) : null }
-                    {!voorkeur || !voorkeur.brancheId || !branchesObj[voorkeur.brancheId] ? (
+                    {!algemeneVoorkeur || !algemeneVoorkeur.brancheId || !branchesObj[algemeneVoorkeur.brancheId] ? (
                         <Alert type="warning" inline={true}>
                             <span>
                                 U hebt uw <strong>koopwaar</strong> nog niet doorgegeven in het{' '}
@@ -120,7 +120,7 @@ class OndernemerMarktDetailPage extends React.Component {
                                 markt={markt}
                                 sollicitatie={sollicitatie}
                                 rsvpEntries={rsvpEntries}
-                                disabled={ !voorkeur || !voorkeur.brancheId || !branchesObj[voorkeur.brancheId] }
+                                disabled={ !voorkeur || !algemeneVoorkeur.brancheId || !branchesObj[algemeneVoorkeur.brancheId] }
                             />
                         </div>
                         <div className="col-1-2">
