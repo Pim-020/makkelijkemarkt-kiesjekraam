@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import csrf from 'csurf';
 import morgan from 'morgan';
 import path from 'path';
@@ -148,6 +149,9 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+if (process.env.ENABLE_CORS_FOR_ORIGIN) {
+    app.use(cors({ origin: process.env.ENABLE_CORS_FOR_ORIGIN }));
+}
 
 // Static files that are public (robots.txt, favicon.ico)
 app.use(express.static('./dist/'));
