@@ -293,11 +293,12 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
             krachtStroom: null,
             kraaminrichting: inrichting,
             anywhere: vk.anywhere,
-            absentFrom: vk.absentFrom || null,
-            absentUntil: vk.absentUntil || null,
             branches: branches,
             verkoopinrichting: inrichting,
         })
+
+        if (vk.absentFrom) result[result.length-1].absentFrom = vk.absentFrom;
+        if (vk.absentUntil) result[result.length-1].absentUntil = vk.absentUntil;
     })
 
     return result;
