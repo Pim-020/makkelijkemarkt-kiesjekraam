@@ -301,7 +301,7 @@ export const checkLogin = (): Promise<any> => {
     );
 };
 
-export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON): Promise<AxiosResponse> => {
+export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: any): Promise<AxiosResponse> => {
     const result = await apiBase(endpoint, method, body, true);
 
     return result.data;
