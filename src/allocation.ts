@@ -48,8 +48,8 @@ const mapMarktenToAfwijzingen = (markten: any): Promise<IAfwijzing[]> => {
     .reduce(flatten, []);
 };
 
-async function destroyAndCreateToewijzingenAfwijzingen(afkorting:string, 
-                                                       toewijzingen: IToewijzing[], 
+async function destroyAndCreateToewijzingenAfwijzingen(afkorting:string,
+                                                       toewijzingen: IToewijzing[],
                                                        afwijzingen: IAfwijzing[]) {
     const data:any = {
         "toewijzingen": toewijzingen,
