@@ -23,7 +23,7 @@ interface LotEditProps {
 export default class LotEdit extends Component<LotEditProps> {
     static contextType = MarketContext
     NameRef: RefObject<Input>
-    readonly state: { lot?: Lot, properties: string[], obstacleTypes: string[], currentPosition?: [number, number, number] } = { properties: [], obstacleTypes: [] }
+    readonly state: { lot?: Lot, obstacleTypes: string[], currentPosition?: [number, number, number] } = { obstacleTypes: [] }
     // propertyService: LotPropertyService
     // obstacleTypeService: ObstacleTypeService
 
@@ -47,16 +47,16 @@ export default class LotEdit extends Component<LotEditProps> {
 
     componentDidMount = () => {
         console.log(this.context.obstakel, this.context.plaatseigenschap)
-        mmApiService(`/api/mm/obstakeltypes`).then((obstacleTypes: string[]) => {
-            obstacleTypes.sort((a, b) => {
-                if (a < b) { return -1 }
-                if (a > b) { return 1 }
-                return 0
-            })
-            this.setState({
-                obstacleTypes
-            })
-        })
+        // mmApiService(`/api/mm/obstakeltypes`).then((obstacleTypes: string[]) => {
+        //     obstacleTypes.sort((a, b) => {
+        //         if (a < b) { return -1 }
+        //         if (a > b) { return 1 }
+        //         return 0
+        //     })
+        //     this.setState({
+        //         obstacleTypes
+        //     })
+        // })
     }
 
     isBakPresent = (): boolean => {
@@ -259,8 +259,8 @@ export default class LotEdit extends Component<LotEditProps> {
                                             })
                                         }}
                                     >
-                                        {this.state.obstacleTypes.sort().map((br, i) => {
-                                            return <Select.Option key={i} value={br}>{br}</Select.Option>
+                                        {this.context.obstakel.sort().map((o: INaam) => {
+                                            return <Select.Option key={o.id} value={o.naam}>{o.naam}</Select.Option>
                                         })}
                                     </Select>
                                 </Col>
