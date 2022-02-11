@@ -73,7 +73,12 @@ const IndelingslijstGroup = ({
                         const toewijzing = toewijzingen.find(({ plaatsen }) => plaatsen.includes(plaatsNr));
 
                         const ingedeeldeOndernemer = toewijzing ? ondernemers.find(
-                            ({ erkenningsNummer }) => erkenningsNummer === toewijzing.erkenningsNummer,
+                            ({ erkenningsNummer }) => {
+                                if(toewijzing.koopman){
+                                    toewijzing.erkenningsNummer = toewijzing.koopman;
+                                }
+                                return erkenningsNummer === toewijzing.erkenningsNummer;
+                            },
                         ) : null;
 
                         const plaats         = plaatsList[plaatsNr];

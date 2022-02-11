@@ -15,6 +15,12 @@ const timezoneTime = getTimezoneTime();
 timezoneTime.add(INDELING_DAG_OFFSET, 'days');
 const marktDate = timezoneTime.format('YYYY-MM-DD');
 
+import { ConceptQueue } from './concept-queue';
+const conceptQueue = new ConceptQueue();
+const client = conceptQueue.getClient();
+import { createAllocations } from './makkelijkemarkt-api';
+import { getAllocations } from './makkelijkemarkt-api';
+
 const mapMarktenToToewijzingen = (markten: any): Promise<IToewijzing[]> => {
     return markten
     .map((markt: any) =>
@@ -42,13 +48,30 @@ const mapMarktenToAfwijzingen = (markten: any): Promise<IAfwijzing[]> => {
     .reduce(flatten, []);
 };
 
-async function destroyAndCreateToewijzingenAfwijzingen(toewijzingen: IToewijzing[], afwijzingen: IAfwijzing[]) {
-    const transaction = await sequelize.transaction();
-    await models.allocation.destroy({ where: { marktDate }, transaction });
-    await models.afwijzing.destroy({ where: { marktDate }, transaction });
-    await models.allocation.bulkCreate(toewijzingen, { validate: true }, transaction);
-    await models.afwijzing.bulkCreate(afwijzingen, { validate: true }, transaction);
-    await transaction.commit();
+async function destroyAndCreateToewijzingenAfwijzingen(afkorting:string, 
+                                                       toewijzingen: IToewijzing[], 
+                                                       afwijzingen: IAfwijzing[]) {
+    const data:any = {
+        "toewijzingen": toewijzingen,
+        "afwijzingen": afwijzingen
+    }
+    try{
+        const result = await createAllocations(afkorting, marktDate, data);
+        if(result.status){
+            console.log("status: ", result.status);
+        }else{
+            console.log("status: ", result.response.status);
+            console.log("resp: ", result.response.data);
+            console.log("post data: ", result.config.data);
+        }
+    }catch(error){
+        console.log("error: ", error);
+    }
+
+}
+
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function allocate() {
@@ -70,29 +93,33 @@ async function allocate() {
             process.exit(0);
         }
 
-        const indelingen = await Promise.all(markten.map((markt: MMMarkt) => {
-                let prom = calculateIndelingslijst(String(markt.id), marktDate)
-                console.log(prom);
-								return prom;
+        const indelingen_ids = await Promise.all(markten.map((markt: MMMarkt) => {
+                let indeling = calculateIndelingslijst(String(markt.id), marktDate)
+                return indeling;
             })
         );
 
-        console.log(indelingen);
-
-        //const toewijzingen = await mapMarktenToToewijzingen(indelingen);
-        //const afwijzingen = await mapMarktenToAfwijzingen(indelingen);
-
-        //const toewijzingenEnriched = await Promise.all(
-        //    toewijzingen.map(toewijzing => getToewijzingEnriched(toewijzing)
-        //));
-
-        //const afwijzingenEnriched = await Promise.all(
-        //    afwijzingen.map(afwijzing => getAfwijzingEnriched(afwijzing)
-        //));
-
-        //await destroyAndCreateToewijzingenAfwijzingen(toewijzingenEnriched, afwijzingenEnriched);
-
+        for(var ind in indelingen_ids){
+            let res = null;
+            while(res === null){
+                const jobId = indelingen_ids[ind];
+                console.log("waiting for job id:", jobId);
+                await timeout(1000);
+                res = await client.get("RESULT_"+jobId);
+            }
+            const data = JSON.parse(res);
+            if(data["error_id"] === undefined){
+                const marktId:string = data["markt"]["id"];
+                await destroyAndCreateToewijzingenAfwijzingen(marktId, data["toewijzingen"], data["afwijzingen"]);
+                const allocs = await getAllocations(marktId, marktDate); 
+                console.log(allocs.data);
+            }else{
+                console.log(data);
+            }
+        }
+        console.log("done");
         process.exit(0);
+
     } catch(e) {
         console.log(e);
         process.exit(1);

@@ -1,5 +1,6 @@
 const Queue = require('bee-queue');
 const redis = require("redis");
+const util = require('util');
 
 export class ConceptQueue{
     client: any;
@@ -29,6 +30,7 @@ export class ConceptQueue{
                 }
             }
         );
+        this.client.get = util.promisify(this.client.get);
 
         this.client.on('connect', function(){
             console.log('Connected to Redis');

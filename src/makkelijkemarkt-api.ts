@@ -496,7 +496,6 @@ export const getALijst = (
     marktId: string,
     marktDate: string
 ): Promise<MMOndernemer[]> => {
-    console.log("get alijst");
     const day = new Date(marktDate).getDay();
 
     if (A_LIJST_DAYS.includes(day)) {
@@ -536,3 +535,21 @@ export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?
 
     return result.data;
 };
+
+export async function createAllocations(marktId:string,
+                                date:string,
+                                data:Object): Promise<any>{
+    let url:string = `allocation/${marktId}/${date}`
+    let obj:string = JSON.stringify(data);
+    return apiBase(url, obj).then(response => {
+        return response
+    });
+}
+
+export async function getAllocations(marktId:string,
+                                     date:string): Promise<any>{
+    let url:string = `allocation/${marktId}/${date}`
+    return apiBase(url).then(response => {
+        return response
+    });
+}

@@ -27,6 +27,7 @@ import {
     getPlaatsvoorkeuren,
     getIndelingVoorkeuren,
     getVoorkeurenByMarkt,
+    getAllocations,
 } from './makkelijkemarkt-api';
 
 import { calcToewijzingen } from './indeling';
@@ -243,8 +244,10 @@ export const getIndelingslijst = (
 ) => {
     return Promise.all([
         getMarktDetails(marktId, marktDate),
-        getToewijzingen(marktId, marktDate)
-    ]).then(([marktDetails, toewijzingen]) => {
+        // getToewijzingen(marktId, marktDate),
+        getAllocations(marktId, marktDate)
+    ]).then(([marktDetails, tws]) => {
+        let toewijzingen = tws["data"];
         return {
             ...marktDetails,
             toewijzingen
@@ -252,28 +255,24 @@ export const getIndelingslijst = (
     });
 };
 
-export const calculateIndelingslijst = (
+export const calculateIndelingslijst = async (
     marktId: string,
     date: string,
 ) => {
-    console.log(">>>> ", marktId, date);
-    return getCalculationInput(marktId, date).then(data => {
-            data = JSON.parse(JSON.stringify(data));
-            console.log("GET CALC INPUT");
-            const job = allocationQueue.createJob(data);
-            job.save().then(
-                (job: any) => {
-                    console.log("allocation job: ", job.id);
-                }
-            ).catch(error => {
-                console.log("job error: ", error);
-                if(!client.connected){
-                    console.log("connetction error: ", error);
-                    return;
-                }
-                allocationQueue = conceptQueue.getQueueForDispatcher();
-            });
-        });
+   try{
+        let data = await getCalculationInput(marktId, date);
+        data = JSON.parse(JSON.stringify(data));
+        const job = allocationQueue.createJob(data);
+        const result = await job.save();
+        return result.id;
+    }catch(error){
+        console.log("job error: ", error);
+        if(!client.connected){
+            console.log("REDIS: connection error: ", error);
+            return;
+        }
+        allocationQueue = conceptQueue.getQueueForDispatcher();
+    }
 };
 
 

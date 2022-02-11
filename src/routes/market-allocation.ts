@@ -18,7 +18,6 @@ const client = conceptQueue.getClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
-    console.log(">>>> ", marktId, marktDate);
     getCalculationInput(marktId, marktDate).then(data => {
             data = JSON.parse(JSON.stringify(data));
             const job = allocationQueue.createJob(data);
@@ -45,6 +44,7 @@ export const indelingPage = (req: GrantedRequest, res: Response, type: string = 
 
     getIndelingslijst(marktId, marktDate)
     .then(indeling => {
+        console.log("indeling: ", indeling);
         res.render('IndelingslijstPage.tsx', {
             ...indeling,
             type,
@@ -55,9 +55,10 @@ export const indelingPage = (req: GrantedRequest, res: Response, type: string = 
     }, internalServerErrorPage(res));
 };
 
-export const indelingLogsPage = (req: GrantedRequest, res: Response) => {
+export const indelingLogsPage = async (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
-    client.get("LOGS_"+jobId, function(err, reply){
+    try{
+        const reply:any = await client.get("LOGS_"+jobId);
         if(reply){
             const type = "concept-indeling-logs";
             const data = JSON.parse(reply);
@@ -69,12 +70,15 @@ export const indelingLogsPage = (req: GrantedRequest, res: Response) => {
                 user  : getKeycloakUser(req)
             });
         }
-    });
+    }catch(error){
+        console.log(error);
+    }
 }
 
-export const indelingInputJobPage = (req: GrantedRequest, res: Response) => {
+export const indelingInputJobPage = async (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
-    client.get("JOB_"+jobId, function(err, reply){
+    try{
+        const reply:any  = await client.get("JOB_"+jobId);
         if(reply){
             const data = JSON.parse(reply);
             const jsonPretty = JSON.stringify(data,null,2);
@@ -82,27 +86,33 @@ export const indelingInputJobPage = (req: GrantedRequest, res: Response) => {
                 data: jsonPretty
             });
         }
-    });
+    }catch(error){
+        console.log(error);
+    }
 }
 
-export const indelingErrorStacktracePage = (req: GrantedRequest, res: Response) => {
+export const indelingErrorStacktracePage = async (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
-    client.get("ERROR_"+jobId, function(err, reply){
+    try{
+        const reply:any = await client.get("ERROR_"+jobId);
         if(reply){
             res.render('IndelingsInputJobPage.tsx', {
                 data: reply
             });
         }
-    });
+    }catch(error){
+        console.log(error);
+    }
 }
 
 function allocationHasFailed(resultData: any){
     return resultData["error"] !== undefined;
 }
 
-export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
-    const { jobId } = req.params;
-    client.get("RESULT_"+jobId, function(err, reply){
+export const indelingWaitingPage = async (req: GrantedRequest, res: Response) => {
+    try{
+        const { jobId } = req.params;
+        const reply:any = await client.get("RESULT_"+jobId);
         if (!reply) {
             return res.render('WaitingPage.jsx');
         }
@@ -125,5 +135,7 @@ export const indelingWaitingPage = (req: GrantedRequest, res: Response) => {
             role  : Roles.MARKTMEESTER,
             user  : getKeycloakUser(req)
         });
-    });
+    }catch(error){
+        console.log(error);
+    }
 };
