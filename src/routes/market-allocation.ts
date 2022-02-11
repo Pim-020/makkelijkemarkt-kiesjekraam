@@ -44,7 +44,6 @@ export const indelingPage = (req: GrantedRequest, res: Response, type: string = 
 
     getIndelingslijst(marktId, marktDate)
     .then(indeling => {
-        console.log("indeling: ", indeling);
         res.render('IndelingslijstPage.tsx', {
             ...indeling,
             type,
