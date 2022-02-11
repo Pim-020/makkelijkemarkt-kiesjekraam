@@ -183,17 +183,43 @@ app.get('/', (req: Request, res: Response) => {
     res.render('HomePage');
 });
 
+app.post('/initial/:marktName/:marktId', async (req, res) => {
+    const marktPath = path.join(__dirname, '..', 'tmp', 'config', 'markt', req.params.marktName);
+    const payload = {};
+    ['branches', 'geografie', 'locaties', 'markt', 'paginas'].forEach((fileName: string) => {
+        payload[fileName] = require(path.join(marktPath, `${fileName}.json`))
+        payload['marktOpstelling'] = payload['markt']
+    })
+    console.log(payload)
+    try {
+        const result = await callApiGeneric(
+            `/markt/${req.params.marktId}/marktconfiguratie`,
+            req.method.toLowerCase() as HttpMethod,
+            payload,
+        );
+
+        res.send(result);
+    } catch (error) {
+        res.status( error.response.status);
+        res.send({ statusText: error.response.statusText, message: error.response.data });
+    }
+});
+
 app.get('/bdm/*', keycloak.protect(Roles.MARKTMEESTER), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
 });
 
-app.get('/api/markt', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
+app.get('/api/markt',
+    // keycloak.protect(Roles.MARKTMEESTER),
+    (req: GrantedRequest, res: Response) => {
     getMarkten(true).then((markten: any) => {
         res.send(markten);
     }, internalServerErrorPage(res));
 });
 
-app.get('/api/markt/:marktId', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
+app.get('/api/markt/:marktId',
+    // keycloak.protect(Roles.MARKTMEESTER),
+    (req: GrantedRequest, res: Response) => {
     getMarkt(req.params.marktId).then((markt: any) => {
         res.send(markt);
     }, internalServerErrorPage(res));
@@ -531,7 +557,7 @@ app.post(
 genericMMApiRoutes.forEach((genericApiRoute: string) => {
     app.all(
         `/api/${genericApiRoute}/*`,
-        keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)),
+        // keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)),
         async (req: GrantedRequest, res: Response) => {
             try {
                 const result = await callApiGeneric(
