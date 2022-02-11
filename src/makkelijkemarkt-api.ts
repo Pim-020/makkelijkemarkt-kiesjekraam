@@ -187,6 +187,9 @@ const convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray = (
     plaatsvoorkeuren: MMMarktPlaatsvoorkeuren[]
 ): IPlaatsvoorkeur[] => {
     let result = [];
+    if(plaatsvoorkeuren === undefined){
+        return result;
+    }
     plaatsvoorkeuren.forEach( (pv) => {
         result = result.concat(
             pv.plaatsen.map( (plaats, index) => ({
@@ -267,6 +270,9 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
     marktvoorkeuren: MMarktondernemerVoorkeur[]
 ): IMarktondernemerVoorkeur[] => {
     let result = [];
+    if(marktvoorkeuren === undefined){
+        return result;
+    }
 
     marktvoorkeuren.forEach( (vk) => {
         let branches = [];
@@ -314,7 +320,10 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
         branche = marktvoorkeur.branches[0] as BrancheId;
     }
 
-    let hasInrichting = marktvoorkeur.verkoopinrichting[0] || marktvoorkeur.kraaminrichting ? true: false;
+    let hasInrichting:boolean = false;
+    if (marktvoorkeur.verkoopinrichting !== undefined){
+        hasInrichting = marktvoorkeur.verkoopinrichting[0] || marktvoorkeur.kraaminrichting ? true: false;
+    }
 
     let result: MMarktondernemerVoorkeur = {
         "koopman": marktvoorkeur.erkenningsNummer,
@@ -366,12 +375,17 @@ export const deleteVoorkeurenByErkenningsnummer = ( erkenningsNummer: string ) =
 
 export const convertVoorkeurToVoorkeurRow = (
     obj: IMarktondernemerVoorkeur
-): IMarktondernemerVoorkeurRow => ({
-    ...obj,
-    brancheId: obj.branches[0] as BrancheId || EMPTY_BRANCH,
-    parentBrancheId: obj.branches.includes('bak') ? 'bak' : '',
-    inrichting: obj.verkoopinrichting[0] || '',
-});
+): IMarktondernemerVoorkeurRow => {
+    if(obj === undefined){
+        return null;
+    }
+    return {
+        ...obj,
+        brancheId: obj.branches[0] as BrancheId || EMPTY_BRANCH,
+        parentBrancheId: obj.branches.includes('bak') ? 'bak' : '',
+        inrichting: obj.verkoopinrichting[0] || '',
+    }
+}
 
 export const getVoorkeurByMarktEnOndernemer = (
     marktId: string,
