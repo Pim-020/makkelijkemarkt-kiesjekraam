@@ -1,7 +1,8 @@
 import { Col, Input, Row, Select, Checkbox, Radio, Button } from "antd"
 import { CheckboxChangeEvent } from "antd/lib/checkbox"
 import React, { Component, createRef, CSSProperties, RefObject } from "react"
-import { AssignedBranche, Lot } from "../models"
+import { capitalize } from 'lodash'
+import { AssignedBranche, INaam, Lot } from "../models"
 // import { LotPropertyService, ObstacleTypeService } from "../services/service_lookup"
 import { mmApiService } from "../services/service_mm_api"
 import { MarketContext } from '../components/MarketDataWrapper'
@@ -46,16 +47,6 @@ export default class LotEdit extends Component<LotEditProps> {
 
     componentDidMount = () => {
         console.log(this.context.obstakel, this.context.plaatseigenschap)
-        mmApiService(`/api/mm/plaatseigenschappen`).then((properties: string[]) => {
-            properties.sort((a, b) => {
-                if (a < b) { return -1 }
-                if (a > b) { return 1 }
-                return 0
-            })
-            this.setState({
-                properties
-            })
-        })
         mmApiService(`/api/mm/obstakeltypes`).then((obstacleTypes: string[]) => {
             obstacleTypes.sort((a, b) => {
                 if (a < b) { return -1 }
@@ -348,11 +339,11 @@ export default class LotEdit extends Component<LotEditProps> {
                                 {this.isBakPresent() &&
                                 <Col style={colStyle}><Checkbox checked={this.getBak()} onChange={this.setBak} /><br />Bak</Col>
                                 }
-                                {this.state.properties && this.state.properties.map((prop: string, i: number) => {
-                                    return <Col key={i} style={colStyle}>
-                                        <Checkbox id={prop} checked={this.getProperty(prop)} onChange={this.setProperty} />
+                                {this.context.plaatseigenschap.map((prop: INaam) => {
+                                    return <Col key={prop.id} style={colStyle}>
+                                        <Checkbox id={prop.naam} checked={this.getProperty(prop.naam)} onChange={this.setProperty} />
                                         <br />
-                                        {prop.charAt(0).toUpperCase() + prop.slice(1)}
+                                        {capitalize(prop.naam)}
                                     </Col>
                                 })}
 
