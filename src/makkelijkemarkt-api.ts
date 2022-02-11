@@ -260,7 +260,7 @@ export const updatePlaatsvoorkeur = (
     plaatsvoorkeuren: IPlaatsvoorkeur[]
 ): Promise<IPlaatsvoorkeur> => {
     let pv =  convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren(plaatsvoorkeuren);
-    return apiBase('plaatsvoorkeur', JSON.stringify(pv) ).then(response => response.data);
+    return apiBase('plaatsvoorkeur', 'post', JSON.stringify(pv) ).then(response => response.data);
 }
 
 const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
@@ -338,6 +338,7 @@ export const updateMarktVoorkeur = (
 ): Promise<MMarktondernemerVoorkeur> =>
     apiBase(
         'marktvoorkeur',
+        'post',
         JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur))
 ).then(response => response.data);
 
