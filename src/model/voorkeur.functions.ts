@@ -1,14 +1,10 @@
-import { Op } from 'sequelize';
-
 import { isVast } from '../domain-knowledge';
 
 import {
-    IMarktondernemerVoorkeur,
-    IMarktondernemerVoorkeurRow
+    IMarktondernemerVoorkeurRow,
 } from '../markt.model';
 
 import { MMSollicitatie } from '../makkelijkemarkt.model';
-import { Voorkeur } from './voorkeur.model';
 
 export const getDefaultVoorkeur = (
     sollicitatie: MMSollicitatie
@@ -44,48 +40,3 @@ export const voorkeurenFormData = (
     return voorkeur;
 };
 
-export const deleteVoorkeurenByErkenningsnummer = (
-    erkenningsNummer: string
-) =>
-    Voorkeur.destroy({ where: { erkenningsNummer } });
-
-export const getVoorkeurenByMarkt = (
-    marktId: string
-): Promise<IMarktondernemerVoorkeur[]> =>
-    Voorkeur.findAll({
-        where: { marktId },
-        raw: true
-    });
-
-export const getVoorkeurenByOndernemer = (
-    erkenningsNummer: string
-): Promise<IMarktondernemerVoorkeur[]> =>
-    Voorkeur.findAll({
-        where: { erkenningsNummer },
-        raw: true
-    });
-
-export const getVoorkeurByMarktEnOndernemer = (
-    marktId: string,
-    erkenningsNummer: string
-): Promise<IMarktondernemerVoorkeurRow> =>
-    Voorkeur.findOne({
-        where: { erkenningsNummer, marktId },
-        raw: true
-    });
-
-export const getVoorkeurenAbsentByMarkt = (
-    marktId: string
-): Promise<IMarktondernemerVoorkeur[]> =>
-    Voorkeur.findAll({
-        where: {
-            marktId,
-            absentFrom: {
-                [Op.ne]: null
-            },
-            absentUntil: {
-                [Op.ne]: null
-            },
-        },
-        raw: true
-    });

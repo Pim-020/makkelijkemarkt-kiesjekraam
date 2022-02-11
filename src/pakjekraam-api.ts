@@ -26,11 +26,8 @@ import {
     getOndernemersByMarkt,
     getPlaatsvoorkeuren,
     getIndelingVoorkeuren,
+    getVoorkeurenByMarkt,
 } from './makkelijkemarkt-api';
-
-import {
-    getVoorkeurenByMarkt
-} from './model/voorkeur.functions';
 
 import { calcToewijzingen } from './indeling';
 
