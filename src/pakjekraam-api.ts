@@ -186,7 +186,7 @@ export const getMarktDetails = (
     marktId: string,
     marktDate: string
 ) => {
-    console.log("get marker details: ", marktId, marktDate);
+    console.log("get market details: ", marktId, marktDate);
     const marktBasics = getMarktBasics(marktId);
 
     // Populate the `ondernemer.voorkeur` field
@@ -244,7 +244,6 @@ export const getIndelingslijst = (
 ) => {
     return Promise.all([
         getMarktDetails(marktId, marktDate),
-        // getToewijzingen(marktId, marktDate),
         getAllocations(marktId, marktDate)
     ]).then(([marktDetails, tws]) => {
         let toewijzingen = tws["data"];

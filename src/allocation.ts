@@ -111,7 +111,7 @@ async function allocate() {
             if(data["error_id"] === undefined){
                 const marktId:string = data["markt"]["id"];
                 await destroyAndCreateToewijzingenAfwijzingen(marktId, data["toewijzingen"], data["afwijzingen"]);
-                const allocs = await getAllocations(marktId, marktDate); 
+                const allocs = await getAllocations(marktId, marktDate);
                 console.log(allocs.data);
             }else{
                 console.log(data);
