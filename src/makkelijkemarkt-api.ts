@@ -14,6 +14,7 @@ import {
 } from './makkelijkemarkt.model';
 
 import {
+    BrancheId,
     IRSVP,
     IMarktondernemer,
     IPlaatsvoorkeur,
@@ -276,11 +277,11 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
         }
 
         if (vk.branche) {
-            branches.push(vk.branche);
+            branches.push(vk.branche as BrancheId);
         }
 
         if (vk.isBak) {
-            branches.push('bak');
+            branches.push('bak' as BrancheId);
         }
 
         result.push( {
@@ -306,13 +307,13 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     marktvoorkeur: IMarktondernemerVoorkeur
 ): MMarktondernemerVoorkeur => {
     let isBak = false;
-    let branche = EMPTY_BRANCH;
-    if(marktvoorkeur.branches !== null ){
+    let branche = null;
+    if( marktvoorkeur.branches !== null ){
         if (marktvoorkeur.branches.includes("bak")) isBak = true;
-        branche = marktvoorkeur.branches[0];
+        branche = marktvoorkeur.branches[0] as BrancheId;
     }
 
-    let hasInrichting = marktvoorkeur.verkoopinrichting || marktvoorkeur.kraaminrichting ? true: false;
+    let hasInrichting = marktvoorkeur.verkoopinrichting[0] || marktvoorkeur.kraaminrichting ? true: false;
 
     let result: MMarktondernemerVoorkeur = {
         "koopman": marktvoorkeur.erkenningsNummer,
