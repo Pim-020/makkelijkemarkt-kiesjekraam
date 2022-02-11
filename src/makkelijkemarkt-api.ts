@@ -541,7 +541,7 @@ export async function createAllocations(marktId:string,
                                 data:Object): Promise<any>{
     let url:string = `allocation/${marktId}/${date}`
     let obj:string = JSON.stringify(data);
-    return apiBase(url, obj).then(response => {
+    return apiBase(url, "post", obj).then(response => {
         return response
     });
 }
@@ -549,7 +549,7 @@ export async function createAllocations(marktId:string,
 export async function getAllocations(marktId:string,
                                      date:string): Promise<any>{
     let url:string = `allocation/${marktId}/${date}`
-    return apiBase(url).then(response => {
+    return apiBase(url, "get").then(response => {
         return response
     });
 }
