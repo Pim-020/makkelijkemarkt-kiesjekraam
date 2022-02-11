@@ -42,6 +42,8 @@ const MarketDataWrapper: React.FC<{match: any}> = (props) => {
             marktId,
             genericBranches: genericBranches.data,
             marktConfig: marktConfig.data,
+            obstakel: obstakel.data,
+            plaatseigenschap: plaatseigenschap.data,
         }
         return (
             <MarketContext.Provider value={marketContext}>

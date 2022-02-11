@@ -4,8 +4,9 @@ import React, { Component, createRef, CSSProperties, RefObject } from "react"
 import { AssignedBranche, Lot } from "../models"
 // import { LotPropertyService, ObstacleTypeService } from "../services/service_lookup"
 import { mmApiService } from "../services/service_mm_api"
+import { MarketContext } from '../components/MarketDataWrapper'
 
-import { //CopyOutlined, 
+import { //CopyOutlined,
     DeleteOutlined, PlusOutlined
 } from '@ant-design/icons'
 import { RadioChangeEvent } from "antd/lib/radio"
@@ -19,6 +20,7 @@ interface LotEditProps {
 }
 
 export default class LotEdit extends Component<LotEditProps> {
+    static contextType = MarketContext
     NameRef: RefObject<Input>
     readonly state: { lot?: Lot, properties: string[], obstacleTypes: string[], currentPosition?: [number, number, number] } = { properties: [], obstacleTypes: [] }
     // propertyService: LotPropertyService
@@ -43,6 +45,7 @@ export default class LotEdit extends Component<LotEditProps> {
     }
 
     componentDidMount = () => {
+        console.log(this.context.obstakel, this.context.plaatseigenschap)
         mmApiService(`/api/mm/plaatseigenschappen`).then((properties: string[]) => {
             properties.sort((a, b) => {
                 if (a < b) { return -1 }
@@ -353,11 +356,11 @@ export default class LotEdit extends Component<LotEditProps> {
                                     </Col>
                                 })}
 
-                                
+
                             </Row>
                         </>}
                     <Row gutter={formGutter}>
-                        
+
                     </Row>
                 </div>}
         </div>

@@ -1,3 +1,8 @@
+export interface INaam {
+    naam: string
+    id: number
+}
+
 export interface Plan {
     name: string
     pages: number
@@ -132,7 +137,6 @@ export interface DayOfWeek {
     id: number
     name: string
     abbreviation: string
-
 }
 
 export interface IMarktConfiguratie {
@@ -145,8 +149,10 @@ export interface IMarktConfiguratie {
 
 export interface IMarketContext {
     marktId: string
-    genericBranches: Branche[],
-    marktConfig: IMarktConfiguratie,
+    genericBranches: Branche[]
+    marktConfig: IMarktConfiguratie
+    obstakel: INaam[]
+    plaatseigenschap: INaam[]
 }
 
 export interface IApiError extends Error {
