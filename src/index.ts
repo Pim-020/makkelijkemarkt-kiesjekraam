@@ -157,7 +157,7 @@ if (process.env.ENABLE_CORS_FOR_ORIGIN) {
 app.use(express.static('./dist/'));
 
 // serve BewerkDeMarkten React build via static
-app.use('/bdm/static', express.static('bdm/build/static', { index: false }));
+app.use('/bdm(/|/*/)static', express.static('bdm/build/static', { index: false }));
 
 app.use(sessionMiddleware());
 app.use(keycloak.middleware({ logout: '/logout' }));
