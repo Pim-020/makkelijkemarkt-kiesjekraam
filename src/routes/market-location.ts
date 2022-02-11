@@ -131,8 +131,6 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
     const insertAlgVoorkeurFormData = () => {
         console.log('algemene voorkeuren opslaan...');
 
-
-        console.log(req.body)
         let vk = (
             {
                 erkenningsNummer,
