@@ -221,7 +221,11 @@ app.get('/api/markt/:marktId',
     // keycloak.protect(Roles.MARKTMEESTER),
     (req: GrantedRequest, res: Response) => {
     getMarkt(req.params.marktId).then((markt: any) => {
-        res.send(markt);
+        if (markt) {
+            res.send(markt);
+        } else {
+            res.status(404).send(markt);
+        }
     }, internalServerErrorPage(res));
 });
 
