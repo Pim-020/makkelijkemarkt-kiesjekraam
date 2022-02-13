@@ -2,8 +2,6 @@ import React, { createRef, MouseEvent, RefObject, KeyboardEvent, useEffect, useS
 import Day from "../components/Day"
 // import MarketsService from "../services/service_markets"
 import { Transformer } from "../services/transformer"
-import { mmApiSaveService } from "../services/service_mm_api"
-import { DynamicBase } from "./DynamicBase"
 import { Breadcrumb, Tabs, Row, Col, //Button, Upload
     } from 'antd'
 import { HomeOutlined, //UploadOutlined, FileZipOutlined
@@ -17,6 +15,7 @@ import { validateLots } from "../common/validator"
 //import { zipMarket } from "../common/generic"
 
 import MarketDataWrapper, { MarketContext } from '../components/MarketDataWrapper'
+import SaveButton from '../components/SaveButton'
 
 const { TabPane } = Tabs
 
@@ -87,8 +86,8 @@ class MarketPage extends React.Component {
             const paginas = this.transformer.layoutToPages(pages)
             const branches = this.transformer.decodeBranches(this.state.marketEventDetails.branches)
 
-            const marktConfiguratie = {branches, locaties, markt:marktOpstelling, geografie, paginas}
-            mmApiSaveService(`/api/markt/${this.context.marktId}/marktconfiguratie/`, marktConfiguratie)
+            const marktConfiguratie = { branches, locaties, marktOpstelling, geografie, paginas }
+            this.context.saveMarktConfig(marktConfiguratie)
         }
     }
 
@@ -128,7 +127,7 @@ class MarketPage extends React.Component {
                     </>
                 }
             </Breadcrumb>
-            <button onClick={this.save.bind(this)}>SAVE</button>
+            <SaveButton clickHandler={this.save.bind(this)} saveInProgress={this.context.saveInProgress}>Marktconfiguratie opslaan</SaveButton>
             <Row align="top" gutter={[16, 16]}>
                 <Col>
                     {/* {this.state.uploadProps &&

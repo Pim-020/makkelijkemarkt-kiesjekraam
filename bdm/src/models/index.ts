@@ -80,6 +80,7 @@ export interface Geography {
 
 // Branches for the general Branches list
 export interface IBranche {
+    id: number
     brancheId: string
     number?: number
     description: string

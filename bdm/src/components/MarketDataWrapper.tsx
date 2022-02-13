@@ -1,33 +1,35 @@
 import { some, every} from 'lodash'
 import React from 'react'
+import { RouteComponentProps } from 'react-router-dom'
+import {Progress} from 'antd'
 
 import { IMarketContext } from '../models'
-import { useGenericBranches, useMarktConfig, useObstakel, usePlaatseigenschap } from '../hooks'
+import { useGenericBranches, useMarkt, useMarktConfig, useObstakel, usePlaatseigenschap, useSaveMarktConfig } from '../hooks'
 
 export const MarketContext = React.createContext<Partial<IMarketContext>>({});
 
-const MarketDataWrapper: React.FC<{match: any}> = (props) => {
-    console.log(props)
+const MarketDataWrapper: React.FC<RouteComponentProps<{id: string}>> = (props) => {
     const marktId = props.match.params.id
+    const { mutate: saveMarktConfig, isLoading:saveInProgress } = useSaveMarktConfig(marktId)
 
+    const markt = useMarkt(marktId)
     const marktConfig = useMarktConfig(marktId)
-    // const markt = useMarkt(marktId)
     const genericBranches = useGenericBranches()
     const obstakel = useObstakel()
     const plaatseigenschap = usePlaatseigenschap()
-
-    const data = [marktConfig, genericBranches, obstakel, plaatseigenschap]
+    const data = [markt, marktConfig, genericBranches, obstakel, plaatseigenschap]
 
     if (some(data, item => item.isLoading)) {
+        const percent = (data.filter(item => item.isSuccess).length / data.length) * 100
         return (
-            <h1>Loading</h1>
+            <Progress type="circle" percent={percent} />
         )
     }
     if (some(data, item => item.isError)) {
         console.log(data)
-        // if (markt.error?.status === 404) {
-        //     return (<h1>Markt bestaat helemaal niet</h1>)
-        // }
+        if (markt.error?.status === 404) {
+            return (<h1>Markt bestaat helemaal niet</h1>)
+        }
         if (marktConfig.error?.status === 404) {
             return (<h1>MarktConfig bestaat niet - nieuwe aanmaken</h1>)
         }
@@ -40,8 +42,11 @@ const MarketDataWrapper: React.FC<{match: any}> = (props) => {
         console.log(data)
         const marketContext: Partial<IMarketContext> = {
             marktId,
-            genericBranches: genericBranches.data,
+            saveMarktConfig,
+            saveInProgress,
+            markt: markt.data,
             marktConfig: marktConfig.data,
+            genericBranches: genericBranches.data,
             obstakel: obstakel.data,
             plaatseigenschap: plaatseigenschap.data,
         }

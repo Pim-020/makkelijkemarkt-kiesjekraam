@@ -2,22 +2,19 @@ import { Breadcrumb, Button, Input, Popover } from "antd"
 import React, { ChangeEvent, Component } from "react"
 import { Link } from "react-router-dom"
 import { HomeOutlined } from '@ant-design/icons'
+import { some, every} from 'lodash'
 import { Branche } from "../models"
-import { BrancheService } from "../services/service_lookup"
-import { mmApiService } from "../services/service_mm_api"
+import { useGenericBranches } from '../hooks'
 import {
     DeleteOutlined, PlusOutlined, BgColorsOutlined,
-    // UploadOutlined 
 } from '@ant-design/icons'
 import { getTextColor } from '../common/generic'
 import CSS from 'csstype'
 import { ChromePicker } from 'react-color'
 import { message } from 'antd'
 
-export default class BrancheListPage extends Component {
-
-    readonly state: { dirtybits: boolean, branches: Branche[], displayColorPicker: boolean } = {
-        dirtybits: false,
+class BrancheListPage extends Component<{genericBranches: Branche[] | undefined}> {
+    readonly state: { branches: Branche[], displayColorPicker: boolean } = {
         displayColorPicker: false,
         branches: []
     }
@@ -28,29 +25,13 @@ export default class BrancheListPage extends Component {
         }
     }
 
-    brancheService: BrancheService
-
     constructor(props: any) {
         super(props)
-        this.brancheService = new BrancheService()
     }
 
-    updateBranches = (branches: Branche[], dirty: boolean = false) => {
+    updateBranches = (branches: Branche[]) => {
         // Do not updateBranches when the branches length is 0.
         if (branches.length > 0) {
-            localStorage.setItem('bwdm_lookup_branches', JSON.stringify(branches))
-            // We need to trigger the remote update with a dirty parameter. 
-            // Do not update to often as this will send more requests
-            // then necessary to the backend.
-            if (dirty) {
-                const _branches = this.state.branches.filter((b: Branche) => b !== null)
-                this.brancheService.update(_branches).catch((e: any) => {
-                    message.error('Er is iets fout gegaan')
-                })
-                this.setState({ dirtybits: false })
-            } else {
-                this.setState({ dirtybits: true })
-            }
             this.setState({
                 branches
             })
@@ -58,28 +39,14 @@ export default class BrancheListPage extends Component {
     }
 
     componentDidMount = () => {
-        mmApiService(`/api/mm/branches`).then((branches: Branche[]) => {
-            const _branches = branches.filter((b: Branche) => b !== null)
-            // Make sure there are no empty elements in the branches.
-            this.setState({
-                branches: _branches
-            })
+        this.setState({
+            branches: this.props.genericBranches
         })
     }
 
     render() {
-        return <><Breadcrumb>
-            <Breadcrumb.Item>
-                <Link to="/">
-                    <HomeOutlined />
-                </Link>
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>
-                <Link to="/branches">
-                    <span>Branches</span>
-                </Link>
-            </Breadcrumb.Item>
-        </Breadcrumb>
+        console.log(this.state)
+        return <>
             <table>
                 <thead>
                     <tr><th>Code</th><th>Titel</th><th>Omschrijving</th><th></th></tr>
@@ -88,15 +55,12 @@ export default class BrancheListPage extends Component {
                     {this.state.branches.map((branche, i) => {
                         return <tr key={i}>
                             <td style={this.getStyle(branche)}>
-
                                 <Popover content={<ChromePicker color={branche.color} disableAlpha={true} onChange={(color: any, event: any) => {
                                     if (this.state.branches) {
                                         const _branches = this.state.branches
                                         _branches[i].color = color.hex
                                         this.updateBranches(_branches)
                                     }
-
-
                                 }} />} trigger="click">
                                     <Button
                                         title="Kleur veranderen"
@@ -136,11 +100,12 @@ export default class BrancheListPage extends Component {
                                 type="primary"
                                 icon={<DeleteOutlined />}
                                 onClick={() => {
-                                    if (this.state.branches) {
-                                        const _branches = this.state.branches
-                                        delete _branches[i]
-                                        this.updateBranches(_branches)
-                                    }
+                                    const _branches = this.state.branches.filter(b => b.id !== branche.id)
+                                    // if (this.state.branches) {
+                                    //     const _branches = this.state.branches
+                                    //     delete _branches[i]
+                                    this.updateBranches(_branches)
+                                    // }
                                 }}
                             /></td>
                         </tr>
@@ -149,7 +114,9 @@ export default class BrancheListPage extends Component {
             <Button
                 onClick={() => {
                     const _branches = this.state.branches || []
+                    const id = Math.max(...this.state.branches.map(x => x.id)) + 1
                     _branches.push({
+                        id,
                         number: 0,
                         brancheId: "",
                         description: "",
@@ -174,3 +141,15 @@ export default class BrancheListPage extends Component {
         </>
     }
 }
+
+const BranchesDataWrapper = () => {
+    const genericBranches = useGenericBranches()
+    const data = [genericBranches]
+
+    if (some(data, item => item.isLoading)) { return null }
+    if (some(data, item => item.isError)) { return null }
+
+    return <BrancheListPage genericBranches={genericBranches.data}/>
+}
+
+export default BranchesDataWrapper
