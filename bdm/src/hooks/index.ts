@@ -10,8 +10,15 @@ export const useGenericBranches = () => {
     return useQuery<Branche[], IApiError>('genericBranches', async() => {
         const branche = await mmApi.get(`/branche/all`)
         return branche.map((b:IBranche) => {
-            const { afkorting:brancheId, ...rest } = b
-            return {...rest, brancheId}
+            const { afkorting:brancheId, color, ...rest } = b
+            const getColor = (color:string): string => {
+                const hexColorRegex = /^[0-9a-f]{3,6}$/i
+                if (hexColorRegex.test(color)) {
+                    return `#${color}`
+                }
+                return color
+            }
+            return {...rest, color: getColor(color), brancheId}
         })
     }, MM_API_QUERY_CONFIG)
 }

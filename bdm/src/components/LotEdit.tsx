@@ -4,7 +4,6 @@ import React, { Component, createRef, CSSProperties, RefObject } from "react"
 import { capitalize } from 'lodash'
 import { AssignedBranche, INaam, Lot } from "../models"
 // import { LotPropertyService, ObstacleTypeService } from "../services/service_lookup"
-import { mmApiService } from "../services/service_mm_api"
 import { MarketContext } from '../components/MarketDataWrapper'
 
 import { //CopyOutlined,
