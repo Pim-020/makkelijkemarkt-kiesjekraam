@@ -1,6 +1,14 @@
 import { MM_API_BASE_URL } from '../constants'
-import { IApiError } from '../models'
+import { IApiError, IMarktConfiguratie } from '../models'
 
+
+export const initialMarktConfiguratie: IMarktConfiguratie = {
+    branches: [],
+    locaties: [],
+    marktOpstelling: {rows: []},
+    geografie: {obstakels: []},
+    paginas: [],
+}
 
 const handleResponse = (response: Response) => {
     if (!response.ok) {

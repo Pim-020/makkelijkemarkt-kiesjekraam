@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { sortBy } from 'lodash'
 
 import { MM_API_QUERY_CONFIG } from '../constants'
 import { Branche, IApiError, IBranche, IMarkt, IMarktConfiguratie, INaam } from '../models'
-import * as mmApi from "../services/mmApi"
+import * as mmApi from '../services/mmApi'
 
 
 export const useGenericBranches = () => {
@@ -30,9 +30,14 @@ export const useMarktConfig = (marktId: string) => {
 }
 
 export const useSaveMarktConfig = (marktId: string) => {
+    const queryClient = useQueryClient()
     return useMutation<IMarktConfiguratie, IApiError, IMarktConfiguratie>((marktConfiguratie) => {
         return mmApi.post(`/markt/${marktId}/marktconfiguratie/`, marktConfiguratie)
-    }, MM_API_QUERY_CONFIG)
+    },
+    {
+        ...MM_API_QUERY_CONFIG,
+        onSuccess: () => queryClient.invalidateQueries('marktconfig'),
+    })
 }
 
 export const useObstakel = () => {

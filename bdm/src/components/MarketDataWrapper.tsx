@@ -1,10 +1,11 @@
 import { some, every} from 'lodash'
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import {Progress} from 'antd'
+import { Progress } from 'antd'
 
 import { IMarketContext } from '../models'
 import { useGenericBranches, useMarkt, useMarktConfig, useObstakel, usePlaatseigenschap, useSaveMarktConfig } from '../hooks'
+import CreateMarketConfig from './CreateMarketConfig'
 
 export const MarketContext = React.createContext<Partial<IMarketContext>>({});
 
@@ -39,8 +40,8 @@ const MarketDataWrapper: React.FC<RouteComponentProps<{id: string}>> = (props) =
         if (markt.error?.status === 404) {
             return (<h1>Markt bestaat helemaal niet</h1>)
         }
-        if (marktConfig.error?.status === 404) {
-            return (<h1>MarktConfig bestaat niet - nieuwe aanmaken</h1>)
+        if (marktConfig.error?.status === 404 && markt.data) {
+            return <CreateMarketConfig markt={markt.data} saveMarktConfig={saveMarktConfig} />
         }
         return (
             <h1>ERROR</h1>

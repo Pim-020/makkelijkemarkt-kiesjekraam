@@ -7,7 +7,7 @@ import { Breadcrumb, Tabs, Row, Col, //Button, Upload
 import { HomeOutlined, //UploadOutlined, FileZipOutlined
     } from '@ant-design/icons'
 import { Link } from "react-router-dom"
-import { AssignedBranche, Branche, Geography, Lot, MarketEventDetails, Page, Plan, Rows } from "../models"
+import { AssignedBranche, Branche, IMarktConfiguratie, Geography, Lot, MarketEventDetails, Page, Plan, Rows } from "../models"
 // import { BrancheService } from "../services/service_lookup"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
@@ -86,7 +86,7 @@ class MarketPage extends React.Component {
             const paginas = this.transformer.layoutToPages(pages)
             const branches = this.transformer.decodeBranches(this.state.marketEventDetails.branches)
 
-            const marktConfiguratie = { branches, locaties, marktOpstelling, geografie, paginas }
+            const marktConfiguratie: IMarktConfiguratie = { branches, locaties, marktOpstelling, geografie, paginas }
             this.context.saveMarktConfig(marktConfiguratie)
         }
     }
@@ -109,6 +109,7 @@ class MarketPage extends React.Component {
     render() {
         console.log('MarketPage', this.state)
         return <>
+            <h1>{this.context.markt.naam}</h1>
             <Breadcrumb>
                 <Breadcrumb.Item>
                     <Link to="/">
