@@ -1,3 +1,6 @@
+import { MMarkt } from './mmarkt'
+export * from './mmarkt'
+
 export interface INaam {
     naam: string
     id: number
@@ -155,21 +158,15 @@ export interface IMarketContext {
     marktId: string
     saveMarktConfig(marktConfiguratie: IMarktConfiguratie): void
     saveInProgress: boolean
-    genericBranches: Branche[]
-    markt: Required<IMarkt>
-    marktConfig: IMarktConfiguratie
-    obstakel: INaam[]
-    plaatseigenschap: INaam[]
+    genericBranches?: Branche[]
+    markt?: MMarkt
+    marktConfig?: IMarktConfiguratie
+    obstakel?: INaam[]
+    plaatseigenschap?: INaam[]
 }
 
 export interface IApiError extends Error {
     status?: number;
-}
-
-export interface IMarkt {
-    id: number
-    afkorting: string
-    naam: string
 }
 
 export const WeekDays: DayOfWeek[] = [

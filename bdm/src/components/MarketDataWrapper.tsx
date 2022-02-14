@@ -19,6 +19,7 @@ const MarketDataWrapper: React.FC<RouteComponentProps<{id: string}>> = (props) =
     const obstakel = useObstakel()
     const plaatseigenschap = usePlaatseigenschap()
     const data = [markt, marktConfig, genericBranches, obstakel, plaatseigenschap]
+    let page = null
 
     if (some(data, item => item.isLoading)) {
         const percent = (data.filter(item => item.isSuccess).length / data.length) * 100
@@ -35,38 +36,41 @@ const MarketDataWrapper: React.FC<RouteComponentProps<{id: string}>> = (props) =
         )
     }
 
-    if (some(data, item => item.isError)) {
-        console.log(data)
-        if (markt.error?.status === 404) {
-            return (<h1>Markt bestaat helemaal niet</h1>)
-        }
-        if (marktConfig.error?.status === 404 && markt.data) {
-            return <CreateMarketConfig markt={markt.data} saveMarktConfig={saveMarktConfig} />
-        }
-        return (
-            <h1>ERROR</h1>
-        )
+    const marketContext: IMarketContext = {
+        marktId,
+        saveMarktConfig,
+        saveInProgress,
+        markt: markt.data,
+        marktConfig: marktConfig.data,
+        genericBranches: genericBranches.data,
+        obstakel: obstakel.data,
+        plaatseigenschap: plaatseigenschap.data,
     }
 
     if (every(data, item => item.isSuccess)) {
         console.log(data)
-        const marketContext: Partial<IMarketContext> = {
-            marktId,
-            saveMarktConfig,
-            saveInProgress,
-            markt: markt.data,
-            marktConfig: marktConfig.data,
-            genericBranches: genericBranches.data,
-            obstakel: obstakel.data,
-            plaatseigenschap: plaatseigenschap.data,
-        }
+        page = props.children
+    }
+
+    if (marktConfig.error?.status === 404 && markt.data) {
+        page = <CreateMarketConfig />
+    }
+
+    if (page) {
         return (
             <MarketContext.Provider value={marketContext}>
-                {props.children}
+                {page}
             </MarketContext.Provider>
         )
     }
-    return null;
+
+    console.error(data)
+    if (markt.error?.status === 404) {
+        return (<h1>Markt met id {marktId} kon niet gevonden worden</h1>)
+    }
+    return (
+        <h1>Error</h1>
+    )
 }
 
 export default MarketDataWrapper;

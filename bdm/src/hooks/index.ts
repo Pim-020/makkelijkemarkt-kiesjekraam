@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { sortBy } from 'lodash'
 
 import { MM_API_QUERY_CONFIG } from '../constants'
-import { Branche, IApiError, IBranche, IMarkt, IMarktConfiguratie, INaam } from '../models'
+import { Branche, IApiError, IBranche, IMarktConfiguratie, INaam, MMarkt } from '../models'
 import * as mmApi from '../services/mmApi'
 
 
@@ -55,7 +55,7 @@ export const usePlaatseigenschap = () => {
 }
 
 export const useMarkt = (marktId: string) => {
-    return useQuery<Required<IMarkt>, IApiError>('markt', () => {
+    return useQuery<MMarkt, IApiError>('markt', () => {
         return mmApi.get(`/markt/${marktId}`)
     }, MM_API_QUERY_CONFIG)
 }

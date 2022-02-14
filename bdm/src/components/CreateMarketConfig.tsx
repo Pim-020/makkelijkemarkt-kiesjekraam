@@ -1,16 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
+
+import { MarketContext } from './MarketDataWrapper'
 import { initialMarktConfiguratie } from '../services/mmApi'
+import { IMarketContext } from '../models'
 
-const CreateMarketConfig = (props: any) => {
-    console.log(props)
+const CreateMarketConfig = () => {
+    const marketContext = useContext(MarketContext) as IMarketContext
     const createNewMarketConfig = () => {
-        console.log('new')
-
-        props.saveMarktConfig(initialMarktConfiguratie)
+        marketContext.saveMarktConfig(initialMarktConfiguratie)
     }
     return (
         <div>
-            <h1>{props.markt.naam}</h1>
+            <h1>{marketContext.markt?.naam}</h1>
             <h2>MarktConfig bestaat niet</h2>
             <button onClick={createNewMarketConfig}>Eerste marktConfig aanmaken</button>
         </div>
