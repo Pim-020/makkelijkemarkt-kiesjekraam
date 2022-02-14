@@ -183,17 +183,17 @@ app.get('/', (req: Request, res: Response) => {
     res.render('HomePage');
 });
 
-app.get('/bdm/*', keycloak.protect(Roles.MARKTMEESTER), (req, res) => {
+app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
 });
 
-app.get('/api/markt', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
+app.get('/api/markt', keycloak.protect(Roles.MARKTBEWERKER), (req: GrantedRequest, res: Response) => {
     getMarkten(true).then((markten: any) => {
         res.send(markten);
     }, internalServerErrorPage(res));
 });
 
-app.get('/api/markt/:marktId', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
+app.get('/api/markt/:marktId', keycloak.protect(Roles.MARKTBEWERKER), (req: GrantedRequest, res: Response) => {
     getMarkt(req.params.marktId).then((markt: any) => {
         res.send(markt);
     }, internalServerErrorPage(res));
