@@ -38,7 +38,7 @@ class AanwezigheidsForm extends React.Component {
 
         const getVoorkeurForMarkt = marktId => {
             return voorkeuren.find(voorkeur => {
-                return voorkeur.marktId === marktId;
+                return voorkeur.marktId === marktId.toString();
             });
         };
 
@@ -50,7 +50,7 @@ class AanwezigheidsForm extends React.Component {
 
         const noBranche = markt => {
             const voorkeur = getVoorkeurForMarkt(markt.id);
-            return !voorkeur || !voorkeur.brancheId;
+            return !voorkeur || !voorkeur.branches || voorkeur.branches[0] === '000-EMPTY';
         };
 
         return (

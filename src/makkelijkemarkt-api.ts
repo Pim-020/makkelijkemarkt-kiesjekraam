@@ -313,14 +313,14 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     marktvoorkeur: IMarktondernemerVoorkeur
 ): MMarktondernemerVoorkeur => {
-    let isBak = false;
+    let isBak = null;
     let branche = null;
     if( marktvoorkeur.branches !== null ){
         if (marktvoorkeur.branches.includes("bak")) isBak = true;
         branche = marktvoorkeur.branches[0] as BrancheId;
     }
 
-    let hasInrichting:boolean = false;
+    let hasInrichting:boolean = null;
     if (marktvoorkeur.verkoopinrichting !== undefined){
         hasInrichting = marktvoorkeur.verkoopinrichting[0] || marktvoorkeur.kraaminrichting ? true: false;
     }
