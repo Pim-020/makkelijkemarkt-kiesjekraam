@@ -36,8 +36,7 @@ const humanReadableMessage = {
     [publicErrors.ACTIVATION_CODE_NOT_SET]: 'U hebt geen activatiecode ingevoerd.',
     [publicErrors.NON_MATCHING_PASSWORDS]: `De ingevoerde wachtwoorden komen niet overeen.
         Let op dat u geen fout maakt bij het kiezen van een wachtwoord.`,
-    [publicErrors.ACCOUNT_EXISTS_ALREADY]:
-        'Er bestaat al een account met dit registratienummer.',
+    [publicErrors.ACCOUNT_EXISTS_ALREADY]: 'Er bestaat al een account met dit registratienummer.',
     [publicErrors.ACTIVATION_CODE_INCORRECT]: 'De ingevoerde activatiecode is onjuist.',
     [publicErrors.USERNAME_CONTAINS_DOT]: 'Het ingevoerde registratienummer mag geen punt bevatten.',
 };
@@ -47,13 +46,11 @@ export const httpErrorPage = (res: Response, errorCode: number) => (err: Error |
     res.render('ErrorPage.jsx', { errorCode });
 };
 
-export const internalServerErrorPage = (res: Response) =>  {
+export const internalServerErrorPage = (res: Response) => {
     return httpErrorPage(res, HTTP_INTERNAL_SERVER_ERROR);
 };
 
-export const isAbsoluteUrl = (url: string): Boolean =>
-    (url.indexOf('http://') === 0 || url.indexOf('https://') === 0);
-
+export const isAbsoluteUrl = (url: string): Boolean => url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
 
 export const forbiddenErrorPage = (res: Response) => httpErrorPage(res, HTTP_FORBIDDEN_ERROR);
 
@@ -89,10 +86,5 @@ export const jsonPage = (res: Response) => (data: any) => {
 };
 
 export const redirectWithParams = (res: Response, params: Object) => {
-    return res.redirect(
-        `${res.req.url}${stringify(
-            params,
-            { addQueryPrefix: true },
-        )}`,
-    );
+    return res.redirect(`${res.req.url}${stringify(params, { addQueryPrefix: true })}`);
 };

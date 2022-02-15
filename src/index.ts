@@ -25,12 +25,7 @@ import { Roles, keycloak, sessionMiddleware } from './authentication';
 // API
 // ---
 
-import {
-    callApiGeneric,
-    getMarkt,
-    getMarkten,
-    HttpMethod
-} from './makkelijkemarkt-api';
+import { callApiGeneric, getMarkt, getMarkten, HttpMethod } from './makkelijkemarkt-api';
 
 // Routes
 // ------
@@ -69,7 +64,7 @@ import {
     indelingErrorStacktracePage,
 } from './routes/market-allocation';
 import { MarktConfig } from 'model';
-import {AxiosError, AxiosResponse} from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 
 const csrfProtection = csrf({ cookie: true });
 
@@ -78,12 +73,7 @@ requireEnv('APP_SECRET');
 
 const HTTP_DEFAULT_PORT = 8080;
 
-const genericMMApiRoutes = [
-    'branche',
-    'obstakel',
-    'plaatseigenschap',
-    'markt/:marktId/marktconfiguratie'
-];
+const genericMMApiRoutes = ['branche', 'obstakel', 'plaatseigenschap', 'markt/:marktId/marktconfiguratie'];
 
 const isMarktondernemer = (req: GrantedRequest) => {
     const accessToken = req.kauth.grant.access_token.content;
@@ -510,7 +500,6 @@ app.get(
     },
 );
 
-
 app.post(
     '/upload-markten/zip/',
     keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER) /* ||
@@ -537,15 +526,15 @@ genericMMApiRoutes.forEach((genericApiRoute: string) => {
                 const result = await callApiGeneric(
                     req.url.replace('/api/', '').replace(/\/$/, ''),
                     req.method.toLowerCase() as HttpMethod,
-                    req.body
+                    req.body,
                 );
 
                 return res.send(result);
             } catch (error) {
-                res.status( error.response.status);
+                res.status(error.response.status);
                 return res.send({ statusText: error.response.statusText, message: error.response.data });
             }
-        }
+        },
     );
 });
 

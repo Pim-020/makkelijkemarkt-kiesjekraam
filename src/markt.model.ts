@@ -7,7 +7,7 @@ export type ErkenningsNummer = string;
 export type BrancheId = string;
 
 export enum KraamInrichting {
-    EIGEN_MATERIEEL = 'eigen-materieel'
+    EIGEN_MATERIEEL = 'eigen-materieel',
 }
 
 export enum ObstakelType {
@@ -15,11 +15,11 @@ export enum ObstakelType {
     OPTIONAL_LOOPJE = 'loopjediedichtmag',
     LANTAARNPAAL = 'lantaarnpaal',
     BOOM = 'boom',
-    BANKJE = 'bankje'
+    BANKJE = 'bankje',
 }
 
 export enum VerkoopinrichtingType {
-    EIGEN_MATERIEEL = 'eigen-materieel'
+    EIGEN_MATERIEEL = 'eigen-materieel',
 }
 
 export enum DeelnemerStatus {
@@ -29,7 +29,7 @@ export enum DeelnemerStatus {
     TIJDELIJKE_VASTE_PLAATS_OLD = 'vkk',
     SOLLICITANT = 'soll',
     EXPERIMENTAL = 'exp',
-    EXPERIMENTAL_F = 'expf'
+    EXPERIMENTAL_F = 'expf',
 }
 
 export interface IMarktProperties {

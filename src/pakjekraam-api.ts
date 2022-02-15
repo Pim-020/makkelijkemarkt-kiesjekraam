@@ -3,17 +3,9 @@ import * as fs from 'fs';
 import { numberSort } from './util';
 import { isVast } from './domain-knowledge.js';
 
-import {
-    allocation,
-    log,
-} from './model/index';
+import { allocation, log } from './model/index';
 
-import {
-    IMarktondernemer,
-    IMarktondernemerVoorkeur,
-    IMarktondernemerVoorkeurRow,
-    IToewijzing,
-} from './markt.model';
+import { IMarktondernemer, IMarktondernemerVoorkeur, IMarktondernemerVoorkeurRow, IToewijzing } from './markt.model';
 
 import { Allocation } from './model/allocation.model';
 
@@ -56,7 +48,6 @@ const loadJSON = <T>(path: string, defaultValue: T = null): Promise<T> =>
     });
 
 export const groupAllocationRows = (toewijzingen: IToewijzing[], row: Allocation): IToewijzing[] => {
-
     const { marktId, marktDate, erkenningsNummer } = row;
 
     const existing = toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === erkenningsNummer);
@@ -130,8 +121,9 @@ export const convertVoorkeur = (obj: IMarktondernemerVoorkeurRow): IMarktonderne
 
 const enrichOndernemersWithVoorkeuren = (ondernemers: IMarktondernemer[], voorkeuren: IMarktondernemerVoorkeur[]) => {
     return ondernemers.map(ondernemer => {
-
-        let voorkeurVoorOndernemer = voorkeuren.find(voorkeur => voorkeur.erkenningsNummer === ondernemer.erkenningsNummer);
+        let voorkeurVoorOndernemer = voorkeuren.find(
+            voorkeur => voorkeur.erkenningsNummer === ondernemer.erkenningsNummer,
+        );
 
         if (voorkeurVoorOndernemer === undefined) {
             voorkeurVoorOndernemer = <IMarktondernemerVoorkeur>{
@@ -142,25 +134,18 @@ const enrichOndernemersWithVoorkeuren = (ondernemers: IMarktondernemer[], voorke
 
         return {
             ...ondernemer,
-            voorkeur: { ...ondernemer.voorkeur, ...voorkeurVoorOndernemer }
+            voorkeur: { ...ondernemer.voorkeur, ...voorkeurVoorOndernemer },
         };
     });
 };
 
-export const getMededelingen = (): Promise<any> =>
-    loadJSON('./config/markt/mededelingen.json', {});
+export const getMededelingen = (): Promise<any> => loadJSON('./config/markt/mededelingen.json', {});
 
-export const getDaysClosed = (): Promise<any> =>
-    loadJSON('./config/markt/daysClosed.json', {});
+export const getDaysClosed = (): Promise<any> => loadJSON('./config/markt/daysClosed.json', {});
 
-export const getMarktBasics = (
-    marktId: string
-) => {
+export const getMarktBasics = (marktId: string) => {
     return getMarkt(marktId).then(mmarkt => {
-        const {
-            afkorting: marktAfkorting,
-            kiesJeKraamGeblokkeerdePlaatsen: geblokkeerdePlaatsen,
-        } = mmarkt;
+        const { afkorting: marktAfkorting, kiesJeKraamGeblokkeerdePlaatsen: geblokkeerdePlaatsen } = mmarkt;
 
         return MarktConfig.get(marktAfkorting).then(marktConfig => {
             // Verwijder geblokkeerde plaatsen. Voorheen werd een `inactive` property
@@ -169,8 +154,8 @@ export const getMarktBasics = (
 
             if (geblokkeerdePlaatsen) {
                 const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
-                marktConfig.marktplaatsen = marktConfig.marktplaatsen.filter(({ plaatsId }) =>
-                    !blocked.includes(plaatsId)
+                marktConfig.marktplaatsen = marktConfig.marktplaatsen.filter(
+                    ({ plaatsId }) => !blocked.includes(plaatsId),
                 );
             }
 
@@ -182,33 +167,24 @@ export const getMarktBasics = (
     });
 };
 
-export const getMarktDetails = (
-    marktId: string,
-    marktDate: string
-) => {
-    console.log("get market details: ", marktId, marktDate);
+export const getMarktDetails = (marktId: string, marktDate: string) => {
+    console.log('get market details: ', marktId, marktDate);
     const marktBasics = getMarktBasics(marktId);
 
     // Populate the `ondernemer.voorkeur` field
-    const ondernemersPromise = Promise.all([
-        getOndernemersByMarkt(marktId),
-        getVoorkeurenByMarkt(marktId)
-    ]).then(([ondernemers, voorkeuren]) => {
-        const convertedVoorkeuren = voorkeuren.map(convertVoorkeur);
-        return enrichOndernemersWithVoorkeuren(ondernemers, convertedVoorkeuren);
-    });
+    const ondernemersPromise = Promise.all([getOndernemersByMarkt(marktId), getVoorkeurenByMarkt(marktId)]).then(
+        ([ondernemers, voorkeuren]) => {
+            const convertedVoorkeuren = voorkeuren.map(convertVoorkeur);
+            return enrichOndernemersWithVoorkeuren(ondernemers, convertedVoorkeuren);
+        },
+    );
 
     return Promise.all([
         marktBasics,
         ondernemersPromise,
         getAanmeldingenByMarktAndDate(marktId, marktDate),
         getPlaatsvoorkeuren(marktId),
-    ]).then(([
-        marktBasics,
-        ondernemers,
-        aanmeldingen,
-        voorkeuren,
-    ]) => {
+    ]).then(([marktBasics, ondernemers, aanmeldingen, voorkeuren]) => {
         return {
             naam: '?',
             marktId,
@@ -222,74 +198,59 @@ export const getMarktDetails = (
     });
 };
 
-export const getCalculationInput = (
-    marktId: string,
-    marktDate: string
-) => {
-    return Promise.all([
-        getMarktDetails(marktId, marktDate),
-        getALijst(marktId, marktDate)
-    ]).then(([marktDetails, aLijst]) => ({
-        ...marktDetails,
-
-        aLijst: aLijst.map(({ erkenningsnummer }) =>
-            marktDetails.ondernemers.find(({ erkenningsNummer }) => erkenningsnummer === erkenningsNummer),
-        )
-    }));
-};
-
-export const getIndelingslijst = (
-    marktId: string,
-    marktDate: string
-) => {
-    return Promise.all([
-        getMarktDetails(marktId, marktDate),
-        getAllocations(marktId, marktDate)
-    ]).then(([marktDetails, tws]) => {
-        let toewijzingen = tws["data"];
-        return {
+export const getCalculationInput = (marktId: string, marktDate: string) => {
+    return Promise.all([getMarktDetails(marktId, marktDate), getALijst(marktId, marktDate)]).then(
+        ([marktDetails, aLijst]) => ({
             ...marktDetails,
-            toewijzingen
-        };
-    });
+
+            aLijst: aLijst.map(({ erkenningsnummer }) =>
+                marktDetails.ondernemers.find(({ erkenningsNummer }) => erkenningsnummer === erkenningsNummer),
+            ),
+        }),
+    );
 };
 
-export const calculateIndelingslijst = async (
-    marktId: string,
-    date: string,
-) => {
-   try{
+export const getIndelingslijst = (marktId: string, marktDate: string) => {
+    return Promise.all([getMarktDetails(marktId, marktDate), getAllocations(marktId, marktDate)]).then(
+        ([marktDetails, tws]) => {
+            let toewijzingen = tws['data'];
+            return {
+                ...marktDetails,
+                toewijzingen,
+            };
+        },
+    );
+};
+
+export const calculateIndelingslijst = async (marktId: string, date: string) => {
+    try {
         let data = await getCalculationInput(marktId, date);
         data = JSON.parse(JSON.stringify(data));
         const job = allocationQueue.createJob(data);
         const result = await job.save();
         return result.id;
-    }catch(error){
-        console.log("job error: ", error);
-        if(!client.connected){
-            console.log("REDIS: connection error: ", error);
+    } catch (error) {
+        console.log('job error: ', error);
+        if (!client.connected) {
+            console.log('REDIS: connection error: ', error);
             return;
         }
         allocationQueue = conceptQueue.getQueueForDispatcher();
     }
 };
 
-
 export const getToewijzingslijst = (marktId: string, marktDate: string) =>
-    Promise.all([
-        getCalculationInput(marktId, marktDate),
-        getToewijzingen(marktId, marktDate)
-    ]).then(([data, toewijzingen]) => ({
-        ...data,
-        toewijzingen,
-        afwijzingen: [],
-    }));
+    Promise.all([getCalculationInput(marktId, marktDate), getToewijzingen(marktId, marktDate)]).then(
+        ([data, toewijzingen]) => ({
+            ...data,
+            toewijzingen,
+            afwijzingen: [],
+        }),
+    );
 
 export const getSollicitantenlijstInput = (marktId: string, date: string) =>
     Promise.all([
-        getOndernemersByMarkt(marktId).then(ondernemers =>
-            ondernemers.filter(({ status }) => !isVast(status)),
-        ),
+        getOndernemersByMarkt(marktId).then(ondernemers => ondernemers.filter(({ status }) => !isVast(status))),
         getAanmeldingenByMarktAndDate(marktId, date),
         getPlaatsvoorkeuren(marktId),
         getMarkt(marktId),

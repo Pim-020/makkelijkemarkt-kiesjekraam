@@ -34,7 +34,6 @@ export const getKeycloakAdmin = () => {
     return kcAdminClient.auth(authConfig).then(() => kcAdminClient);
 };
 
-
 export const getKeycloakUser = (req: GrantedRequest) => {
     return req.kauth.grant.access_token.content;
 };
@@ -42,7 +41,7 @@ export const getKeycloakUser = (req: GrantedRequest) => {
 export const userExists = (username: string): Promise<boolean> =>
     getKeycloakAdmin()
         .then(kcAdminClient => kcAdminClient.users.findOne({ username } as any))
-        .then( user => {
+        .then(user => {
             return requireOne(user);
         })
         .then(() => true, () => false);

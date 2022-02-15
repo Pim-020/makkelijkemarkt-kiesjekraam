@@ -24,7 +24,7 @@ export interface IMarktScenario {
 }
 
 export interface IMarktScenarioStub {
-    marktDate?: string,
+    marktDate?: string;
     aanwezigheid?: IRSVP[];
     marktplaatsen?: IMarktplaats[];
     ondernemers?: IMarktondernemer[];

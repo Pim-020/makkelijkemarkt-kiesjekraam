@@ -37,7 +37,7 @@ export interface MMMarkt {
         elektra: boolean;
         afvaleiland: boolean;
     };
-    telefoonNummerContact: string,
+    telefoonNummerContact: string;
     perfectViewNummer: number;
     aantalKramen: number;
     aantalMeter: number;
@@ -103,22 +103,21 @@ export interface MMSollicitatieStandalone extends MMSollicitatie {
 }
 
 export interface MMMarktPlaatsvoorkeuren {
-    markt: string,
-    koopman: string,
-    plaatsen: number[],
+    markt: string;
+    koopman: string;
+    plaatsen: number[];
 }
 
 export interface MMarktondernemerVoorkeur {
-    id?: number,
-    anywhere?: boolean,
-    minimum?: number,
-    maximum?: number,
-    hasInrichting?: boolean,
-    isBak?: boolean,
-    absentFrom?: Date,
-    absentUntil?: Date,
-    branche: string,
-    markt: string,
-    koopman: string,
+    id?: number;
+    anywhere?: boolean;
+    minimum?: number;
+    maximum?: number;
+    hasInrichting?: boolean;
+    isBak?: boolean;
+    absentFrom?: Date;
+    absentUntil?: Date;
+    branche: string;
+    markt: string;
+    koopman: string;
 }
-

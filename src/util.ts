@@ -4,9 +4,7 @@ import * as fs from 'fs';
 const moment = require('moment-timezone');
 
 export const capitalize = (s: string) => {
-    return typeof s === 'string' ?
-           s.charAt(0).toUpperCase() + s.slice(1) :
-           '';
+    return typeof s === 'string' ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 };
 
 export const DAYS_IN_WEEK = 7;
@@ -66,7 +64,7 @@ export const formatMonth = (date: string) => monthName[new Date(date).getMonth()
 
 export const getMaDiWoDo = (date: Date) => {
     const dayOfWeek = WEEK_DAYS[date.getDay()];
-    return dayOfWeek.substring(0,2);
+    return dayOfWeek.substring(0, 2);
 };
 
 export const formatDate = (date: string): string =>
@@ -81,10 +79,11 @@ export const dateDiffInDays = (date1: string, date2: string): number => {
     const dt1 = new Date(date1);
     const dt2 = new Date(date2);
 
-    return Math.floor((
-        Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) -
-        Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate())
-    ) / MILLISECONDS_IN_DAY);
+    return Math.floor(
+        (Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) -
+            Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate())) /
+            MILLISECONDS_IN_DAY,
+    );
 };
 
 export const relativeHumanDay = (date: string) => {
@@ -111,7 +110,9 @@ export const addMinutes = (offsetDate: string | number, minutes: number): string
 export const addMinutesTime = (offsetDate: string | number, minutes: number): Date => {
     const date = new Date(offsetDate);
     const dateNewTime = new Date(date.getTime() + minutes * 60000);
-    return moment(dateNewTime).tz('Europe/Amsterdam').format();
+    return moment(dateNewTime)
+        .tz('Europe/Amsterdam')
+        .format();
 };
 
 export const getTimezoneTime = (): any => {
@@ -119,7 +120,7 @@ export const getTimezoneTime = (): any => {
 };
 
 export const getTimezoneHours = (): Number => {
-    return parseInt(moment( getTimezoneTime() ).format('H'));
+    return parseInt(moment(getTimezoneTime()).format('H'));
 };
 
 export const today = (): string => toISODate(new Date());
@@ -134,19 +135,18 @@ export const endOfWeek = (): string => {
 export const nextWeek = (): string => addDays(Date.now(), DAYS_IN_WEEK);
 
 export const toDate = (dateObject: Date) => {
-    const day   = String(dateObject.getDate()).padStart(2, '0');
-    const month = String(dateObject.getMonth()+1).padStart(2, '0');
-    const year  = dateObject.getFullYear();
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const year = dateObject.getFullYear();
     return `${year}-${month}-${day}`;
 };
-export const toISODate = (date: Date): string =>
-    date.toISOString().replace(/T.+/, '');
+export const toISODate = (date: Date): string => date.toISOString().replace(/T.+/, '');
 
 export const ddmmyyyyToDate = (dateString: string) => {
     const day = dateString.split('-')[0];
     const month = dateString.split('-')[1];
     const year = dateString.split('-')[2];
-    return new Date(parseInt(year), parseInt(month)-1, parseInt(day), 0, 0, 0);
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 0, 0, 0);
 };
 
 // export const dateToDDMMYYYY = (dateObject: Date) => {
@@ -176,20 +176,15 @@ export const stringSort = (a: string, b: string): number => (a > b ? 1 : a === b
 export const sum = (a: number, b: number): number => a + b;
 export const max = (a: number, b: number): number => Math.max(a, b);
 export const flatten = <T>(a: T[] = [], b: T[] = []): T[] => [...(a || []), ...(b || [])];
-export const unique = <T>(a: T[], b: T): T[] => a.includes(b) ? a : [...a, b];
+export const unique = <T>(a: T[], b: T): T[] => (a.includes(b) ? a : [...a, b]);
 
-export const compareProperty = (
-    a: any[],
-    b: any[],
-    property: string
-) => {
-    return a.map(({ [property]: p }) => p).reduce(sum, 0) -
-           b.map(({ [property]: p }) => p).reduce(sum, 0);
+export const compareProperty = (a: any[], b: any[], property: string) => {
+    return a.map(({ [property]: p }) => p).reduce(sum, 0) - b.map(({ [property]: p }) => p).reduce(sum, 0);
 };
 
 // General
 // -------
-export const readJSON = (filePath, emitError=true, defaultValue?) => {
+export const readJSON = (filePath, emitError = true, defaultValue?) => {
     try {
         const data = fs.readFileSync(filePath, { encoding: 'utf8' });
         return JSON.parse(String(data));
@@ -246,49 +241,49 @@ export const paginate = <T>(arr: T[], count: number): T[][] => {
 };
 
 export const getBreadcrumbsOndernemer = (ondernemer: any, role: string) => {
-    if(role === 'marktmeester'){
+    if (role === 'marktmeester') {
         return [
             {
-                'title': 'Markten',
-                'url':  '/markt/'
+                title: 'Markten',
+                url: '/markt/',
             },
             {
-                'title': `${ondernemer.tussenvoegsels} ${ondernemer.achternaam} ${ondernemer.voorletters}`,
-                'url':  `/profile/${ondernemer.erkenningsnummer}/`
-            }
+                title: `${ondernemer.tussenvoegsels} ${ondernemer.achternaam} ${ondernemer.voorletters}`,
+                url: `/profile/${ondernemer.erkenningsnummer}/`,
+            },
         ];
     } else {
         return [
             {
-                'title': 'Mijn markten',
-                'url':  '/dashboard/'
+                title: 'Mijn markten',
+                url: '/dashboard/',
             },
         ];
     }
 };
 
 export const getBreadcrumbsMarkt = (markt: any, role: string) => {
-    if(role === 'marktmeester'){
+    if (role === 'marktmeester') {
         return [
             {
-                'title':'Markten',
-                'url':'/markt/'
+                title: 'Markten',
+                url: '/markt/',
             },
             {
-                'title': markt.naam,
-                'url':  `/markt/${markt.id}/`
-            }
+                title: markt.naam,
+                url: `/markt/${markt.id}/`,
+            },
         ];
     } else {
         return [
             {
-                'title': 'Mijn markten',
-                'url':  '/dashboard/'
+                title: 'Mijn markten',
+                url: '/dashboard/',
             },
             {
-                'title': markt.naam,
-                'url':  `/markt-detail/${markt.id}/`
-            }
+                title: markt.naam,
+                url: `/markt-detail/${markt.id}/`,
+            },
         ];
     }
 };

@@ -26,21 +26,24 @@ export const Roles = {
 };
 
 const sessionStore = new connectPgSimple({
-    pool: new Pool(parseDatabaseURL(process.env.DATABASE_URL))
+    pool: new Pool(parseDatabaseURL(process.env.DATABASE_URL)),
 });
 
-export const keycloak = new Keycloak({
-    store: sessionStore
-}, {
-    realm: process.env.IAM_REALM,
-    'auth-server-url': process.env.IAM_URL,
-    'ssl-required': 'external',
-    resource: process.env.IAM_CLIENT_ID,
-    credentials: {
-        secret: process.env.IAM_CLIENT_SECRET,
+export const keycloak = new Keycloak(
+    {
+        store: sessionStore,
     },
-    'confidential-port': 0,
-});
+    {
+        realm: process.env.IAM_REALM,
+        'auth-server-url': process.env.IAM_URL,
+        'ssl-required': 'external',
+        resource: process.env.IAM_CLIENT_ID,
+        credentials: {
+            secret: process.env.IAM_CLIENT_SECRET,
+        },
+        'confidential-port': 0,
+    },
+);
 
 export const sessionMiddleware = () =>
     session({
@@ -49,6 +52,6 @@ export const sessionMiddleware = () =>
         resave: false,
         saveUninitialized: false,
         cookie: {
-            sameSite: true
-        }
+            sameSite: true,
+        },
     });

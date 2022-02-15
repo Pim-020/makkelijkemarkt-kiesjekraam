@@ -23,51 +23,50 @@ import { getAllocations } from './makkelijkemarkt-api';
 
 const mapMarktenToToewijzingen = (markten: any): Promise<IToewijzing[]> => {
     return markten
-    .map((markt: any) =>
-        markt.toewijzingen.map( (toewijzing: any) => convertToewijzingForDB(toewijzing, markt, marktDate)),
-    )
-    .reduce(flatten, [])
-    .map(( toewijzing: any) =>
-        toewijzing.plaatsen.map((plaatsId: string) => ({
-            marktId: toewijzing.marktId,
-            marktDate: toewijzing.marktDate,
-            plaatsId,
-            erkenningsNummer: toewijzing.erkenningsNummer,
-        })),
-    )
-    .reduce(flatten, []);
+        .map((markt: any) =>
+            markt.toewijzingen.map((toewijzing: any) => convertToewijzingForDB(toewijzing, markt, marktDate)),
+        )
+        .reduce(flatten, [])
+        .map((toewijzing: any) =>
+            toewijzing.plaatsen.map((plaatsId: string) => ({
+                marktId: toewijzing.marktId,
+                marktDate: toewijzing.marktDate,
+                plaatsId,
+                erkenningsNummer: toewijzing.erkenningsNummer,
+            })),
+        )
+        .reduce(flatten, []);
 };
 
 const mapMarktenToAfwijzingen = (markten: any): Promise<IAfwijzing[]> => {
     return markten
-    .map((markt: any) =>
-        markt.afwijzingen.map((afwijzing: any) =>
-            convertAfwijzingForDB(afwijzing, markt, marktDate)
+        .map((markt: any) =>
+            markt.afwijzingen.map((afwijzing: any) => convertAfwijzingForDB(afwijzing, markt, marktDate)),
         )
-    )
-    .reduce(flatten, []);
+        .reduce(flatten, []);
 };
 
-async function createToewijzingenAfwijzingen(afkorting:string,
-                                             toewijzingen: IToewijzing[],
-                                             afwijzingen: IAfwijzing[]) {
-    const data:any = {
-        "toewijzingen": toewijzingen,
-        "afwijzingen": afwijzingen
-    }
+async function createToewijzingenAfwijzingen(
+    afkorting: string,
+    toewijzingen: IToewijzing[],
+    afwijzingen: IAfwijzing[],
+) {
+    const data: any = {
+        toewijzingen: toewijzingen,
+        afwijzingen: afwijzingen,
+    };
     try {
         const result = await createAllocations(afkorting, marktDate, data);
-        if(result.status) {
-            console.log("status: ", result.status);
+        if (result.status) {
+            console.log('status: ', result.status);
         } else {
-            console.log("status: ", result.response.status);
-            console.log("resp: ", result.response.data);
-            console.log("post data: ", result.config.data);
+            console.log('status: ', result.response.status);
+            console.log('resp: ', result.response.data);
+            console.log('post data: ', result.config.data);
         }
-    } catch(error) {
-        console.log("error: ", error);
+    } catch (error) {
+        console.log('error: ', error);
     }
-
 }
 
 function timeout(ms) {
@@ -84,8 +83,8 @@ async function allocate() {
         }
 
         let markten = await getMarktenByDate(marktDate);
-        markten = markten.filter((markt: MMMarkt) =>
-            markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode'
+        markten = markten.filter(
+            (markt: MMMarkt) => markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode',
         );
 
         if (!markten.length) {
@@ -93,34 +92,34 @@ async function allocate() {
             process.exit(0);
         }
 
-        const indelingen_ids = await Promise.all(markten.map((markt: MMMarkt) => {
-                const indeling = calculateIndelingslijst(String(markt.id), marktDate)
+        const indelingen_ids = await Promise.all(
+            markten.map((markt: MMMarkt) => {
+                const indeling = calculateIndelingslijst(String(markt.id), marktDate);
                 return indeling;
-            })
+            }),
         );
 
-        for(var ind in indelingen_ids){
+        for (var ind in indelingen_ids) {
             let res = null;
-            while(res === null){
+            while (res === null) {
                 const jobId = indelingen_ids[ind];
-                console.log("waiting for job id:", jobId);
+                console.log('waiting for job id:', jobId);
                 await timeout(1000);
-                res = await redisClient.get("RESULT_"+jobId);
+                res = await redisClient.get('RESULT_' + jobId);
             }
             const data = JSON.parse(res);
-            if(data["error_id"] === undefined){
-                const marktId:string = data["markt"]["id"];
-                await createToewijzingenAfwijzingen(marktId, data["toewijzingen"], data["afwijzingen"]);
+            if (data['error_id'] === undefined) {
+                const marktId: string = data['markt']['id'];
+                await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
                 const allocs = await getAllocations(marktId, marktDate);
                 console.log(allocs.data);
-            }else{
+            } else {
                 console.log(data);
             }
         }
-        console.log("done");
+        console.log('done');
         process.exit(0);
-
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         process.exit(1);
     }
