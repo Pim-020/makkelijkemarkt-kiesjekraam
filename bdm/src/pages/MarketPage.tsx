@@ -1,10 +1,10 @@
-import React, { createRef, MouseEvent, RefObject, KeyboardEvent, useEffect, useState } from "react"
+import React, { createRef, MouseEvent, RefObject, KeyboardEvent } from "react"
 import { Tabs, Row, Col } from 'antd'
 
 import Day from "../components/Day"
 import { Transformer } from "../services/transformer"
 
-import { AssignedBranche, Branche, IMarktConfiguratie, Geography, Lot, MarketEventDetails, Page, Plan, Rows } from "../models"
+import { AssignedBranche, Branche, IMarktConfiguratie, MarketEventDetails, Plan } from "../models"
 import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
 import { validateLots } from "../common/validator"

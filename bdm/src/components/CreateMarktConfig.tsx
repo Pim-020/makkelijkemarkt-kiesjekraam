@@ -13,10 +13,6 @@ const CreateMarktConfig = () => {
   const { mutate } = useSaveMarktConfig(marktContext.marktId)
   const history = useHistory()
 
-  const showModal = () => {
-    setIsModalVisible(true)
-  }
-
   const handleOk = () => {
     setIsModalVisible(false)
     mutate(initialMarktConfiguratie)

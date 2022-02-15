@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from 'antd'
-import { PlusOutlined, SaveFilled } from '@ant-design/icons'
+import { SaveFilled } from '@ant-design/icons'
 
 interface BaseButtonProps {
   icon: JSX.Element

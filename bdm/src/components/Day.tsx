@@ -2,7 +2,7 @@ import React, { RefObject, Component, createRef, MouseEvent, KeyboardEvent, Chan
 import { Modal, Button, Input, Tabs } from "antd"
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
-import { AssignedBranche, Branche, Lot, MarketEventDetails, MarketLayout, MarketPage } from "../models"
+import { AssignedBranche, Lot, MarketEventDetails, MarketLayout, MarketPage } from "../models"
 import LayoutEdit from "./LayoutEdit"
 import LotEdit from "./LotEdit"
 import LotBlock from "./LotBlock"
@@ -243,7 +243,6 @@ export default class Day extends Component<DayPageProps> {
                 this.props.changed()
             }
         })
-        const { pages } = newMarketState
     }
 
     onTabChange = (activeKey: string) => {
