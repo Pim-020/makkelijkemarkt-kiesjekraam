@@ -22,7 +22,7 @@ export default class App extends Component {
               <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink="/"/>
               <div className="site-layout-content">
                 <Switch>
-                  <Route path="/market/:id" exact component={MarketPage} />
+                  <Route path="/markt/:id" exact component={MarketPage} />
                   <Route path="/" component={ErrorPage} />
                 </Switch>
               </div>
