@@ -17,7 +17,7 @@ const marktDate = timezoneTime.format('YYYY-MM-DD');
 
 import { ConceptQueue } from './concept-queue';
 const conceptQueue = new ConceptQueue();
-const client = conceptQueue.getClient();
+const redisClient = conceptQueue.getClient();
 import { createAllocations } from './makkelijkemarkt-api';
 import { getAllocations } from './makkelijkemarkt-api';
 
@@ -48,23 +48,23 @@ const mapMarktenToAfwijzingen = (markten: any): Promise<IAfwijzing[]> => {
     .reduce(flatten, []);
 };
 
-async function destroyAndCreateToewijzingenAfwijzingen(afkorting:string,
+async function createToewijzingenAfwijzingen(afkorting:string,
                                                        toewijzingen: IToewijzing[],
                                                        afwijzingen: IAfwijzing[]) {
     const data:any = {
         "toewijzingen": toewijzingen,
         "afwijzingen": afwijzingen
     }
-    try{
+    try {
         const result = await createAllocations(afkorting, marktDate, data);
-        if(result.status){
+        if(result.status) {
             console.log("status: ", result.status);
-        }else{
+        } else {
             console.log("status: ", result.response.status);
             console.log("resp: ", result.response.data);
             console.log("post data: ", result.config.data);
         }
-    }catch(error){
+    } catch(error) {
         console.log("error: ", error);
     }
 
@@ -94,7 +94,7 @@ async function allocate() {
         }
 
         const indelingen_ids = await Promise.all(markten.map((markt: MMMarkt) => {
-                let indeling = calculateIndelingslijst(String(markt.id), marktDate)
+                const indeling = calculateIndelingslijst(String(markt.id), marktDate)
                 return indeling;
             })
         );
@@ -105,12 +105,12 @@ async function allocate() {
                 const jobId = indelingen_ids[ind];
                 console.log("waiting for job id:", jobId);
                 await timeout(1000);
-                res = await client.get("RESULT_"+jobId);
+                res = await redisClient.get("RESULT_"+jobId);
             }
             const data = JSON.parse(res);
             if(data["error_id"] === undefined){
                 const marktId:string = data["markt"]["id"];
-                await destroyAndCreateToewijzingenAfwijzingen(marktId, data["toewijzingen"], data["afwijzingen"]);
+                await createToewijzingenAfwijzingen(marktId, data["toewijzingen"], data["afwijzingen"]);
                 const allocs = await getAllocations(marktId, marktDate);
                 console.log(allocs.data);
             }else{

@@ -48,7 +48,7 @@ class AanwezigheidsForm extends React.Component {
             return link;
         };
 
-        const noBranche = markt => {
+        const hasNoBranche = markt => {
             const voorkeur = getVoorkeurForMarkt(markt.id);
             return !voorkeur || !voorkeur.branches || voorkeur.branches[0] === '000-EMPTY';
         };
@@ -67,7 +67,7 @@ class AanwezigheidsForm extends React.Component {
                         <h2 className="Heading Heading--intro">
                             {markt.naam} <SollicitatieSpecs sollicitatie={sollicitaties[markt.id]} />
                         </h2>
-                        { noBranche(markt) ? (
+                        { hasNoBranche(markt) ? (
                         <Alert type="error" inline={true} fullwidth={true}>
                             <span>
                                 U hebt uw <strong>koopwaar</strong> nog niet doorgegeven in het {' '}
@@ -91,7 +91,7 @@ class AanwezigheidsForm extends React.Component {
                                                 type="checkbox"
                                                 id={`rsvp-${index}`}
                                                 name={`rsvp[${index}][attending]`}
-                                                disabled={week[day].isInThePast || noBranche(markt)}
+                                                disabled={week[day].isInThePast || hasNoBranche(markt)}
                                                 defaultValue="1"
                                                 defaultChecked={week[day].attending}
                                             />
