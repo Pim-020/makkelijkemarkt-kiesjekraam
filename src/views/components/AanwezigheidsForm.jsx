@@ -6,6 +6,7 @@ const SollicitatieSpecs = require('./SollicitatieSpecs');
 const Alert = require('./Alert');
 
 import { Roles } from '../../authentication';
+import { EMPTY_BRANCH } from '../../makkelijkemarkt-api';
 
 const {
     toDate,
@@ -50,7 +51,7 @@ class AanwezigheidsForm extends React.Component {
 
         const hasNoBranche = markt => {
             const voorkeur = getVoorkeurForMarkt(markt.id);
-            return !voorkeur || !voorkeur.branches || voorkeur.branches[0] === '000-EMPTY';
+            return !voorkeur || !voorkeur.branches || voorkeur.branches[0] === EMPTY_BRANCH;
         };
 
         return (

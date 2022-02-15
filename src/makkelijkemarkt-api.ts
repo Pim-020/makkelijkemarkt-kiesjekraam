@@ -44,7 +44,7 @@ const MINUTES_IN_HOUR = 60;
 
 const MAX_RETRY_50X = 10;
 const MAX_RETRY_40X = 10;
-const EMPTY_BRANCH: BrancheId = "000-EMPTY"
+export const EMPTY_BRANCH: BrancheId = "000-EMPTY"
 
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
