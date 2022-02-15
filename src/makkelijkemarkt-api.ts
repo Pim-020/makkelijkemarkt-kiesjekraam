@@ -311,6 +311,11 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     marktvoorkeur: IMarktondernemerVoorkeur,
 ): MMarktondernemerVoorkeur => {
+
+    // By nulling the fields 'isBak', 'hasInrichting' and 'branche'
+    // we let the MM-api know that these fields
+    // can be ignored in the update.
+
     let isBak = null;
     let branche = null;
     if (marktvoorkeur.branches !== null) {

@@ -51,9 +51,9 @@ async function createToewijzingenAfwijzingen(
     toewijzingen: IToewijzing[],
     afwijzingen: IAfwijzing[],
 ) {
-    const data: any = {
-        toewijzingen: toewijzingen,
-        afwijzingen: afwijzingen,
+    const data = {
+        toewijzingen,
+        afwijzingen,
     };
     try {
         const result = await createAllocations(afkorting, marktDate, data);
