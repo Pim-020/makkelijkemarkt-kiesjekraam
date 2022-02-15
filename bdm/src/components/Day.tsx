@@ -1,11 +1,12 @@
-import { Modal, Button, Input, Tabs } from "antd"
 import React, { RefObject, Component, createRef, MouseEvent, KeyboardEvent, ChangeEvent } from "react"
-import { AssignedBranche, Branche, Lot, MarketEventDetails, MarketLayout, MarketPage } from "../models"
+import { Modal, Button, Input, Tabs } from "antd"
+import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+
+import { AssignedBranche, Lot, MarketEventDetails, MarketLayout, MarketPage } from "../models"
 import LayoutEdit from "./LayoutEdit"
 import LotEdit from "./LotEdit"
 import LotBlock from "./LotBlock"
 import { Transformer } from "../services/transformer"
-import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { validateLots } from "../common/validator"
 
 const { TabPane } = Tabs
@@ -18,7 +19,6 @@ interface DayPageState {
 
 interface DayPageProps {
     id: string,
-    lookupBranches: Branche[]
     changed?: () => void
 }
 export default class Day extends Component<DayPageProps> {
@@ -243,12 +243,6 @@ export default class Day extends Component<DayPageProps> {
                 this.props.changed()
             }
         })
-        const { pages } = newMarketState
-        localStorage.setItem(`bwdm_cache_${this.props.id}_lots`, JSON.stringify(this.transformer.layoutToStands(pages)))
-        localStorage.setItem(`bwdm_cache_${this.props.id}_rows`, JSON.stringify(this.transformer.layoutToRows(pages)))
-        localStorage.setItem(`bwdm_cache_${this.props.id}_geography`, JSON.stringify(this.transformer.layoutToGeography(pages)))
-        localStorage.setItem(`bwdm_cache_${this.props.id}_pages`, JSON.stringify(this.transformer.layoutToPages(pages)))
-
     }
 
     onTabChange = (activeKey: string) => {

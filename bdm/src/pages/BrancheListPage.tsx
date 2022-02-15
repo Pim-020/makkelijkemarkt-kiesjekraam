@@ -2,16 +2,24 @@ import { Breadcrumb, Button, Input, Popover } from "antd"
 import React, { ChangeEvent, Component } from "react"
 import { Link } from "react-router-dom"
 import { HomeOutlined } from '@ant-design/icons'
-import { Branche } from "../models"
+import { Branche as BranchModel } from "../models"
 import { BrancheService } from "../services/service_lookup"
+// @ts-ignore
+import { mmApiService } from "../services/service_mm_api"
 import {
     DeleteOutlined, PlusOutlined, BgColorsOutlined,
-    // UploadOutlined 
+    // UploadOutlined
 } from '@ant-design/icons'
 import { getTextColor } from '../common/generic'
 import CSS from 'csstype'
 import { ChromePicker } from 'react-color'
 import { message } from 'antd'
+
+interface Branche extends BranchModel {
+    number: number
+    brancheId: string
+    description: string
+}
 
 export default class BrancheListPage extends Component {
 
@@ -38,7 +46,7 @@ export default class BrancheListPage extends Component {
         // Do not updateBranches when the branches length is 0.
         if (branches.length > 0) {
             localStorage.setItem('bwdm_lookup_branches', JSON.stringify(branches))
-            // We need to trigger the remote update with a dirty parameter. 
+            // We need to trigger the remote update with a dirty parameter.
             // Do not update to often as this will send more requests
             // then necessary to the backend.
             if (dirty) {
@@ -57,13 +65,13 @@ export default class BrancheListPage extends Component {
     }
 
     componentDidMount = () => {
-        this.brancheService.retrieve().then((branches: Branche[]) => {
-            const _branches = branches.filter((b: Branche) => b !== null)
-            // Make sure there are no empty elements in the branches.
-            this.setState({
-                branches: _branches
-            })
-        })
+        // mmApiService(`/api/mm/branches`).then((branches: Branche[]) => {
+        //     const _branches = branches.filter((b: Branche) => b !== null)
+        //     // Make sure there are no empty elements in the branches.
+        //     this.setState({
+        //         branches: _branches
+        //     })
+        // })
     }
 
     render() {
@@ -148,6 +156,7 @@ export default class BrancheListPage extends Component {
             <Button
                 onClick={() => {
                     const _branches = this.state.branches || []
+                    // @ts-ignore
                     _branches.push({
                         number: 0,
                         brancheId: "",

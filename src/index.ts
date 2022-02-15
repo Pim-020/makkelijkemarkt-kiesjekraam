@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import csrf from 'csurf';
 import morgan from 'morgan';
 import path from 'path';
@@ -148,12 +149,15 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+if (process.env.ENABLE_CORS_FOR_ORIGIN) {
+    app.use(cors({ origin: process.env.ENABLE_CORS_FOR_ORIGIN }));
+}
 
 // Static files that are public (robots.txt, favicon.ico)
 app.use(express.static('./dist/'));
 
 // serve BewerkDeMarkten React build via static
-app.use('/bdm/static', express.static('bdm/build/static', { index: false }));
+app.use('/bdm(/|/*/)static', express.static('bdm/build/static', { index: false }));
 
 app.use(sessionMiddleware());
 app.use(keycloak.middleware({ logout: '/logout' }));
@@ -179,17 +183,17 @@ app.get('/', (req: Request, res: Response) => {
     res.render('HomePage');
 });
 
-app.get('/bdm/*', keycloak.protect(Roles.MARKTMEESTER), (req, res) => {
+app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
 });
 
-app.get('/api/markt', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
+app.get('/api/markt', keycloak.protect(Roles.MARKTBEWERKER), (req: GrantedRequest, res: Response) => {
     getMarkten(true).then((markten: any) => {
         res.send(markten);
     }, internalServerErrorPage(res));
 });
 
-app.get('/api/markt/:marktId', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
+app.get('/api/markt/:marktId', keycloak.protect(Roles.MARKTBEWERKER), (req: GrantedRequest, res: Response) => {
     getMarkt(req.params.marktId).then((markt: any) => {
         res.send(markt);
     }, internalServerErrorPage(res));

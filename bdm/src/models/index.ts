@@ -1,3 +1,11 @@
+import { MMarkt } from './mmarkt'
+export * from './mmarkt'
+
+export interface INaam {
+    naam: string
+    id: number
+}
+
 export interface Plan {
     name: string
     pages: number
@@ -75,10 +83,10 @@ export interface Geography {
 
 // Branches for the general Branches list
 export interface Branche {
-    brancheId: string
-    number?: number
-    description: string
+    id: number
+    omschrijving: string
     color: string
+    afkorting: string
 }
 
 export interface Announcement {
@@ -132,7 +140,29 @@ export interface DayOfWeek {
     id: number
     name: string
     abbreviation: string
+}
 
+export interface IMarktConfiguratie {
+    branches: AssignedBranche[]
+    geografie: Geography
+    locaties: Lot[]
+    marktOpstelling: Rows
+    paginas: Page[]
+}
+
+export interface IMarktContext {
+    marktId: string
+    saveMarktConfig(marktConfiguratie: IMarktConfiguratie): void
+    saveInProgress: boolean
+    genericBranches?: Branche[]
+    markt?: MMarkt
+    marktConfig?: IMarktConfiguratie
+    obstakel?: INaam[]
+    plaatseigenschap?: INaam[]
+}
+
+export interface IApiError extends Error {
+    status?: number;
 }
 
 export const WeekDays: DayOfWeek[] = [
