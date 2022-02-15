@@ -49,8 +49,8 @@ const mapMarktenToAfwijzingen = (markten: any): Promise<IAfwijzing[]> => {
 };
 
 async function createToewijzingenAfwijzingen(afkorting:string,
-                                                       toewijzingen: IToewijzing[],
-                                                       afwijzingen: IAfwijzing[]) {
+                                             toewijzingen: IToewijzing[],
+                                             afwijzingen: IAfwijzing[]) {
     const data:any = {
         "toewijzingen": toewijzingen,
         "afwijzingen": afwijzingen
