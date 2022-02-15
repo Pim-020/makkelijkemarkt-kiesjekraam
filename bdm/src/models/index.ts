@@ -150,7 +150,7 @@ export interface IMarktConfiguratie {
     paginas: Page[]
 }
 
-export interface IMarketContext {
+export interface IMarktContext {
     marktId: string
     saveMarktConfig(marktConfiguratie: IMarktConfiguratie): void
     saveInProgress: boolean

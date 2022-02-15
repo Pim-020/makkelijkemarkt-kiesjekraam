@@ -10,10 +10,6 @@ import { getTextColor } from "../common/generic"
 export default class Branches extends Component<{ id: string, lookupBranches: Branche[], changed?: (lookupBranches: AssignedBranche[]) => void }> {
     readonly state: { branches?: AssignedBranche[] } = {}
 
-    constructor(props: any) {
-        super(props)
-    }
-
     updateStorage = (branches: AssignedBranche[]) => {
         // Tell the parent component this page has changed.
         const _branches = branches.filter(e => e.brancheId !== "")

@@ -2,15 +2,15 @@ import React, { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'antd'
 
-import { MarketContext } from './MarketDataWrapper'
+import { MarktContext } from './MarktDataWrapper'
 import { initialMarktConfiguratie } from '../services/mmApi'
-import { IMarketContext } from '../models'
+import { IMarktContext } from '../models'
 import { useSaveMarktConfig } from '../hooks'
 
-const CreateMarketConfig = () => {
-  const marketContext = useContext(MarketContext) as IMarketContext
+const CreateMarktConfig = () => {
+  const marktContext = useContext(MarktContext) as IMarktContext
   const [isModalVisible, setIsModalVisible] = React.useState(true)
-  const { mutate } = useSaveMarktConfig(marketContext.marktId)
+  const { mutate } = useSaveMarktConfig(marktContext.marktId)
   const history = useHistory()
 
   const showModal = () => {
@@ -27,7 +27,7 @@ const CreateMarketConfig = () => {
     history.goBack()
   }
 
-  const title = `${marketContext.markt?.naam}`
+  const title = `${marktContext.markt?.naam}`
 
   return (
     <Modal
@@ -43,4 +43,4 @@ const CreateMarketConfig = () => {
   )
 }
 
-export default CreateMarketConfig
+export default CreateMarktConfig

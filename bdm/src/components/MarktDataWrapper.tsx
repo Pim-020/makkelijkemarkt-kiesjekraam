@@ -3,7 +3,7 @@ import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { Progress } from 'antd'
 
-import { IMarketContext } from '../models'
+import { IMarktContext } from '../models'
 import {
   useGenericBranches,
   useMarkt,
@@ -12,10 +12,10 @@ import {
   usePlaatseigenschap,
   useSaveMarktConfig,
 } from '../hooks'
-import CreateMarketConfig from './CreateMarketConfig'
+import CreateMarktConfig from './CreateMarktConfig'
 import ErrorPage from '../pages/ErrorPage'
 
-export const MarketContext = React.createContext<Partial<IMarketContext>>({})
+export const MarktContext = React.createContext<Partial<IMarktContext>>({})
 
 const MarketDataWrapper: React.FC<RouteComponentProps<{ id: string }>> = (props) => {
   const marktId = props.match.params.id
@@ -44,7 +44,7 @@ const MarketDataWrapper: React.FC<RouteComponentProps<{ id: string }>> = (props)
     )
   }
 
-  const marketContext: IMarketContext = {
+  const marktContext: IMarktContext = {
     marktId,
     saveMarktConfig,
     saveInProgress,
@@ -60,16 +60,15 @@ const MarketDataWrapper: React.FC<RouteComponentProps<{ id: string }>> = (props)
   }
 
   if (marktConfig.error?.status === 404 && markt.data) {
-    page = <CreateMarketConfig />
+    page = <CreateMarktConfig />
   }
 
   if (page) {
-    return <MarketContext.Provider value={marketContext}>{page}</MarketContext.Provider>
+    return <MarktContext.Provider value={marktContext}>{page}</MarktContext.Provider>
   }
 
-  console.error(data)
   if (markt.error?.status === 404) {
-    return <h1>Markt met id {marktId} kon niet gevonden worden</h1>
+    return <p>Markt met id {marktId} kon niet gevonden worden</p>
   }
   return <ErrorPage />
 }

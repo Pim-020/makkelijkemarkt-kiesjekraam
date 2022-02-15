@@ -9,13 +9,13 @@ import Branches from "../components/Branches"
 import Configuration from "../services/configuration"
 import { validateLots } from "../common/validator"
 
-import MarketDataWrapper, { MarketContext } from '../components/MarketDataWrapper'
+import MarketDataWrapper, { MarktContext } from '../components/MarktDataWrapper'
 import { SaveButton } from '../components/buttons'
 
 const { TabPane } = Tabs
 
 class MarketPage extends React.Component {
-    static contextType = MarketContext
+    static contextType = MarktContext
     readonly state: {
         lookupBranches?: Branche[],
         marketEventDetails?: MarketEventDetails,
