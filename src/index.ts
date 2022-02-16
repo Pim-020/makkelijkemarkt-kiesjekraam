@@ -25,7 +25,7 @@ import { Roles, keycloak, sessionMiddleware } from './authentication';
 // API
 // ---
 
-import { callApiGeneric, getMarkt, getMarkten, HttpMethod } from './makkelijkemarkt-api';
+import { getMarkt, getMarkten } from './makkelijkemarkt-api';
 
 // Routes
 // ------
@@ -63,6 +63,8 @@ import {
     indelingInputJobPage,
     indelingErrorStacktracePage,
 } from './routes/market-allocation';
+import mmApiDispatch from './routes/mmApiDispatch';
+
 import { MarktConfig } from 'model';
 import { AxiosError, AxiosResponse } from 'axios';
 
@@ -72,8 +74,6 @@ requireEnv('DATABASE_URL');
 requireEnv('APP_SECRET');
 
 const HTTP_DEFAULT_PORT = 8080;
-
-const genericMMApiRoutes = ['branche', 'obstakel', 'plaatseigenschap', 'markt/:marktId/marktconfiguratie'];
 
 const isMarktondernemer = (req: GrantedRequest) => {
     const accessToken = req.kauth.grant.access_token.content;
@@ -173,20 +173,10 @@ app.get('/', (req: Request, res: Response) => {
     res.render('HomePage');
 });
 
+app.use('/api', mmApiDispatch);
+
 app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
-});
-
-app.get('/api/markt', keycloak.protect(Roles.MARKTBEWERKER), (req: GrantedRequest, res: Response) => {
-    getMarkten(true).then((markten: any) => {
-        res.send(markten);
-    }, internalServerErrorPage(res));
-});
-
-app.get('/api/markt/:marktId', keycloak.protect(Roles.MARKTBEWERKER), (req: GrantedRequest, res: Response) => {
-    getMarkt(req.params.marktId).then((markt: any) => {
-        res.send(markt);
-    }, internalServerErrorPage(res));
 });
 
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
@@ -512,31 +502,6 @@ app.post(
         uploadMarktenZip(req, res, next, mostImportantRole);
     },
 );
-
-// TODO: add csrfProtection
-
-// This creates routes for everything under /branche, /obstakel, /plaatseigenschap and /markt/{id}/marktconfiguratie
-// It forwards the route to the API directly.
-genericMMApiRoutes.forEach((genericApiRoute: string) => {
-    app.all(
-        `/api/${genericApiRoute}/*`,
-        keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER)),
-        async (req: GrantedRequest, res: Response) => {
-            try {
-                const result = await callApiGeneric(
-                    req.url.replace('/api/', '').replace(/\/$/, ''),
-                    req.method.toLowerCase() as HttpMethod,
-                    req.body,
-                );
-
-                return res.send(result);
-            } catch (error) {
-                res.status(error.response.status);
-                return res.send({ statusText: error.response.statusText, message: error.response.data });
-            }
-        },
-    );
-});
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
