@@ -26,7 +26,6 @@ const applyProtectionIfNeeded = () => {
 
 subroutes.forEach((subroute: string) => {
     router.all(subroute, applyProtectionIfNeeded(), async (req: GrantedRequest, res: Response) => {
-        console.log(req.url);
         try {
             const result = await callApiGeneric(req.url, req.method.toLowerCase() as HttpMethod, req.body);
             return res.send(result);
