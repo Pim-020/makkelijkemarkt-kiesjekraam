@@ -100,23 +100,23 @@ export default class Branches extends Component<{ id: string, lookupBranches: Br
             <tbody>
                 {this.state.branches.map((branche, i) => {
                     return <tr key={i} className={this.getClass(branche)}>
-                        <td style={this.getStyle(branche)}><Button
-                            danger
-                            type="primary"
-                            icon={<DeleteOutlined/>}
-                            onClick={() => {
-                                if (this.state.branches) {
-                                    let _branches = this.state.branches
-                                    delete _branches[i]
-                                    _branches = _branches.filter(() => true)
-                                    this.updateStorage(_branches)
-                                }
-                            }}
-                        /></td>
-                        {branche.brancheId &&
-                            <td>{branche.brancheId.split('-')[0]}</td>
-                        }
-                        {!branche.brancheId &&
+                        <td style={this.getStyle(branche)}>
+                            <Button
+                                danger
+                                type="primary"
+                                icon={<DeleteOutlined/>}
+                                onClick={() => {
+                                    if (this.state.branches) {
+                                        let _branches = this.state.branches
+                                        delete _branches[i]
+                                        _branches = _branches.filter(() => true)
+                                        this.updateStorage(_branches)
+                                    }
+                                }}
+                            />
+                        </td>
+                        { branche.brancheId ?
+                            <td>{branche.brancheId.split('-')[0]}</td> :
                             <td style={{color: 'red'}}>Geen brancheId</td>
                         }
                         <td>{this.getBrancheId(branche, i)}</td>
