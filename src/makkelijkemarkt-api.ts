@@ -339,8 +339,12 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
         branche: branche,
     };
 
-    if (marktvoorkeur.absentFrom) result.absentFrom = marktvoorkeur.absentFrom;
-    if (marktvoorkeur.absentUntil) result.absentUntil = marktvoorkeur.absentUntil;
+    if (marktvoorkeur.absentFrom !== undefined) {
+        result.absentFrom = marktvoorkeur.absentFrom;
+    }
+    if (marktvoorkeur.absentUntil !== undefined) {
+        result.absentUntil = marktvoorkeur.absentUntil;
+    }
 
     return result;
 };
