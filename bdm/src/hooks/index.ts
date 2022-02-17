@@ -29,7 +29,7 @@ export const useSaveMarktConfig = (marktId: string) => {
   const queryClient = useQueryClient()
   return useMutation<IMarktConfiguratie, IApiError, IMarktConfiguratie>(
     (marktConfiguratie) => {
-      return mmApi.post(`/markt/${marktId}/marktconfiguratie/`, marktConfiguratie)
+      return mmApi.post(`/markt/${marktId}/marktconfiguratie`, marktConfiguratie)
     },
     {
       ...MM_API_QUERY_CONFIG,
