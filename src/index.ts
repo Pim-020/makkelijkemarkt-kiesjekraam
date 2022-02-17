@@ -11,7 +11,7 @@ import * as reactViews from 'express-react-views';
 // Util
 // ----
 
-import { HTTP_INTERNAL_SERVER_ERROR, internalServerErrorPage, isAbsoluteUrl } from './express-util';
+import { internalServerErrorPage, isAbsoluteUrl } from './express-util';
 
 import { requireEnv } from './util';
 
@@ -65,8 +65,6 @@ import {
 } from './routes/market-allocation';
 import mmApiDispatch from './routes/mmApiDispatch';
 
-import { MarktConfig } from 'model';
-import { AxiosError, AxiosResponse } from 'axios';
 
 const csrfProtection = csrf({ cookie: true });
 
