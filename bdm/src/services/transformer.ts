@@ -32,7 +32,8 @@ export class Transformer {
         const _bb = genericBranches;
 
         if (marketEventDetails) {
-            const { pages } = marketEventDetails
+            const { pages, branches } = marketEventDetails
+            _b = branches
             _l = this.layoutToStands(pages)
             _r = this.layoutToRows(pages)
             _g = this.layoutToGeography(pages)
