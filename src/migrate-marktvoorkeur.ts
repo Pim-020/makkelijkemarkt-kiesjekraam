@@ -14,6 +14,7 @@ voorkeur.findAll<Voorkeur>({
             Voorkeur.destroy({
                 where: {
                     erkenningsNummer: convertedVoorkeur.erkenningsNummer,
+                    marktId: convertedVoorkeur.marktId,
                 },
             })
         ).catch(() => console.log(`${convertedVoorkeur.erkenningsNummer} with marktId ${convertedVoorkeur.marktId} failed`));
