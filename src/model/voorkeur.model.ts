@@ -18,7 +18,7 @@ implements IMarktondernemerVoorkeurRow {
 }
 
 export const initVoorkeur = (sequelize: Sequelize) => {
-    return Voorkeur.init({
+    const attributes = {
         erkenningsNummer: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -66,10 +66,15 @@ export const initVoorkeur = (sequelize: Sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: true,
         },
-    }, {
+    }
+    Voorkeur.init(attributes, {
         modelName: 'voorkeur',
         freezeTableName: true,
         sequelize,
         tableName: 'voorkeur',
     });
+
+    return Voorkeur;
 };
+
+export default initVoorkeur;
