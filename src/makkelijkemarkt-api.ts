@@ -1,5 +1,3 @@
-import { type } from 'os';
-
 const axios = require('axios');
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { addDays, MONDAY, THURSDAY, requireEnv } from './util';
@@ -26,7 +24,6 @@ import { session } from './model/index';
 import { upsert } from './sequelize-util';
 
 import { A_LIJST_DAYS, formatOndernemerName } from './domain-knowledge';
-import { MarktConfig } from 'model/marktconfig';
 
 import { indelingVoorkeurMerge, indelingVoorkeurSort } from './pakjekraam-api';
 import { IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput } from './markt.model';
