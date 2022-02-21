@@ -129,6 +129,7 @@ const apiBase = (
             return response;
         },
         (error: any) => {
+            console.log(`MM-API ERROR: ${error.response.data.error}`);
             if (error.response.status === 504 || error.response.status === 503) {
                 counter50xRetry++;
                 if (counter50xRetry < MAX_RETRY_50X) {

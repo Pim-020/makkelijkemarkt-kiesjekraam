@@ -10,14 +10,19 @@ voorkeur.findAll<Voorkeur>({
     voorkeuren.forEach(v => {
         const convertedVoorkeur = convertVoorkeur(v);
         console.log(convertedVoorkeur);
-        updateMarktVoorkeur(convertedVoorkeur).then( () =>
-            Voorkeur.destroy({
-                where: {
-                    erkenningsNummer: convertedVoorkeur.erkenningsNummer,
-                    marktId: convertedVoorkeur.marktId,
-                },
-            })
-        ).catch(() => console.log(`${convertedVoorkeur.erkenningsNummer} with marktId ${convertedVoorkeur.marktId} failed`));
+        updateMarktVoorkeur(convertedVoorkeur).then( (result) => {
+            if ( result ){
+                Voorkeur.destroy({
+                    where: {
+                        erkenningsNummer: convertedVoorkeur.erkenningsNummer,
+                        marktId: convertedVoorkeur.marktId,
+                    },
+                })
+                console.log(`SUCCESS: ${result}`);
+            } else {
+                console.log(`FAIL: ${result}`);
+            }
+        })
     })
-})
+});
 

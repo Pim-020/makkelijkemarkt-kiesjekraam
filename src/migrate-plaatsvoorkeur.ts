@@ -21,13 +21,18 @@ plaatsvoorkeur.findAll<Plaatsvoorkeur>({
         koopman.forEach( koopmanAndMarkt => {
             console.log(koopmanAndMarkt);
             updatePlaatsvoorkeur(koopmanAndMarkt)
-            .then( () => {
+            .then( (result) => {
+                if ( result ){
+                console.log(result);
                 plaatsvoorkeur.destroy({
                     where: {
                         erkenningsNummer: koopmanAndMarkt[0].erkenningsNummer,
                         marktId: koopmanAndMarkt[0].marktId,
                     },
                 });
+                } else {
+                    console.log(`${koopmanAndMarkt[0].erkenningsNummer} with marktId ${koopmanAndMarkt[0].marktId} failed`)
+                }
             }).catch(() => console.log(`${koopmanAndMarkt[0].erkenningsNummer} with marktId ${koopmanAndMarkt[0].marktId} failed`));
         });
     });
