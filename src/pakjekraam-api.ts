@@ -142,28 +142,27 @@ export const getMededelingen = (): Promise<any> => loadJSON('./config/markt/mede
 
 export const getDaysClosed = (): Promise<any> => loadJSON('./config/markt/daysClosed.json', {});
 
-export const getMarktBasics = (marktId: string) => {
-    return getMarkt(marktId).then(mmarkt => {
-        const { afkorting: marktAfkorting, kiesJeKraamGeblokkeerdePlaatsen: geblokkeerdePlaatsen } = mmarkt;
+export const getMarktBasics = async (marktId: string) => {
+    console.log('getMarktBasics from DB');
+    const mmarkt = await getMarkt(marktId)
+    const { afkorting: marktAfkorting, kiesJeKraamGeblokkeerdePlaatsen: geblokkeerdePlaatsen } = mmarkt;
 
-        return MarktConfig.get(marktAfkorting).then(marktConfig => {
-            // Verwijder geblokkeerde plaatsen. Voorheen werd een `inactive` property
-            // toegevoegd en op `false` gezet, maar aangezien deze nergens werd gecontroleerd
-            // (behalve in de indeling), worden de plaatsen nu simpelweg verwijderd.
+    const marktConfig = await MarktConfig.get(marktAfkorting)
+    // Verwijder geblokkeerde plaatsen. Voorheen werd een `inactive` property
+    // toegevoegd en op `false` gezet, maar aangezien deze nergens werd gecontroleerd
+    // (behalve in de indeling), worden de plaatsen nu simpelweg verwijderd.
 
-            if (geblokkeerdePlaatsen) {
-                const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
-                marktConfig.marktplaatsen = marktConfig.marktplaatsen.filter(
-                    ({ plaatsId }) => !blocked.includes(plaatsId),
-                );
-            }
+    if (geblokkeerdePlaatsen) {
+        const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
+        marktConfig.marktplaatsen = marktConfig.marktplaatsen.filter(
+            ({ plaatsId }) => !blocked.includes(plaatsId),
+        );
+    }
 
-            return {
-                markt: mmarkt,
-                ...marktConfig,
-            };
-        });
-    });
+    return {
+        markt: mmarkt,
+        ...marktConfig,
+    };
 };
 
 export const getMarktDetails = (marktId: string, marktDate: string) => {
