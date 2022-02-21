@@ -25,7 +25,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
             soll.markt.id === markt.id
         );
 
-        const voorkeur = this.props.voorkeur || getDefaultVoorkeur(sollicitatie);
+        const voorkeur = this.props.voorkeur || sollicitatie ? getDefaultVoorkeur(sollicitatie) : {};
 
         if (voorkeur.absentFrom) {
             voorkeur.absentFrom = yyyyMmDdtoDDMMYYYY(voorkeur.absentFrom);
@@ -38,7 +38,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
         return (
 
             <Form csrfToken={csrfToken} className="Form--AlgemenevoorkeurenForm">
-                { role === 'marktondernemer' ?
+                { role === 'marktondernemer' && sollicitatie ?
                     <SollicitatieSpecs sollicitatie={sollicitatie} markt={markt} /> : null
                 }
                 <h1 className="Heading Heading--intro">Marktprofiel {markt.naam}</h1>
