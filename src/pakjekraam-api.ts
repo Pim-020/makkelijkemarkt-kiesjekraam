@@ -22,7 +22,6 @@ import {
     getAllocations,
 } from './makkelijkemarkt-api';
 
-import { calcToewijzingen } from './indeling';
 import { ConceptQueue } from './concept-queue';
 
 const conceptQueue = new ConceptQueue();
