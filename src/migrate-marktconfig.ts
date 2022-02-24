@@ -5,31 +5,9 @@ import {
     postObstakel,
     postPlaatseigenschap
 } from './makkelijkemarkt-api';
-import { IBranche } from './markt.model';
+import { IBranche, IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput } from './markt.model';
 import { MarktConfig } from './model';
 import { MMMarkt } from './makkelijkemarkt.model';
-
-export interface IBrancheInput {
-    afkorting: string,
-    omschrijving: string,
-    color: string
-}
-
-export interface IObstakelInput {
-    naam: string
-}
-
-export interface IPlaatsEigenschapInput {
-    naam: string
-}
-
-export interface IMarktConfiguratieInput {
-    geografie: any,
-    locaties: any,
-    marktOpstelling: any,
-    paginas: any,
-    branches: any
-}
 
 const branches = new Map<string, IBrancheInput>();
 const obstakels = new Map<string, IObstakelInput>();

@@ -195,3 +195,25 @@ export interface IPlaatsvoorkeurRow {
     plaatsId: string;
     priority: number;
 }
+
+export interface IBrancheInput {
+    afkorting: string,
+    omschrijving: string,
+    color: string
+}
+
+export interface IObstakelInput {
+    naam: string
+}
+
+export interface IPlaatsEigenschapInput {
+    naam: string
+}
+
+export interface IMarktConfiguratieInput {
+    geografie: any,
+    locaties: any,
+    marktOpstelling: any,
+    paginas: any,
+    branches: any
+}

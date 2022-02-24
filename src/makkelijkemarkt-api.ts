@@ -29,7 +29,7 @@ import { A_LIJST_DAYS, formatOndernemerName } from './domain-knowledge';
 import { MarktConfig } from 'model/marktconfig';
 
 import { indelingVoorkeurMerge, indelingVoorkeurSort } from './pakjekraam-api';
-import {IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput} from "./migrate-marktconfig";
+import { IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput } from './markt.model';
 
 const packageJSON = require('../package.json');
 
@@ -522,17 +522,17 @@ export async function getAllocations(marktId: string, date: string): Promise<any
 }
 
 export const postBranche = async (branche: IBrancheInput) => {
-    return apiBase('branche', 'post', JSON.stringify(branche));
+    return callApiGeneric('branche', 'post', JSON.parse(JSON.stringify(branche)));
 };
 
 export const postObstakel = async (obstakel: IObstakelInput) => {
-    return apiBase('obstakel', 'post', JSON.stringify(obstakel));
+    return callApiGeneric('obstakel', 'post', JSON.parse(JSON.stringify(obstakel)));
 };
 
 export const postPlaatseigenschap = async (plaatseigenschap: IPlaatsEigenschapInput) => {
-    return apiBase('plaatseigenschap', 'post', JSON.stringify(plaatseigenschap));
+    return callApiGeneric('plaatseigenschap', 'post', JSON.parse(JSON.stringify(plaatseigenschap)));
 };
 
 export const postMarktConfiguratie = async (marktId: number, config: IMarktConfiguratieInput) => {
-    return apiBase(`markt/${marktId}/marktconfiguratie`, 'post', JSON.stringify(config));
+    return callApiGeneric(`markt/${marktId}/marktconfiguratie`, 'post', JSON.parse(JSON.stringify(config)));
 };
