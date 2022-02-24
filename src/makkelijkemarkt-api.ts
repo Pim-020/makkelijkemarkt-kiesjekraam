@@ -13,7 +13,10 @@ import {
 
 import {
     BrancheId,
+    IBranche,
+    IGenericBranche,
     IRSVP,
+    IMarktConfiguratie,
     IMarktondernemer,
     IPlaatsvoorkeur,
     IMarktondernemerVoorkeur,
@@ -27,6 +30,8 @@ import { A_LIJST_DAYS, formatOndernemerName } from './domain-knowledge';
 
 import { indelingVoorkeurMerge, indelingVoorkeurSort } from './pakjekraam-api';
 import { IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput } from './markt.model';
+
+import { MarktConfig, validateMarktConfig } from '../src/model/marktconfig';
 
 const packageJSON = require('../package.json');
 
@@ -310,7 +315,6 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     marktvoorkeur: IMarktondernemerVoorkeur,
 ): MMarktondernemerVoorkeur => {
-
     // By nulling the fields 'isBak', 'hasInrichting' and 'branche'
     // we let the MM-api know that these fields
     // can be ignored in the update.
@@ -388,9 +392,11 @@ export const getVoorkeurByMarktEnOndernemer = (
     marktId: string,
     erkenningsNummer: string,
 ): Promise<IMarktondernemerVoorkeurRow> =>
-    apiBase(`marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then(response =>
-        convertVoorkeurToVoorkeurRow(convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)[0]),
-    );
+    apiBase(`marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then(response => {
+        return convertVoorkeurToVoorkeurRow(
+            convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)[0],
+        );
+    });
 
 export const getVoorkeurenByMarkt = (marktId: string): Promise<IMarktondernemerVoorkeur[]> =>
     apiBase(`marktvoorkeur/markt/${marktId}`).then(response =>
@@ -533,3 +539,80 @@ export const postPlaatseigenschap = async (plaatseigenschap: IPlaatsEigenschapIn
 export const postMarktConfiguratie = async (marktId: number, config: IMarktConfiguratieInput) => {
     return callApiGeneric(`markt/${marktId}/marktconfiguratie`, 'post', JSON.parse(JSON.stringify(config)));
 };
+
+export const getGenericBranches = async (): Promise<IGenericBranche[]> => {
+    const url = '/branche/all';
+    const genericBranches = await callApiGeneric(url, 'get');
+    return (genericBranches as unknown) as IGenericBranche[];
+};
+
+export const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
+    const url = `/markt/${marktId}/marktconfiguratie/latest`;
+    const marktConfig = await callApiGeneric(url, 'get');
+    return (marktConfig as unknown) as IMarktConfiguratie;
+};
+
+const transformToLegacyBranches = (genericBranches: IGenericBranche[]): IBranche[] => {
+    const legacyBranches = genericBranches.map(
+        ({ id: number, afkorting: brancheId, omschrijving: description, color }) => ({
+            number,
+            brancheId,
+            description,
+            color: color ? `#${color}` : '',
+        }),
+    );
+    return legacyBranches;
+};
+
+const transformToLegacyMarktConfig = (genericBranches: IGenericBranche[], configJSON: IMarktConfiguratie) => {
+    // this function is based on MarktConfig.store and MarktConfig.get methods
+    const legacyBranches = transformToLegacyBranches(genericBranches);
+    const { marktOpstelling: markt, ...rest } = configJSON;
+    let marktConfig = {
+        ...rest,
+        markt,
+        branches: MarktConfig.mergeBranches(legacyBranches, configJSON.branches),
+    };
+    validateMarktConfig(marktConfig);
+    marktConfig = MarktConfig.homogenizeData(marktConfig);
+
+    const marktplaatsen = marktConfig.locaties;
+    const rows = marktConfig.markt.rows.map(row =>
+        row.map(plaatsId => marktplaatsen.find(plaats => plaats.plaatsId === plaatsId)),
+    );
+    return {
+        marktplaatsen,
+        rows,
+        branches: marktConfig.branches,
+        obstakels: marktConfig.geografie.obstakels,
+        paginas: marktConfig.paginas,
+    };
+};
+
+export async function getMarktBasics(marktId: string) {
+    // this function is based on pakjekraam-api.getMarktBasics
+    const mmarkt = await getMarkt(marktId);
+    const { kiesJeKraamGeblokkeerdePlaatsen: geblokkeerdePlaatsen } = mmarkt;
+
+    try {
+        const genericBranches = await getGenericBranches();
+        const marktConfig = await getLatestMarktConfig(marktId);
+        const legacyMarktConfig = transformToLegacyMarktConfig(genericBranches, marktConfig);
+        // Verwijder geblokkeerde plaatsen. Voorheen werd een `inactive` property
+        // toegevoegd en op `false` gezet, maar aangezien deze nergens werd gecontroleerd
+        // (behalve in de indeling), worden de plaatsen nu simpelweg verwijderd.
+        if (geblokkeerdePlaatsen) {
+            const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
+            legacyMarktConfig.marktplaatsen = legacyMarktConfig.marktplaatsen.filter(
+                ({ plaatsId }) => !blocked.includes(plaatsId),
+            );
+        }
+        return {
+            markt: mmarkt,
+            ...legacyMarktConfig,
+        };
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
