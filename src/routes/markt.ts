@@ -11,6 +11,7 @@ import {
 } from '../keycloak-api';
 import {
     getMarkt,
+    getMarktBasics,
     getOndernemer,
     getAanmeldingenByOndernemerEnMarkt,
     getVoorkeurByMarktEnOndernemer,
@@ -19,7 +20,6 @@ import {
 } from '../makkelijkemarkt-api';
 import {
     getDaysClosed,
-    getMarktBasics,
     getMededelingen,
 } from '../pakjekraam-api';
 
@@ -109,4 +109,3 @@ export const marktDetail = (
     )
     .catch(next);
 };
-

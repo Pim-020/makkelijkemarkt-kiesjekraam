@@ -13,13 +13,13 @@ import {
 } from '../keycloak-api';
 
 import {
+    getMarktBasics,
     getVoorkeurByMarktEnOndernemer,
     getOndernemer,
     updateMarktVoorkeur,
 } from '../makkelijkemarkt-api';
 
 import {
-    getMarktBasics,
     convertVoorkeur,
 } from '../pakjekraam-api';
 
