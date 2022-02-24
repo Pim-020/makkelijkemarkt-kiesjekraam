@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import {
+    getMarktBasics,
     getOndernemer,
     getPlaatsvoorkeurenByMarktEnOndernemer,
     updatePlaatsvoorkeur,
@@ -9,7 +10,6 @@ import {
 } from '../makkelijkemarkt-api';
 
 import {
-    getMarktBasics,
     getMededelingen,
 } from '../pakjekraam-api';
 
