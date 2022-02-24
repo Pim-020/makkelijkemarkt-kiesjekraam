@@ -72,6 +72,14 @@ export class MarktConfig extends Model {
         });
     }
 
+    public static mergeBranches(allBranches, marktBranches) {
+        return this._mergeBranches(allBranches, marktBranches)
+    }
+
+    public static homogenizeData(data) {
+        return this._homogenizeData(data)
+    }
+
     public static store(configName, marktAfkorting, allBranches, configJSON) {
         marktCache.flushAll();
 
@@ -235,7 +243,7 @@ export const initMarktConfig = (sequelize: Sequelize) => {
     return MarktConfig;
 };
 
-const validateMarktConfig = (configData) => {
+export const validateMarktConfig = (configData) => {
     const index = {
         ...INDEX,
         branches : indexBranches(configData.branches),
