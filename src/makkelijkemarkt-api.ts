@@ -29,6 +29,7 @@ import { A_LIJST_DAYS, formatOndernemerName } from './domain-knowledge';
 import { MarktConfig } from 'model/marktconfig';
 
 import { indelingVoorkeurMerge, indelingVoorkeurSort } from './pakjekraam-api';
+import {IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput} from "./migrate-marktconfig";
 
 const packageJSON = require('../package.json');
 
@@ -519,3 +520,19 @@ export async function getAllocations(marktId: string, date: string): Promise<any
         return response;
     });
 }
+
+export const postBranche = async (branche: IBrancheInput) => {
+    return apiBase('branche', 'post', JSON.stringify(branche));
+};
+
+export const postObstakel = async (obstakel: IObstakelInput) => {
+    return apiBase('obstakel', 'post', JSON.stringify(obstakel));
+};
+
+export const postPlaatseigenschap = async (plaatseigenschap: IPlaatsEigenschapInput) => {
+    return apiBase('plaatseigenschap', 'post', JSON.stringify(plaatseigenschap));
+};
+
+export const postMarktConfiguratie = async (marktId: number, config: IMarktConfiguratieInput) => {
+    return apiBase(`markt/${marktId}/marktconfiguratie`, 'post', JSON.stringify(config));
+};

@@ -26,6 +26,7 @@
     "migrate-rsvp-to-mm-api": "ts-node src/migrate-rsvp.ts",
     "migrate-marktvoorkeur-to-mm-api": "ts-node src/migrate-marktvoorkeur.ts",
     "migrate-plaatsvoorkeur-to-mm-api": "ts-node src/migrate-plaatsvoorkeur.ts",
+    "migrate-marktconfiguratie-to-mm-api": "ts-node src/migrate-marktconfig.ts",
     "import": "echo 'Import skipped. Temporarily disabled.' && exit 0",
     "tdd": "jest --watch --verbose --rootDir ./src/",
     "test": "jest --verbose --silent --rootDir ./src/",
