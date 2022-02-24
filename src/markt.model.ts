@@ -180,6 +180,13 @@ export interface IBranche {
     number?: number;
 }
 
+export interface IGenericBranche {
+    id: number;
+    afkorting: string;
+    omschrijving: string;
+    color: string;
+}
+
 export interface IPlaatsvoorkeur {
     erkenningsNummer: ErkenningsNummer;
     marktId: string;
@@ -197,23 +204,84 @@ export interface IPlaatsvoorkeurRow {
 }
 
 export interface IBrancheInput {
-    afkorting: string,
-    omschrijving: string,
-    color: string
+    afkorting: string;
+    omschrijving: string;
+    color: string;
 }
 
 export interface IObstakelInput {
-    naam: string
+    naam: string;
 }
 
 export interface IPlaatsEigenschapInput {
-    naam: string
+    naam: string;
+}
+
+export interface AssignedBranche {
+    brancheId: string;
+    verplicht: boolean;
+    maximumPlaatsen?: number;
+    allocated?: number;
+    backGroundColor?: string;
+    color?: string;
+}
+
+export interface Obstacle {
+    kraamA: string;
+    kraamB: string;
+    obstakel: string[];
+    type?: 'obstacle';
+}
+
+export interface Geography {
+    obstakels: Obstacle[];
+}
+
+export interface Lot {
+    plaatsId?: string;
+    branches?: string[];
+    verkoopinrichting?: string[];
+    properties?: string[];
+    kraamA?: string;
+    kraamB?: string;
+    obstakel?: string[];
+    type?: 'lot' | 'stand' | 'obstacle';
+    selected?: boolean;
+    blockPosition?: [number, number];
+    blockStart?: boolean;
+    blockEnd?: boolean;
+    invalid?: boolean;
+}
+
+export interface Rows {
+    rows: string[][];
+}
+
+export interface Page {
+    title: string;
+    indelingslijstGroup: Assignment[];
+}
+
+export interface Assignment {
+    class: string;
+    title: string;
+    landmarkTop: string;
+    landmarkBottom: string;
+    plaatsList: string[];
+}
+
+export interface IMarktConfiguratie {
+    branches: AssignedBranche[];
+    geografie: Geography;
+    locaties: Lot[];
+    marktOpstelling: Rows;
+    paginas: Page[];
 }
 
 export interface IMarktConfiguratieInput {
-    geografie: any,
-    locaties: any,
-    marktOpstelling: any,
-    paginas: any,
-    branches: any
+    geografie: any;
+    locaties: any;
+    marktOpstelling: any;
+    paginas: any;
+    branches: any;
 }
