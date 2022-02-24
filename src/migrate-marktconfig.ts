@@ -5,7 +5,14 @@ import {
     postObstakel,
     postPlaatseigenschap
 } from './makkelijkemarkt-api';
-import { IBranche, IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput } from './markt.model';
+import {
+    IBranche,
+    IBrancheInput,
+    IMarktConfiguratieInput,
+    IMarktplaats,
+    IObstakelInput,
+    IPlaatsEigenschapInput
+} from './markt.model';
 import { MarktConfig } from './model';
 import { MMMarkt } from './makkelijkemarkt.model';
 
@@ -118,20 +125,60 @@ const handlePlaatsEigenschappen = async () => {
     await Promise.all(unresolvedPosts.map(post => post.catch(e => e)));
 };
 
+const generateConfigInput = config => {
+    const localBranches = config.branches.map((branche: IBranche) => {
+        const configBranche: any = {
+            brancheId: branche.brancheId
+        };
+
+        if ('verplicht' in branche) { configBranche.verplicht = branche.verplicht; }
+        if ('maximumPlaatsen' in branche) { configBranche.maximumPlaatsen = branche.maximumPlaatsen; }
+
+        return configBranche;
+    });
+
+    const locaties = config.marktplaatsen.map((locatie: IMarktplaats) => {
+        const configLocatie: any = {
+            plaatsId: locatie.plaatsId
+        };
+
+        if (locatie.branches) { configLocatie.branches = locatie.branches; }
+        if (locatie.properties) { configLocatie.properties = locatie.properties; }
+        if (locatie.verkoopinrichting) { configLocatie.verkoopInrichting = locatie.verkoopinrichting; }
+        if (locatie.inactive) { configLocatie.inactive = locatie.inactive; }
+
+        return configLocatie;
+    });
+
+    const configOpstellingen = { rows: [] };
+
+    config.rows.forEach(row => {
+        const currentRow = [];
+
+        row.forEach(space => {
+            currentRow.push(space.plaatsId);
+        });
+
+        configOpstellingen.rows.push(currentRow);
+    });
+
+    return {
+        geografie: { obstakels: config.obstakels },
+        branches: localBranches,
+        paginas: config.paginas,
+        marktOpstelling: configOpstellingen,
+        locaties
+    };
+};
+
 const handleConfig = async (markt: MMMarkt, config) => {
     const id = markt.id;
 
-    const marktConfiguratie: IMarktConfiguratieInput = {
-        geografie: { obstakels: config.obstakels },
-        branches: config.branches,
-        paginas: config.paginas,
-        marktOpstelling: { rows: config.rows },
-        locaties: config.marktplaatsen
-    };
-
-    await postMarktConfiguratie(id, marktConfiguratie);
+    await postMarktConfiguratie(id, generateConfigInput(config));
 };
 
 migrateConfig().then(result => {
     console.log(result);
+    process.exit();
 });
+
