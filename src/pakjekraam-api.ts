@@ -20,6 +20,7 @@ import {
     getIndelingVoorkeuren,
     getVoorkeurenByMarkt,
     getAllocations,
+    getMarktBasics,
 } from './makkelijkemarkt-api';
 
 import { ConceptQueue } from './concept-queue';
@@ -141,30 +142,6 @@ const enrichOndernemersWithVoorkeuren = (ondernemers: IMarktondernemer[], voorke
 export const getMededelingen = (): Promise<any> => loadJSON('./config/markt/mededelingen.json', {});
 
 export const getDaysClosed = (): Promise<any> => loadJSON('./config/markt/daysClosed.json', {});
-
-export const getMarktBasics = (marktId: string) => {
-    return getMarkt(marktId).then(mmarkt => {
-        const { afkorting: marktAfkorting, kiesJeKraamGeblokkeerdePlaatsen: geblokkeerdePlaatsen } = mmarkt;
-
-        return MarktConfig.get(marktAfkorting).then(marktConfig => {
-            // Verwijder geblokkeerde plaatsen. Voorheen werd een `inactive` property
-            // toegevoegd en op `false` gezet, maar aangezien deze nergens werd gecontroleerd
-            // (behalve in de indeling), worden de plaatsen nu simpelweg verwijderd.
-
-            if (geblokkeerdePlaatsen) {
-                const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
-                marktConfig.marktplaatsen = marktConfig.marktplaatsen.filter(
-                    ({ plaatsId }) => !blocked.includes(plaatsId),
-                );
-            }
-
-            return {
-                markt: mmarkt,
-                ...marktConfig,
-            };
-        });
-    });
-};
 
 export const getMarktDetails = (marktId: string, marktDate: string) => {
     console.log('get market details: ', marktId, marktDate);
