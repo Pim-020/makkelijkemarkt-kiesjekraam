@@ -144,7 +144,7 @@ const generateConfigInput = config => {
 
         if (locatie.branches) { configLocatie.branches = locatie.branches; }
         if (locatie.properties) { configLocatie.properties = locatie.properties; }
-        if (locatie.verkoopinrichting) { configLocatie.verkoopInrichting = locatie.verkoopinrichting; }
+        if (locatie.verkoopinrichting) { configLocatie.verkoopinrichting = locatie.verkoopinrichting; }
         if (locatie.inactive) { configLocatie.inactive = locatie.inactive; }
 
         return configLocatie;
@@ -181,4 +181,3 @@ migrateConfig().then(result => {
     console.log(result);
     process.exit();
 });
-
