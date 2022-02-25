@@ -250,6 +250,9 @@ export const getPlaatsvoorkeurenOndernemer = (erkenningsNummer: string): Promise
 //TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
 export const deletePlaatsvoorkeurenByErkenningsnummer = (erkenningsNummer: string) => null;
 
+export const deletePlaatsvoorkeurenByMarktAndKoopman = (marktId: string, erkenningsNummer: string) =>
+    apiBase(`plaatsvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`, 'delete').then(response => response.data);
+
 export const getPlaatsvoorkeurenByMarkt = (marktId: string): Promise<IPlaatsvoorkeur[]> =>
     apiBase(`plaatsvoorkeur/markt/${marktId}`).then(response =>
         convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data),

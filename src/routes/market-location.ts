@@ -7,6 +7,7 @@ import {
     updatePlaatsvoorkeur,
     getIndelingVoorkeur,
     updateMarktVoorkeur,
+    deletePlaatsvoorkeurenByMarktAndKoopman,
 } from '../makkelijkemarkt-api';
 
 import {
@@ -95,16 +96,6 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
 
     const { redirectTo } = req.body;
 
-    const removeExisting = () =>
-        models.plaatsvoorkeur
-            .destroy({
-                where: {
-                    erkenningsNummer,
-                    marktId,
-                },
-            })
-            .then(n => console.log(`${n} Bestaande voorkeuren verwijderd...`));
-
     const ignoreEmptyVoorkeur = (voorkeur: IPlaatsvoorkeurRow) => !!voorkeur.plaatsId;
 
     const insertFormData = () => {
@@ -123,7 +114,7 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
 
             return updatePlaatsvoorkeur(voorkeuren);
         } else {
-            return null;
+            return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer);
         }
 
     };
@@ -144,8 +135,7 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
         return updateMarktVoorkeur(vk);
     };
 
-    removeExisting()
-        .then(insertFormData)
+    insertFormData()
         .then(insertAlgVoorkeurFormData)
         .then(
             () => res.status(HTTP_CREATED_SUCCESS).redirect(redirectTo),
