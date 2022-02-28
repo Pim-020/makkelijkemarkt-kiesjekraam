@@ -115,7 +115,6 @@ export const indelingVoorkeurMerge = (
 
 export const convertVoorkeur = (obj: IMarktondernemerVoorkeurRow): IMarktondernemerVoorkeur => ({
     ...obj,
-    branches: [obj.brancheId, obj.parentBrancheId].filter(Boolean),
     verkoopinrichting: obj.inrichting ? [obj.inrichting] : [],
 });
 

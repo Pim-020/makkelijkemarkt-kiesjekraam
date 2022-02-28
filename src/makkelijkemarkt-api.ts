@@ -281,10 +281,10 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 
     marktvoorkeuren.forEach(vk => {
         let branches = [];
-        let inrichting = [];
+        let inrichting = '';
 
         if (vk.hasInrichting) {
-            inrichting = ['eigen-materieel'];
+            inrichting = 'eigen-materieel';
         }
 
         if (vk.branche) {
@@ -303,9 +303,10 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
             maximum: vk.maximum,
             krachtStroom: null,
             kraaminrichting: inrichting,
+            inrichting: inrichting,
             anywhere: vk.anywhere,
             branches: branches,
-            verkoopinrichting: inrichting,
+            verkoopinrichting: [inrichting],
         });
 
         if (vk.absentFrom) result[result.length - 1].absentFrom = vk.absentFrom;
