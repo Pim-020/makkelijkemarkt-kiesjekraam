@@ -103,18 +103,26 @@ async function allocate() {
             let res = null;
             while (res === null) {
                 const jobId = indelingen_ids[ind];
+                if (jobId === undefined){
+                    console.error('ERROR:');
+                    console.error('ERROR: Undefined job id!');
+                    console.error('ERROR:');
+                    break;
+                }
                 console.log('waiting for job id:', jobId);
                 await timeout(1000);
                 res = await redisClient.get('RESULT_' + jobId);
             }
-            const data = JSON.parse(res);
-            if (data['error_id'] === undefined) {
-                const marktId: string = data['markt']['id'];
-                await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
-                const allocs = await getAllocations(marktId, marktDate);
-                console.log(allocs.data);
-            } else {
-                console.log(data);
+            if (res !== null){
+                const data = JSON.parse(res);
+                if (data['error_id'] === undefined) {
+                    const marktId: string = data['markt']['id'];
+                    await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
+                    const allocs = await getAllocations(marktId, marktDate);
+                    console.log(allocs.data);
+                } else {
+                    console.log(data);
+                }
             }
         }
         console.log('done');
