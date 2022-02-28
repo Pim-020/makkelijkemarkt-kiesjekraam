@@ -326,13 +326,14 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     let isBak = null;
     let branche = null;
     if (marktvoorkeur.branches !== null) {
-        if (marktvoorkeur.branches.includes('bak')) isBak = true;
+        isBak = (marktvoorkeur.branches.includes('bak')) ? true : false;
         branche = marktvoorkeur.branches[0] as BrancheId;
     }
 
+
     let hasInrichting: boolean = null;
     if (marktvoorkeur.verkoopinrichting !== undefined) {
-        hasInrichting = marktvoorkeur.verkoopinrichting || marktvoorkeur.kraaminrichting ? true : false;
+        hasInrichting = (marktvoorkeur.verkoopinrichting.includes('eigen-materieel')) ? true : false;
     }
 
     let result: MMarktondernemerVoorkeur = {
