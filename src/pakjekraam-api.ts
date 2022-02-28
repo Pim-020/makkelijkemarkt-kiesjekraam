@@ -115,6 +115,7 @@ export const indelingVoorkeurMerge = (
 
 export const convertVoorkeur = (obj: IMarktondernemerVoorkeurRow): IMarktondernemerVoorkeur => ({
     ...obj,
+     branches: [obj.brancheId, obj.parentBrancheId].filter(Boolean),
     verkoopinrichting: obj.inrichting ? [obj.inrichting] : [],
 });
 
@@ -149,8 +150,7 @@ export const getMarktDetails = (marktId: string, marktDate: string) => {
     // Populate the `ondernemer.voorkeur` field
     const ondernemersPromise = Promise.all([getOndernemersByMarkt(marktId), getVoorkeurenByMarkt(marktId)]).then(
         ([ondernemers, voorkeuren]) => {
-            const convertedVoorkeuren = voorkeuren.map(convertVoorkeur);
-            return enrichOndernemersWithVoorkeuren(ondernemers, convertedVoorkeuren);
+            return enrichOndernemersWithVoorkeuren(ondernemers, voorkeuren);
         },
     );
 
