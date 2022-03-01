@@ -236,7 +236,7 @@ const convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren = (
     return {
         markt: plaatsvoorkeuren[0].marktId,
         koopman: plaatsvoorkeuren[0].erkenningsNummer,
-        plaatsen: plaatsvoorkeuren.map(pv => parseInt(pv.plaatsId)),
+        plaatsen: plaatsvoorkeuren.map(pv => pv.plaatsId),
     };
 };
 

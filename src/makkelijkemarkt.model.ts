@@ -105,7 +105,7 @@ export interface MMSollicitatieStandalone extends MMSollicitatie {
 export interface MMMarktPlaatsvoorkeuren {
     markt: string;
     koopman: string;
-    plaatsen: number[];
+    plaatsen: string[];
 }
 
 export interface MMarktondernemerVoorkeur {
