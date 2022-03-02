@@ -21,7 +21,7 @@ const obstakels = new Map<string, IObstakelInput>();
 const plaatseigenschappen = new Map<string, IPlaatsEigenschapInput>();
 
 export const migrateConfig = async (): Promise<boolean> => {
-    const markten = await getMarkten(true);
+    const markten = await getMarkten(false);
 
     console.log('Markten opzoeken in config: ', markten.map(markt => markt.naam));
 
