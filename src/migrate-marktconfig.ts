@@ -1,9 +1,9 @@
 import {
-    getMarkten,
     postBranche,
     postMarktConfiguratie,
     postObstakel,
-    postPlaatseigenschap
+    postPlaatseigenschap,
+    getAllMarkten
 } from './makkelijkemarkt-api';
 import {
     IBranche,
@@ -21,7 +21,7 @@ const obstakels = new Map<string, IObstakelInput>();
 const plaatseigenschappen = new Map<string, IPlaatsEigenschapInput>();
 
 export const migrateConfig = async (): Promise<boolean> => {
-    const markten = await getMarkten(false);
+    const markten = await getAllMarkten();
 
     console.log('Markten opzoeken in config: ', markten.map(markt => markt.naam));
 

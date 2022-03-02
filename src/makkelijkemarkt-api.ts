@@ -416,6 +416,10 @@ export const getVoorkeurenByOndernemer = (erkenningsNummer: string): Promise<IMa
 export const getMarkt = (marktId: string): Promise<MMMarkt> =>
     apiBase(`markt/${marktId}`).then(response => response.data);
 
+//TODO: deze mag verwijderd worden als de migrate-marktConfig wordt gedecommed
+export const getAllMarkten = (): Promise<MMMarkt[]> =>
+    apiBase('markt/').then(response => response.data)
+
 export const getMarkten = (includeInactive: boolean = false): Promise<MMMarkt[]> =>
     apiBase('markt/').then(({ data: markten = [] }) =>
         markten.filter(
