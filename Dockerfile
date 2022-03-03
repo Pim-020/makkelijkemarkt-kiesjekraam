@@ -15,7 +15,7 @@ RUN npm run build
 
 
 ### Kies je kraam
-FROM mhart/alpine-node:12.0.0
+FROM mhart/alpine-node:16.4.2
 
 # Setup certificates for ADP/Motiv
 RUN apk add ca-certificates
