@@ -1,29 +1,34 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-export default class SvgTree extends Component<{ color?: string, invert?: boolean, position: { x: number, y: number } }> {
-    render() {
-        return <svg
-            x={this.props.position.x}
-            y={this.props.position.y}
-            width="12"
-            height="12"
-            viewBox="0 0 568.031 568.03"
-            version="1.1"
-            id="tree">
-            <defs id="defs2" />
-            <metadata id="metadata5">
-            </metadata>
-            <g id="tree-group">
-                <path
-                    style={{
-                        fill: this.props.color || '#73ab4f',
-                        stroke: this.props.color || '#73ab4f',
-                        strokeWidth: 0.4,
-                        strokeLinecap: "round",
-                        strokeLinejoin: "round",
-                        strokeOpacity: 1
-                    }}
-                    d="M508.752,177.104c-12.55-9.086-21.587-23.337-20.004-37.312c5.586-49.327-24.644-91.457-73.514-99.144
+export default class SvgTree extends Component<{
+  color?: string
+  invert?: boolean
+  position: { x: number; y: number }
+}> {
+  render() {
+    return (
+      <svg
+        x={this.props.position.x}
+        y={this.props.position.y}
+        width="12"
+        height="12"
+        viewBox="0 0 568.031 568.03"
+        version="1.1"
+        id="tree"
+      >
+        <defs id="defs2" />
+        <metadata id="metadata5"></metadata>
+        <g id="tree-group">
+          <path
+            style={{
+              fill: this.props.color || '#73ab4f',
+              stroke: this.props.color || '#73ab4f',
+              strokeWidth: 0.4,
+              strokeLinecap: 'round',
+              strokeLinejoin: 'round',
+              strokeOpacity: 1,
+            }}
+            d="M508.752,177.104c-12.55-9.086-21.587-23.337-20.004-37.312c5.586-49.327-24.644-91.457-73.514-99.144
                     c-8.678-1.367-17.319-5.092-25.141-9.282c-14.745-7.902-30.11-10.812-45.998-6.381c-8.58,2.395-13.859,1.326-20.678-4.847
                     c-38.899-35.219-99.862-22.632-118.92,25.169c-5.471,13.729-13.562,21.742-26.247,26.965c-2.832,1.167-5.94,2.484-7.952,4.639
                     c-6.332,6.781-12.366,5.108-20.037,1.845C100.74,57.663,47.41,92.371,45.346,146.044c-0.293,7.666-3.472,15.989-7.584,22.599
@@ -44,8 +49,10 @@ export default class SvgTree extends Component<{ color?: string, invert?: boolea
                      M335.541,342.88c1.469-3.518,2.941-7.034,4.472-10.535c0.51,0,1.024,0,1.534-0.004c0-1.212,0.028-2.428,0.069-3.647
                     c4.19-9.396,8.768-18.584,13.908-27.364c6.549,5.773,13.37,10.959,20.637,15.189C363.995,327.273,350.355,336.103,335.541,342.88z
                     "
-                    id="path1048-5" />
-            </g>
-        </svg>
-    }
+            id="path1048-5"
+          />
+        </g>
+      </svg>
+    )
+  }
 }

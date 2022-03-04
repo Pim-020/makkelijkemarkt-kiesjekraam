@@ -10,7 +10,6 @@ import MarketPage from './pages/MarketPage'
 const { Footer } = Layout
 const queryClient = new QueryClient()
 
-
 export default class App extends Component {
   render() {
     return (
@@ -19,7 +18,7 @@ export default class App extends Component {
           <GlobalStyle />
           <div className="App">
             <BrowserRouter basename="/bdm">
-              <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink="/"/>
+              <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink="/" />
               <div className="site-layout-content">
                 <Switch>
                   <Route path="/markt/:id" exact component={MarketPage} />
@@ -28,9 +27,9 @@ export default class App extends Component {
               </div>
             </BrowserRouter>
           </div>
-          <Footer/>
+          <Footer />
         </QueryClientProvider>
       </ThemeProvider>
-    );
+    )
   }
 }
