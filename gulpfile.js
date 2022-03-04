@@ -1,10 +1,10 @@
-const gulp = require('gulp'),
-    sass = require('gulp-sass'),
-    minifyCSS = require('gulp-clean-css'),
-    paths = {
-        style: ['src/scss/**/*.scss'],
-        cssMin: 'dist/style/',
-    };
+const gulp = require('gulp');
+const sass = require('gulp-sass')(require('sass'));
+const minifyCSS = require('gulp-clean-css');
+const paths = {
+    style: ['src/scss/**/*.scss'],
+    cssMin: 'dist/style/',
+};
 
 gulp.task('build', () =>
     gulp
@@ -15,7 +15,7 @@ gulp.task('build', () =>
 );
 
 gulp.task('watch', () =>
-    gulp.watch(paths.style).on('change', (path, stats) =>
+    gulp.watch(paths.style).on('change', () =>
         gulp
             .src(paths.style)
             .pipe(sass().on('error', sass.logError))
@@ -23,3 +23,4 @@ gulp.task('watch', () =>
             .pipe(gulp.dest(paths.cssMin)),
     ),
 );
+

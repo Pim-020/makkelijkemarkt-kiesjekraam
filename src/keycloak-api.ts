@@ -1,6 +1,7 @@
 import KeycloakAdminClient from 'keycloak-admin';
 import { requireEnv, requireOne } from './util';
 import { GrantedRequest } from 'keycloak-connect';
+import {Credentials} from "keycloak-admin/lib/utils/auth";
 
 requireEnv('IAM_URL');
 requireEnv('IAM_REALM');
@@ -14,7 +15,7 @@ const clientConfig = {
     realmName: process.env.IAM_REALM,
 };
 
-const authConfig = {
+const authConfig: Credentials = {
     username: process.env.IAM_ADMIN_USER,
     password: process.env.IAM_ADMIN_PASS,
     grantType: 'password',

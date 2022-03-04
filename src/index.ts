@@ -1,6 +1,5 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 
-import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
@@ -101,7 +100,7 @@ const isMarktBewerker = (req: GrantedRequest) => {
 };
 
 const getErkenningsNummer = (req: GrantedRequest) => {
-    const tokenContent = req.kauth.grant.access_token.content as TokenContent & any;
+    const tokenContent: TokenContent = req.kauth.grant.access_token.content;
     return isMarktondernemer(req) && tokenContent.preferred_username.replace(/\./g, '');
 };
 
@@ -134,8 +133,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true }) as RequestHandler);
+app.use(express.json() as RequestHandler);
 app.use(cookieParser());
 if (process.env.ENABLE_CORS_FOR_ORIGIN) {
     app.use(cors({ origin: process.env.ENABLE_CORS_FOR_ORIGIN }));

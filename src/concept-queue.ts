@@ -15,7 +15,6 @@ export class ConceptQueue {
     print: string;
 
     constructor() {
-        const redis = require('redis');
         const redisHost: string = process.env.REDIS_HOST;
         const redisPort: string = process.env.REDIS_PORT;
         const redisPassword: string = process.env.REDIS_PASSWORD;
@@ -40,7 +39,7 @@ export class ConceptQueue {
         this.client.on('error', function(err) {
             console.log('Redis error: ' + err);
         });
-        this.client.on('reconnecting', function(err) {
+        this.client.on('reconnecting', function() {
             console.log('Redis try reconnecting..');
         });
 
