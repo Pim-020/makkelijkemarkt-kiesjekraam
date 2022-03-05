@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'antd'
 
-import { MarktContext } from './MarktDataWrapper'
+import { MarktContext } from './providers/MarktDataProvider'
 import { initialMarktConfiguratie } from '../services/mmApi'
 import { IMarktContext } from '../models'
 import { useSaveMarktConfig } from '../hooks'

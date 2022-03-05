@@ -154,15 +154,27 @@ export interface IMarktContext {
   marktId: string
   saveMarktConfig(marktConfiguratie: IMarktConfiguratie): void
   saveInProgress: boolean
-  genericBranches?: Branche[]
   markt?: MMarkt
+  marktNotFound: boolean
   marktConfig?: IMarktConfiguratie
-  obstakel?: INaam[]
-  plaatseigenschap?: INaam[]
+  marktConfigNotFound: boolean
+}
+
+export interface IMarktGenericContext {
+  genericBranches: Branche[]
+  obstakel: INaam[]
+  plaatseigenschap: INaam[]
 }
 
 export interface IApiError extends Error {
   status?: number
+}
+
+export interface IQueryContext {
+  isLoading: boolean
+  isSuccess: boolean
+  errors: (IApiError | null)[]
+  queryProgress: number
 }
 
 export const WeekDays: DayOfWeek[] = [

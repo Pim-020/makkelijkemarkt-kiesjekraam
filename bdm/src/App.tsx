@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Layout } from 'antd'
 
 import ErrorPage from './pages/ErrorPage'
-import MarketPage from './pages/MarketPage'
+import MarktDataProvider from './components/providers/MarktDataProvider'
+import MarktGenericDataProvider from './components/providers/MarktGenericDataProvider'
+import MarktPageWrapper from './components/MarktPageWrapper'
 
 const { Footer } = Layout
 const queryClient = new QueryClient()
@@ -21,7 +23,13 @@ export default class App extends Component {
               <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink="/" />
               <div className="site-layout-content">
                 <Switch>
-                  <Route path="/markt/:id" exact component={MarketPage} />
+                  <Route exact path="/markt/:marktId">
+                    <MarktGenericDataProvider>
+                      <MarktDataProvider>
+                        <MarktPageWrapper />
+                      </MarktDataProvider>
+                    </MarktGenericDataProvider>
+                  </Route>
                   <Route component={ErrorPage} />
                 </Switch>
               </div>
