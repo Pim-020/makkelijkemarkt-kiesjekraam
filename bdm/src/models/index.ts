@@ -177,6 +177,27 @@ export interface IQueryContext {
   queryProgress: number
 }
 
+export interface IAction<Payload = {}> {
+  type: string
+  payload: Payload
+}
+
+export interface IItemReducerAction extends IAction<IItemReducerActionPayload> {}
+export interface IItemReducerActionPayload<Data = []> {
+  data?: Data
+  id?: number
+  key?: string
+  value?: any
+  newItem?: any
+}
+
+export interface IItemReducerItem {
+  id: number | string
+}
+
+export interface IBrancheAction extends IAction<IBranchePayload> {}
+export interface IBranchePayload extends IItemReducerActionPayload<Branche[]> {}
+
 export const WeekDays: DayOfWeek[] = [
   { id: 0, name: 'Maandag', abbreviation: 'MA' },
   { id: 1, name: 'Dinsdag', abbreviation: 'DI' },

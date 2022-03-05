@@ -1,206 +1,69 @@
-import { Breadcrumb, Button, Input, Popover } from 'antd'
-import React, { ChangeEvent, Component } from 'react'
-import { Link } from 'react-router-dom'
-import { HomeOutlined } from '@ant-design/icons'
-import { Branche as BranchModel } from '../models'
-import { BrancheService } from '../services/service_lookup'
-// @ts-ignore
-import { mmApiService } from '../services/service_mm_api'
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  BgColorsOutlined,
-  // UploadOutlined
-} from '@ant-design/icons'
-import { getTextColor } from '../common/generic'
-import CSS from 'csstype'
-import { ChromePicker } from 'react-color'
-import { message } from 'antd'
+import React, { Reducer, useContext, useEffect } from 'react'
 
-interface Branche extends BranchModel {
-  number: number
-  brancheId: string
-  description: string
+import { Branche, IApiError, IBrancheAction, IMarktGenericContext, IQueryContext } from '../models'
+import { useCreateGenericBranche } from '../hooks'
+import { MarktGenericContext } from '../components/providers/MarktGenericDataProvider'
+import { itemReducer as genericBranchesReducer } from '../reducers'
+import GenericBranche from '../components/GenericBranche'
+import { AddButton } from '../components/buttons'
+import { networkErrorNotification } from '../common/notifications'
+
+const initialBranche: Omit<Branche, 'id'> = {
+  afkorting: '',
+  omschrijving: '',
+  color: '',
 }
 
-export default class BrancheListPage extends Component {
-  readonly state: { dirtybits: boolean; branches: Branche[]; displayColorPicker: boolean } = {
-    dirtybits: false,
-    displayColorPicker: false,
-    branches: [],
-  }
-  getStyle = (branche: Branche): CSS.Properties => {
-    return {
-      background: branche.color || '#fff',
-      color: getTextColor(branche.color) || '#000',
+const initialBranches = Array(20)
+  .fill(initialBranche)
+  .map((branche, id) => ({ ...branche, id }))
+
+const BrancheListPage = () => {
+  const context = useContext(MarktGenericContext) as IMarktGenericContext & IQueryContext
+  const { mutateAsync: createGenericBranche, isLoading: createInProgress } = useCreateGenericBranche()
+  const [branches, dispatch] = React.useReducer(
+    genericBranchesReducer as unknown as Reducer<Branche[], IBrancheAction>,
+    []
+  )
+
+  useEffect(() => {
+    const payload = { data: context.genericBranches }
+    dispatch({ type: 'REPLACE_ALL', payload })
+  }, [context.isSuccess, context.genericBranches])
+
+  const brancheRows = (context.isLoading ? initialBranches : branches).map((branche) => {
+    return <GenericBranche key={branche.id} dispatch={dispatch} isLoading={context.isLoading} {...branche} />
+  })
+
+  const createBranche = async () => {
+    try {
+      const response = await createGenericBranche(initialBranche)
+      const payload = { newItem: response }
+      dispatch({ type: 'CREATE_ITEM', payload })
+    } catch (error: any) {
+      networkErrorNotification(error as IApiError)
     }
   }
 
-  brancheService: BrancheService
-
-  constructor(props: any) {
-    super(props)
-    this.brancheService = new BrancheService()
-  }
-
-  updateBranches = (branches: Branche[], dirty: boolean = false) => {
-    // Do not updateBranches when the branches length is 0.
-    if (branches.length > 0) {
-      localStorage.setItem('bwdm_lookup_branches', JSON.stringify(branches))
-      // We need to trigger the remote update with a dirty parameter.
-      // Do not update to often as this will send more requests
-      // then necessary to the backend.
-      if (dirty) {
-        const _branches = this.state.branches.filter((b: Branche) => b !== null)
-        this.brancheService.update(_branches).catch((e: any) => {
-          message.error('Er is iets fout gegaan')
-        })
-        this.setState({ dirtybits: false })
-      } else {
-        this.setState({ dirtybits: true })
-      }
-      this.setState({
-        branches,
-      })
-    }
-  }
-
-  componentDidMount = () => {
-    // mmApiService(`/api/mm/branches`).then((branches: Branche[]) => {
-    //     const _branches = branches.filter((b: Branche) => b !== null)
-    //     // Make sure there are no empty elements in the branches.
-    //     this.setState({
-    //         branches: _branches
-    //     })
-    // })
-  }
-
-  render() {
-    return (
-      <>
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <Link to="/">
-              <HomeOutlined />
-            </Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <Link to="/branches">
-              <span>Branches</span>
-            </Link>
-          </Breadcrumb.Item>
-        </Breadcrumb>
-        <table>
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Titel</th>
-              <th>Omschrijving</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.branches.map((branche, i) => {
-              return (
-                <tr key={i}>
-                  <td style={this.getStyle(branche)}>
-                    <Popover
-                      content={
-                        <ChromePicker
-                          color={branche.color}
-                          disableAlpha={true}
-                          onChange={(color: any, event: any) => {
-                            if (this.state.branches) {
-                              const _branches = this.state.branches
-                              _branches[i].color = color.hex
-                              this.updateBranches(_branches)
-                            }
-                          }}
-                        />
-                      }
-                      trigger="click"
-                    >
-                      <Button title="Kleur veranderen" icon={<BgColorsOutlined />} />
-                    </Popover>
-                  </td>
-                  <td>{branche.number ? branche.number : ''}</td>
-                  <td>
-                    <Input
-                      value={branche.brancheId}
-                      placeholder={'ID-Naam'}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                        if (e.target.value && this.state.branches) {
-                          const _branches = this.state.branches
-                          _branches[i].brancheId = e.target.value
-                          _branches[i].number = parseInt(e.target.value.split('-')[0])
-                          this.updateBranches(_branches)
-                        }
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      value={branche.description}
-                      placeholder={'Omschrijving'}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                        if (e.target.value && this.state.branches) {
-                          const _branches = this.state.branches
-                          _branches[i].description = e.target.value
-                          this.updateBranches(_branches)
-                        }
-                      }}
-                    />
-                  </td>
-
-                  <td>
-                    <Button
-                      danger
-                      title="Branche verwijderen"
-                      type="primary"
-                      icon={<DeleteOutlined />}
-                      onClick={() => {
-                        if (this.state.branches) {
-                          const _branches = this.state.branches
-                          delete _branches[i]
-                          this.updateBranches(_branches)
-                        }
-                      }}
-                    />
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-        <Button
-          onClick={() => {
-            const _branches = this.state.branches || []
-            // @ts-ignore
-            _branches.push({
-              number: 0,
-              brancheId: '',
-              description: '',
-              color: '#fff',
-            })
-            this.updateBranches(_branches)
-          }}
-          style={{ marginTop: '20px' }}
-          icon={<PlusOutlined />}
-        >
-          Toevoegen
-        </Button>
-        {/* <Button
-                disabled={!this.state.dirtybits}
-                title={`Upload branches.json naar de centrale server`}
-                style={{ marginLeft: "1em" }}
-                icon={<UploadOutlined />}
-                type="primary"
-                onClick={() => {
-                    this.updateBranches(this.state.branches, true)
-                }}
-
-            >Branches opslaan</Button> */}
-      </>
-    )
-  }
+  return (
+    <>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Afkorting</th>
+            <th>Omschrijving</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>{brancheRows}</tbody>
+      </table>
+      <AddButton inProgress={createInProgress} clickHandler={createBranche}>
+        Branche toevoegen
+      </AddButton>
+    </>
+  )
 }
+
+export default BrancheListPage

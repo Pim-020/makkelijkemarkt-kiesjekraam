@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Layout } from 'antd'
 
 import ErrorPage from './pages/ErrorPage'
+import BrancheListPage from './pages/BrancheListPage'
 import MarktDataProvider from './components/providers/MarktDataProvider'
 import MarktGenericDataProvider from './components/providers/MarktGenericDataProvider'
 import MarktPageWrapper from './components/MarktPageWrapper'
@@ -20,7 +21,7 @@ export default class App extends Component {
           <GlobalStyle />
           <div className="App">
             <BrowserRouter basename="/bdm">
-              <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink="/" />
+              <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink="/bdm/branches" />
               <div className="site-layout-content">
                 <Switch>
                   <Route exact path="/markt/:marktId">
@@ -28,6 +29,11 @@ export default class App extends Component {
                       <MarktDataProvider>
                         <MarktPageWrapper />
                       </MarktDataProvider>
+                    </MarktGenericDataProvider>
+                  </Route>
+                  <Route exact path="/branches">
+                    <MarktGenericDataProvider>
+                      <BrancheListPage />
                     </MarktGenericDataProvider>
                   </Route>
                   <Route component={ErrorPage} />

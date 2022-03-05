@@ -15,6 +15,24 @@ export const useGenericBranches = () => {
   )
 }
 
+export const useCreateGenericBranche = () => {
+  return useMutation<Branche, IApiError, Omit<Branche, 'id'>>((branche) => {
+    return mmApi.post(`/branche`, branche)
+  }, MM_API_QUERY_CONFIG)
+}
+
+export const useUpdateGenericBranche = (brancheId: string | number) => {
+  return useMutation<Branche, IApiError, Branche>((branche: Branche) => {
+    return mmApi.put(`/branche/${brancheId}`, branche)
+  }, MM_API_QUERY_CONFIG)
+}
+
+export const useDeleteGenericBranche = (brancheId: string | number) => {
+  return useMutation<Branche, IApiError>(() => {
+    return mmApi.delete_(`/branche/${brancheId}`)
+  }, MM_API_QUERY_CONFIG)
+}
+
 export const useMarktConfig = (marktId: string) => {
   return useQuery<IMarktConfiguratie, IApiError>(
     'marktconfig',
