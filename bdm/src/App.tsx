@@ -22,7 +22,7 @@ export default class App extends Component {
               <div className="site-layout-content">
                 <Switch>
                   <Route path="/markt/:id" exact component={MarketPage} />
-                  <Route path="/" component={ErrorPage} />
+                  <Route component={ErrorPage} />
                 </Switch>
               </div>
             </BrowserRouter>
