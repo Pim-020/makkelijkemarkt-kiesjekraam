@@ -6,11 +6,15 @@
     "jest": true,
     "shared-node-browser": true
   },
-  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
-  "parser": "babel-eslint",
+  "parser": "@typescript-eslint/parser",
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:react/recommended", "prettier" ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "parserOptions": {
-    "ecmaVersion": 2019,
-    "jsx": true
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
   "rules": {
     "accessor-pairs": ["error"],
@@ -36,7 +40,6 @@
     ],
     "complexity": ["off"],
     "computed-property-spacing": ["error", "never"],
-    "consistent-return": ["error"],
     "consistent-this": ["error"],
     "constructor-super": ["error"],
     "class-methods-use-this": ["off", { "exceptMethods": ["render"] }],
@@ -267,7 +270,6 @@
     "template-curly-spacing": ["error", "never"],
     "use-isnan": ["error"],
     "vars-on-top": ["off"],
-    "wrap-iife": ["error"],
     "wrap-regexp": ["off"],
     "yield-star-spacing": ["error"],
     "yoda": ["error", "never"],
@@ -275,7 +277,9 @@
     "wrap-iife": [2, "any"],
     "consistent-return": ["off"],
     "react/prop-types": ["off"],
-    "react/no-unknown-property": ["off"]
+    "react/no-unknown-property": ["off"],
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error"
   },
   "settings": {
     "react": {
