@@ -92,7 +92,7 @@ LABEL \
     org.label-schema.vcs-ref="${VCS_REF}" \
     org.label-schema.vcs-url="https://github.com/Amsterdam/fixxx-pakjekraam" \
     org.label-schema.vendor="Amsterdam" \
-    org.label-schema.version="12.0.0"
+    org.label-schema.version="16.4.2"
 
 # Add lowercase proxy settings for compatibility,
 # but use uppercase exports for shellcheck compatibility.
