@@ -132,7 +132,8 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
             type,
             datum : data["marktDate"],
             role  : Roles.MARKTMEESTER,
-            user  : getKeycloakUser(req)
+            user  : getKeycloakUser(req),
+            job   : jobId
         });
     }catch(error){
         console.log(error);

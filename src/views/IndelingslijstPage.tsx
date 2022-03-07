@@ -8,7 +8,8 @@ import {
     IMarkt,
     IObstakelBetween,
     IMarktondernemerVoorkeur,
-    IBranche
+    IBranche,
+    IAfwijzing
 } from '../markt.model';
 import {
     IAllocationPrintout
@@ -36,6 +37,7 @@ type IndelingslijstPageState = {
     ondernemers: IMarktondernemer[];
     paginas: IAllocationPrintout;
     toewijzingen: IToewijzing[];
+    afwijzingen: IAfwijzing[];
     markt: IMarkt;
     marktId: string;
     datum: string;
@@ -43,6 +45,7 @@ type IndelingslijstPageState = {
     branches: IBranche[];
     role: string;
     user: object;
+    job: string;
 };
 
 const titleMap: { [index: string]: string } = {
@@ -65,7 +68,8 @@ export default class IndelingslijstPage extends React.Component {
             type = 'indeling',
             branches,
             role,
-            user
+            user,
+            job
         } = props;
 
         const title        = titleMap[type];
@@ -76,6 +80,15 @@ export default class IndelingslijstPage extends React.Component {
         const obstakelList = obstakelsToLocatieKeyValue(obstakels);
 
         const toewijzingen = type !== 'wenperiode' ? props.toewijzingen : [];
+        const afwijzingen = props.afwijzingen;
+        const afwijzingPages = afwijzingen.reduce((pagedArray, item, index) => {
+          const pageIndex = Math.floor(index/30) //30 per page
+          if(!pagedArray[pageIndex]) {
+            pagedArray[pageIndex] = []
+          }
+          pagedArray[pageIndex].push(item)
+          return pagedArray
+        }, [])
 
         return (
             <MarktDetailBase
@@ -118,6 +131,7 @@ export default class IndelingslijstPage extends React.Component {
                 </PrintPage>
             ))}
 
+
                 <PrintPage
                     key="legenda"
                     title={`Legenda ${markt.naam}`}
@@ -130,7 +144,39 @@ export default class IndelingslijstPage extends React.Component {
                         aanmeldingen={aanmeldingen}
                         toewijzingen={toewijzingen}
                     ></IndelingsLegenda>
+                    <div className="IndelingsLegenda">
+                        <b><a href={`/logs/${job}`}>Bekijk Indelingslog</a></b>
+                    </div>
                 </PrintPage>
+
+                {afwijzingPages.map((page) => (
+                    <PrintPage
+                        key="afwijzingen"
+                        title={`Afwijzingen ${markt.naam}`}
+                        datum={datum}
+                    >
+                        <div className="IndelingsLegenda">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Erkenningsnummer</th>
+                                    <th>Status</th>
+                                    <th>Naam</th>
+                                    <th>Reden</th>
+                                </tr>
+                                </thead>
+                                {page.map((afw: IAfwijzing) => (
+                                <tr>
+                                    <td>{afw.ondernemer.erkenningsNummer}</td>
+                                    <td>{afw.ondernemer.description}</td>
+                                    <td>{afw.ondernemer.status}</td>
+                                    <td>{afw.reason.message}</td>
+                                </tr>
+                                ))}
+                            </table>
+                        </div>
+                    </PrintPage>
+                ))}
 
                 <script src="/js/IndelingslijstPage.js"></script>
             </MarktDetailBase>
