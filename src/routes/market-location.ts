@@ -135,6 +135,11 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
         return updateMarktVoorkeur(vk);
     };
 
+    if(parseInt(req.body.maximum) > parseInt(req.body.maxNumKramen)){
+        const formError = "Sorry, het maximale aantal kramen voor deze markt is "+req.body.maxNumKramen;
+        return res.redirect(`./?error=${formError}`);
+    }
+
     insertFormData()
         .then(insertAlgVoorkeurFormData)
         .then(

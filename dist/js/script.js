@@ -222,12 +222,14 @@ function splitByArray(orgArr, valueArr) {
         _getFormData = function () {
           var out = [],
           plaatsvoorkeuren = form.querySelectorAll('#plaatsvoorkeuren-list-item'),
+            maxNumKramen = form.querySelector('[name="maxNumKramen"]').value,
             erkenningsNummer = form.querySelector('[name="erkenningsNummer"]').value,
             minimum = form.querySelector('[name="minimum"]:checked').value,
             extra = form.querySelector('[name="extra-count"]:checked').value,
             maximum = parseInt(minimum, 10) + parseInt(extra, 10),
             anywhere = form.querySelector('[name="anywhere"]:checked') && form.querySelector('[name="anywhere"]:checked').value;
           out.push(encodeURIComponent('erkenningsNummer') + '=' + encodeURIComponent(erkenningsNummer));
+          out.push(encodeURIComponent('maxNumKramen') + '=' + encodeURIComponent(maxNumKramen));
           out.push(encodeURIComponent('redirectTo') + '=' + encodeURIComponent(redirectTo));
           anywhere && out.push(encodeURIComponent('anywhere') + '=' + encodeURIComponent(anywhere));
           out.push(encodeURIComponent('minimum') + '=' + encodeURIComponent(minimum));

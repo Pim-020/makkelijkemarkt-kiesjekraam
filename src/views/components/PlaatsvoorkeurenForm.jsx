@@ -70,6 +70,7 @@ class PlaatsvoorkeurenForm extends React.Component {
         };
 
         const isMarktmeesterEnVph = (role === 'marktmeester' && isVastOfExp(sollicitatie.status));
+        const maxNumKramen = markt.maxAantalKramenPerOndernemer;
 
         plaatsvoorkeuren = plaatsvoorkeuren.map((plaatsvoorkeur, index) => {
                 return {
@@ -103,12 +104,20 @@ class PlaatsvoorkeurenForm extends React.Component {
                     defaultValue={ondernemer.erkenningsnummer}
                 />
 
+                <input
+                    id="maxNumKramen"
+                    type="hidden"
+                    name="maxNumKramen"
+                    defaultValue={maxNumKramen}
+                />
+
                 <div className="PlaatsvoorkeurenForm__markt" data-markt-id={markt.id}>
                     <input name="maximum" id="maximum" type="hidden" defaultValue={voorkeur.maximum} />
                     <div className={"Fieldset PlaatsvoorkeurenForm__plaats-count " + (isMarktmeesterEnVph ? 'Fieldset--highlighted' : null)}>
                         {isMarktmeesterEnVph ?
                             <p className="Fieldset__highlight-text">Verouderde functie! Alleen aanpassen als je weet wat je doet.</p> : null
                         }
+                        { maxNumKramen ? <p className="Fieldset__highlight-text"><i>Voor deze markt geld een maximum van {maxNumKramen} plaatsen ondernemer.</i></p>: null }
                         <h2 className="Fieldset__header">
                             {isVastOfExp(sollicitatie.status) ? `Uw vaste ${plaatsenDuiding(sollicitatie.vastePlaatsen)}` : 'Aantal plaatsen'}
                         </h2>
