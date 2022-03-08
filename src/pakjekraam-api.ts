@@ -23,7 +23,7 @@ import {
     getMarktBasics,
 } from './makkelijkemarkt-api';
 
-import { ConceptQueue } from './concept-queue';
+import { ConceptQueue, ALLOCATION_MODE_SCHEDULED } from './concept-queue';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
@@ -201,6 +201,7 @@ export const calculateIndelingslijst = async (marktId: string, date: string) => 
     try {
         let data = await getCalculationInput(marktId, date);
         data = JSON.parse(JSON.stringify(data));
+        data["mode"] = ALLOCATION_MODE_SCHEDULED;
         const job = allocationQueue.createJob(data);
         const result = await job.save();
         return result.id;

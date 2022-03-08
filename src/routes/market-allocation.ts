@@ -9,7 +9,7 @@ import {
     getIndelingslijst,
 } from '../pakjekraam-api';
 
-import { ConceptQueue } from '../concept-queue';
+import { ConceptQueue, ALLOCATION_MODE_CONCEPT } from '../concept-queue';
 import { getCalculationInput } from '../pakjekraam-api';
 
 const conceptQueue = new ConceptQueue();
@@ -20,6 +20,7 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
     getCalculationInput(marktId, marktDate).then(data => {
             data = JSON.parse(JSON.stringify(data));
+            data["mode"] = ALLOCATION_MODE_CONCEPT;
             const job = allocationQueue.createJob(data);
             console.log("GET CALC INPUT");
             job.save().then(

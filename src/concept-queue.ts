@@ -2,6 +2,10 @@ const Queue = require('bee-queue');
 const redis = require('redis');
 const util = require('util');
 
+
+export const ALLOCATION_MODE_CONCEPT:string = "concept";
+export const ALLOCATION_MODE_SCHEDULED:string = "scheduled";
+
 export class ConceptQueue {
     client: any;
     worker_config: any;
