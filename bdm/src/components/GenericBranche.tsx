@@ -8,12 +8,13 @@ import { useDeleteGenericBranche, useUpdateGenericBranche } from '../hooks'
 import { SaveButton } from './buttons'
 import { getTextColor } from '../common/generic'
 import { networkErrorNotification } from '../common/notifications'
+import { COLOR } from '../constants'
 
-const getStyle = (color: string): CSSProperties => {
+const getColorAndBackgroundColorStyle = (color: string): CSSProperties => {
   color = `#${color}`
   return {
-    background: color || '#fff',
-    color: getTextColor(color) || '#000',
+    background: color || COLOR.WHITE,
+    color: getTextColor(color) || COLOR.BLACK,
   }
 }
 
@@ -32,7 +33,6 @@ const GenericBranche: React.VFC<Props> = ({
   isLoading,
   hasChanged = false,
 }) => {
-  const style = getStyle(color)
   const { mutateAsync: updateGenericBranche, isLoading: updateInProgress } = useUpdateGenericBranche(id)
   const { mutateAsync: deleteGenericBranche, isLoading: deleteInProgress } = useDeleteGenericBranche(id)
 
@@ -41,7 +41,7 @@ const GenericBranche: React.VFC<Props> = ({
       const response = await updateGenericBranche({ id, afkorting, omschrijving, color })
       const payload: IBranchePayload = { id, newItem: response }
       dispatch({ type: 'REPLACE_ITEM', payload })
-    } catch (error: any) {
+    } catch (error: unknown) {
       networkErrorNotification(error as IApiError)
     }
   }
@@ -51,14 +51,14 @@ const GenericBranche: React.VFC<Props> = ({
       await deleteGenericBranche()
       const payload: IBranchePayload = { id }
       dispatch({ type: 'DELETE_ITEM', payload })
-    } catch (error: any) {
+    } catch (error: unknown) {
       networkErrorNotification(error as IApiError)
     }
   }
 
   return (
     <tr>
-      <td style={style}>
+      <td style={getColorAndBackgroundColorStyle(color)}>
         <Popover
           content={
             <ChromePicker
@@ -116,11 +116,11 @@ const GenericBranche: React.VFC<Props> = ({
       </td>
 
       <td>
-        {hasChanged ? (
+        {hasChanged && (
           <SaveButton clickHandler={save} inProgress={updateInProgress}>
             Opslaan
           </SaveButton>
-        ) : null}
+        )}
       </td>
     </tr>
   )

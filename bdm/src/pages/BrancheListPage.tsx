@@ -40,7 +40,7 @@ const BrancheListPage = () => {
       const response = await createGenericBranche(initialBranche)
       const payload = { newItem: response }
       dispatch({ type: 'CREATE_ITEM', payload })
-    } catch (error: any) {
+    } catch (error: unknown) {
       networkErrorNotification(error as IApiError)
     }
   }

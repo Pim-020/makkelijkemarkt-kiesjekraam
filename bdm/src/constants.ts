@@ -5,3 +5,8 @@ export const MM_API_QUERY_CONFIG = {
   retry: 1,
   refetchOnWindowFocus: false, //refetch when window comes to focus
 }
+
+export const COLOR = {
+  WHITE: '#fff',
+  BLACK: '#000',
+}

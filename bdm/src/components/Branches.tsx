@@ -5,6 +5,7 @@ import CSS from 'csstype'
 
 import { AssignedBranche, Branche } from '../models'
 import { getTextColor } from '../common/generic'
+import { COLOR } from '../constants'
 
 export default class Branches extends Component<{
   id: string
@@ -183,8 +184,8 @@ export default class Branches extends Component<{
                 _branches.push({
                   brancheId: '',
                   verplicht: false,
-                  color: '#000',
-                  backGroundColor: '#fff',
+                  color: COLOR.BLACK,
+                  backGroundColor: COLOR.WHITE,
                   allocated: 0,
                 })
                 this.updateStorage(_branches)

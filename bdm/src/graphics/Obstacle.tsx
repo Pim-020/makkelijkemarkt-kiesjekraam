@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { COLOR } from '../constants'
 import { Lot } from '../models'
 import SvgBench from './SvgBench'
 import SvgElectra from './SvgElectra'
@@ -18,7 +19,7 @@ export default class Obstacle extends Component<{
     if (this.props.classDef.indexOf('selected') > -1) {
       return '#1890ff'
     }
-    return '#fff'
+    return COLOR.WHITE
   }
 
   getGraphic = () => {
