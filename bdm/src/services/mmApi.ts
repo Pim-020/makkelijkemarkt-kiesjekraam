@@ -14,8 +14,9 @@ const handleResponse = async (response: Response) => {
   try {
     responseData = await response.json()
   } catch {
-    // in case of empty response body
+    responseData = {} // in case of empty response body
   }
+
   if (!response.ok) {
     const customError: IApiError = new Error(responseData.message ? responseData.message.error : response.statusText)
     customError.status = response.status
