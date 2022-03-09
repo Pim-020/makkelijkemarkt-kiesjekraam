@@ -49,11 +49,11 @@ const GenericBranche: React.VFC<Props> = ({
   const apiDelete = async () => {
     try {
       await deleteGenericBranche()
+      const payload: IBranchePayload = { id }
+      dispatch({ type: 'DELETE_ITEM', payload })
     } catch (error: any) {
       networkErrorNotification(error as IApiError)
     }
-    const payload: IBranchePayload = { id }
-    dispatch({ type: 'DELETE_ITEM', payload })
   }
 
   return (
