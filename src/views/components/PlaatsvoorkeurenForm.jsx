@@ -117,7 +117,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                         {isMarktmeesterEnVph ?
                             <p className="Fieldset__highlight-text">Verouderde functie! Alleen aanpassen als je weet wat je doet.</p> : null
                         }
-                        { maxNumKramen ? <p className="Fieldset__highlight-text"><i>Voor deze markt geld een maximum van {maxNumKramen} plaatsen ondernemer.</i></p>: null }
+                        { maxNumKramen ? <p className="Fieldset__highlight-text"><i>Voor deze markt geldt een maximum van {maxNumKramen} plaatsen ondernemer.</i></p>: null }
                         <h2 className="Fieldset__header">
                             {isVastOfExp(sollicitatie.status) ? `Uw vaste ${plaatsenDuiding(sollicitatie.vastePlaatsen)}` : 'Aantal plaatsen'}
                         </h2>
