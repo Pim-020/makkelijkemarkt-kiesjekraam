@@ -81,14 +81,17 @@ export default class IndelingslijstPage extends React.Component {
 
         const toewijzingen = type !== 'wenperiode' ? props.toewijzingen : [];
         const afwijzingen = props.afwijzingen;
-        const afwijzingPages = afwijzingen.reduce((pagedArray, item, index) => {
-          const pageIndex = Math.floor(index/30) //30 per page
-          if(!pagedArray[pageIndex]) {
-            pagedArray[pageIndex] = []
-          }
-          pagedArray[pageIndex].push(item)
-          return pagedArray
-        }, [])
+        let afwijzingPages = [];
+        if(afwijzingen !== undefined){
+            afwijzingPages = afwijzingen.reduce((pagedArray, item, index) => {
+              const pageIndex = Math.floor(index/30) //30 per page
+              if(!pagedArray[pageIndex]) {
+                pagedArray[pageIndex] = []
+              }
+              pagedArray[pageIndex].push(item)
+              return pagedArray
+            }, [])
+        }
 
         return (
             <MarktDetailBase
@@ -144,9 +147,9 @@ export default class IndelingslijstPage extends React.Component {
                         aanmeldingen={aanmeldingen}
                         toewijzingen={toewijzingen}
                     ></IndelingsLegenda>
-                    <div className="IndelingsLegenda">
+                    { job ? <div className="IndelingsLegenda">
                         <b><a href={`/logs/${job}`}>Bekijk Indelingslog</a></b>
-                    </div>
+                    </div>: null}
                 </PrintPage>
 
                 {afwijzingPages.map((page) => (
