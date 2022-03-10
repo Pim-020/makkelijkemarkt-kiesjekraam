@@ -21,7 +21,9 @@ class MarktenPage extends React.Component {
                     role={role}
                     user={user}
                     breadcrumbs={breadcrumbs}
-                />
+                >
+                    <PullDown />
+                </Header>
                 <Content>
                     {/* <h1 className="Heading Heading--intro">Acties</h1>
                     <a href="/upload-markten" className="Link">Upload markten</a> */}
@@ -32,6 +34,12 @@ class MarktenPage extends React.Component {
             </Page>
         );
     }
+}
+
+const PullDown = () => {
+    return (
+        <span>PullDown 2</span>
+    )
 }
 
 module.exports = MarktenPage;
