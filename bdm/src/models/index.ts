@@ -154,16 +154,49 @@ export interface IMarktContext {
   marktId: string
   saveMarktConfig(marktConfiguratie: IMarktConfiguratie): void
   saveInProgress: boolean
-  genericBranches?: Branche[]
   markt?: MMarkt
+  marktNotFound: boolean
   marktConfig?: IMarktConfiguratie
-  obstakel?: INaam[]
-  plaatseigenschap?: INaam[]
+  marktConfigNotFound: boolean
+}
+
+export interface IMarktGenericContext {
+  genericBranches: Branche[]
+  obstakel: INaam[]
+  plaatseigenschap: INaam[]
 }
 
 export interface IApiError extends Error {
   status?: number
 }
+
+export interface IQueryContext {
+  isLoading: boolean
+  isSuccess: boolean
+  errors: (IApiError | null)[]
+  queryProgress: number
+}
+
+export interface IAction<Payload = {}> {
+  type: string
+  payload: Payload
+}
+
+export interface IItemReducerAction extends IAction<IItemReducerActionPayload> {}
+export interface IItemReducerActionPayload<Data = []> {
+  data?: Data
+  id?: number
+  key?: string
+  value?: any
+  newItem?: any
+}
+
+export interface IItemReducerItem {
+  id: number | string
+}
+
+export interface IBrancheAction extends IAction<IBranchePayload> {}
+export interface IBranchePayload extends IItemReducerActionPayload<Branche[]> {}
 
 export const WeekDays: DayOfWeek[] = [
   { id: 0, name: 'Maandag', abbreviation: 'MA' },

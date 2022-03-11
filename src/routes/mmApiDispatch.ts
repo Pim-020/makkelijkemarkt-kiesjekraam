@@ -6,6 +6,8 @@ import { callApiGeneric, HttpMethod } from '../makkelijkemarkt-api';
 
 const router = express.Router();
 const subroutes = [
+    '/branche',
+    '/branche/:brancheId',
     '/branche/all',
     '/obstakel/all',
     '/plaatseigenschap/all',

@@ -3,18 +3,27 @@ import { Tabs, Row, Col } from 'antd'
 
 import Day from '../components/Day'
 import { Transformer } from '../services/transformer'
-
-import { AssignedBranche, Branche, IMarktConfiguratie, MarketEventDetails, Plan } from '../models'
+import {
+  AssignedBranche,
+  Branche,
+  IMarktConfiguratie,
+  IMarktGenericContext,
+  IQueryContext,
+  MarketEventDetails,
+  Plan,
+} from '../models'
 import Branches from '../components/Branches'
 import Configuration from '../services/configuration'
 import { validateLots } from '../common/validator'
-
-import MarketDataWrapper, { MarktContext } from '../components/MarktDataWrapper'
+import { MarktContext } from '../components/providers/MarktDataProvider'
 import { SaveButton } from '../components/buttons'
 
 const { TabPane } = Tabs
+type Props = {
+  marktGenericContext: IMarktGenericContext & IQueryContext
+}
 
-class MarketPage extends React.Component {
+class MarketPage extends React.Component<Props> {
   static contextType = MarktContext
   readonly state: {
     lookupBranches?: Branche[]
@@ -43,7 +52,7 @@ class MarketPage extends React.Component {
 
   dayChanged = () => {
     this.transformer
-      .encode(this.context.marktConfig, this.context.genericBranches, this.state.marketEventDetails)
+      .encode(this.context.marktConfig, this.props.marktGenericContext.genericBranches, this.state.marketEventDetails)
       .then((result) => {
         validateLots(result)
         this.branchesRef.current?.updateStorage(result.branches)
@@ -81,7 +90,7 @@ class MarketPage extends React.Component {
   }
 
   componentDidMount() {
-    this.transformer.encode(this.context.marktConfig, this.context.genericBranches).then((result) => {
+    this.transformer.encode(this.context.marktConfig, this.props.marktGenericContext.genericBranches).then((result) => {
       validateLots(result)
       this.branchesRef.current?.updateStorage(result.branches)
       this.setState(
@@ -108,7 +117,7 @@ class MarketPage extends React.Component {
         <Row align="top" gutter={[16, 16]}>
           <Col></Col>
         </Row>
-        {this.context.genericBranches && (
+        {this.props.marktGenericContext.genericBranches && (
           <Tabs
             activeKey={this.state.activeKey}
             onTabClick={(key: string, e: MouseEvent | KeyboardEvent) => {
@@ -133,10 +142,4 @@ class MarketPage extends React.Component {
   }
 }
 
-export default function WrappedMarketPage(props: any) {
-  return (
-    <MarketDataWrapper {...props}>
-      <MarketPage />
-    </MarketDataWrapper>
-  )
-}
+export default MarketPage

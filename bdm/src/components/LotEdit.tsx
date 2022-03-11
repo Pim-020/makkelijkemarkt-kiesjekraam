@@ -6,7 +6,7 @@ import { RadioChangeEvent } from 'antd/lib/radio'
 import { capitalize } from 'lodash'
 
 import { AssignedBranche, INaam, Lot } from '../models'
-import { MarktContext } from './MarktDataWrapper'
+import { MarktGenericContext } from './providers/MarktGenericDataProvider'
 
 interface LotEditProps {
   branches: AssignedBranche[]
@@ -17,7 +17,7 @@ interface LotEditProps {
 }
 
 export default class LotEdit extends Component<LotEditProps> {
-  static contextType = MarktContext
+  static contextType = MarktGenericContext
   NameRef: RefObject<Input>
   readonly state: { lot?: Lot; currentPosition?: [number, number, number] } = {}
 
