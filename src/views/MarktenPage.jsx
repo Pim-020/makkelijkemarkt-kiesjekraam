@@ -4,6 +4,7 @@ const PropTypes = require('prop-types');
 const Header = require('./components/Header');
 const Content = require('./components/Content');
 const MarktList = require('./components/MarktList');
+import PullDownMenu from './components/PullDownMenu'
 
 class MarktenPage extends React.Component {
     propTypes = {
@@ -22,7 +23,7 @@ class MarktenPage extends React.Component {
                     user={user}
                     breadcrumbs={breadcrumbs}
                 >
-                    <PullDown />
+                    <PullDownMenu />
                 </Header>
                 <Content>
                     {/* <h1 className="Heading Heading--intro">Acties</h1>
@@ -34,12 +35,6 @@ class MarktenPage extends React.Component {
             </Page>
         );
     }
-}
-
-const PullDown = () => {
-    return (
-        <span>PullDown 2</span>
-    )
 }
 
 module.exports = MarktenPage;
