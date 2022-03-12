@@ -1,5 +1,12 @@
+/* The container <div> - needed to position the dropdown content */
+.pull-down-menu {
+  background-color: inherit;
+  position: relative;
+  display: inline-block;
+}
+
 /* Dropdown Button */
-.dropbtn {
+.pull-down-menu__header {
   background-color: inherit;
   color: black;
   padding: 16px;
@@ -7,15 +14,8 @@
   border: none;
 }
 
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  background-color: inherit;
-  position: relative;
-  display: inline-block;
-}
-
 /* Dropdown Content (Hidden by Default) */
-.dropdown-content {
+.pull-down-menu__content {
   display: none;
   position: absolute;
   background-color: #f1f1f1;
@@ -25,13 +25,13 @@
 }
 
 @media screen and (max-width: 600px) {
-  .dropdown-content {
+  .pull-down-menu__content {
     right: 0;
   }
 }
 
 /* Links inside the dropdown */
-.dropdown-content a {
+.pull-down-menu__content .pull-down-menu__option {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
@@ -39,10 +39,17 @@
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #000; color: #fff}
+.pull-down-menu__content .pull-down-menu__option:hover {
+  background-color: #000;
+  color: #fff;
+}
 
 /* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {display: block;}
+.pull-down-menu:hover .pull-down-menu__content {
+  display: block;
+}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {background-color: #da1219;}
+.pull-down-menu:hover .pull-down-menu__header {
+  background-color: #da1219;
+}
