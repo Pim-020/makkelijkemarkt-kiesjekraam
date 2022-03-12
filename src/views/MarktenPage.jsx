@@ -45,8 +45,8 @@ const ConfigurationPullDownMenu = () => {
     return (
         <PullDownMenu options={options}>
             <span>
-                <Cog style={{width: '24px', height: '24px'}} />
-                <TriangleSmallDown style={{width: '24px', height: '24px'}} />
+                <Cog />
+                <TriangleSmallDown />
             </span>
         </PullDownMenu>
     );

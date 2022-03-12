@@ -14,16 +14,11 @@
 .pull-down-menu__content {
   display: none;
   position: absolute;
+  right: 0;
   background-color: $neutral-grey2;
   min-width: 180px;
   box-shadow: 0px 8px 16px 0px $overlay-black50;
   z-index: 1;
-}
-
-@media screen and (max-width: 600px) {
-  .pull-down-menu__content {
-    right: 0;
-  }
 }
 
 .pull-down-menu__content .pull-down-menu__option {
