@@ -4,6 +4,8 @@ const PropTypes = require('prop-types');
 const Header = require('./components/Header');
 const Content = require('./components/Content');
 const MarktList = require('./components/MarktList');
+import PullDownMenu from './components/PullDownMenu';
+import { Cog, TriangleSmallDown } from './components/svg';
 
 class MarktenPage extends React.Component {
     propTypes = {
@@ -17,11 +19,9 @@ class MarktenPage extends React.Component {
         const { role, user, markten } = this.props;
         return (
             <Page>
-                <Header
-                    role={role}
-                    user={user}
-                    breadcrumbs={breadcrumbs}
-                />
+                <Header role={role} user={user} breadcrumbs={breadcrumbs}>
+                    <ConfigurationPullDownMenu />
+                </Header>
                 <Content>
                     {/* <h1 className="Heading Heading--intro">Acties</h1>
                     <a href="/upload-markten" className="Link">Upload markten</a> */}
@@ -33,5 +33,23 @@ class MarktenPage extends React.Component {
         );
     }
 }
+
+const ConfigurationPullDownMenu = () => {
+    const options = [
+        {
+            destination: '/bdm/branches',
+            name: 'Branches bewerken',
+        },
+    ];
+
+    return (
+        <PullDownMenu options={options}>
+            <span>
+                <Cog />
+                <TriangleSmallDown />
+            </span>
+        </PullDownMenu>
+    );
+};
 
 module.exports = MarktenPage;
