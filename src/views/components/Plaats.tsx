@@ -67,7 +67,7 @@ const Plaats = ({
                 className={`Plaats__prop Plaats__prop-branche autoColor ${wilBakken ? 'bak' : ''}`}
                 style={{ backgroundColor: color || 'transparent' }}
             >
-                {realBranche ? realBranche.number : null}
+                {realBranche ? realBranche.brancheId.substring(0,3) : null}
             </td>
             <td className="Plaats__prop Plaats__prop-soll Plaats__prop-vph">
                 {opUitgebreid ? <div className="Plaats__prop__icon Icon Icon--plus"></div> : null }
