@@ -131,7 +131,7 @@ class MarketPage extends React.Component<Props> {
               <Branches
                 id={this.context.marktId}
                 ref={this.branchesRef}
-                lookupBranches={this.context.genericBranches}
+                lookupBranches={this.props.marktGenericContext.genericBranches}
                 changed={this.updateAssignedBranches}
               />
             </TabPane>
