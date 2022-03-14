@@ -25,27 +25,39 @@ export const migrateConfig = async (): Promise<boolean> => {
 
     console.log('Markten opzoeken in config: ', markten.map(markt => markt.naam));
 
-    const promises = markten.map(markt => {
-        return handleMarkt(markt);
+    const configPromises = markten.map(markt => {
+        return getMarktConfigForMarkt(markt);
     });
 
-    await Promise.all(promises);
+    const configs = await Promise.all(configPromises);
+
+    const marktPromises = [];
 
     await handleBranches();
     await handleObstakels();
     await handlePlaatsEigenschappen();
 
+    configs.forEach((config, index) => {
+        if (config !== null) {
+            const markt = markten[index];
+
+            marktPromises.push(handleConfig(markt, config));
+        }
+    });
+
+    await Promise.all(marktPromises);
+
     return true;
 };
 
-const handleMarkt = async (markt: MMMarkt) => {
+const getMarktConfigForMarkt = async (markt: MMMarkt) => {
     let config;
 
     try {
         config = await MarktConfig.get(markt.afkorting);
     } catch (e) {
         console.log(`Markt ${markt.naam} niet gevonden in KJK`);
-        return;
+        return null;
     }
 
     config.branches.forEach((branche: IBranche) => {
@@ -86,7 +98,7 @@ const handleMarkt = async (markt: MMMarkt) => {
         });
     });
 
-    await handleConfig(markt, config);
+    return config;
 };
 
 const handleBranches = async () => {
