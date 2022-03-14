@@ -9,6 +9,7 @@ import BrancheListPage from './pages/BrancheListPage'
 import MarktDataProvider from './components/providers/MarktDataProvider'
 import MarktGenericDataProvider from './components/providers/MarktGenericDataProvider'
 import MarktPageWrapper from './components/MarktPageWrapper'
+import { HOME_LINK } from './constants'
 
 const { Footer } = Layout
 const queryClient = new QueryClient()
@@ -21,7 +22,7 @@ export default class App extends Component {
           <GlobalStyle />
           <div className="App">
             <BrowserRouter basename="/bdm">
-              <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink="/bdm/branches" />
+              <Header tall={false} title="Bewerk de markten" fullWidth={false} homeLink={HOME_LINK} />
               <div className="site-layout-content">
                 <Switch>
                   <Route exact path="/markt/:marktId">

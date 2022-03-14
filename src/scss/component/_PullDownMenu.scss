@@ -1,0 +1,42 @@
+.pull-down-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.pull-down-menu__header {
+    background-color: inherit;
+    color: $primary-black;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+
+.pull-down-menu__content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: $neutral-grey2;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px 0px $overlay-black50;
+    z-index: 1;
+}
+
+.pull-down-menu__content .pull-down-menu__option {
+    color: $primary-black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.pull-down-menu__content .pull-down-menu__option:hover {
+    background-color: $primary-black;
+    color: $primary-white;
+}
+
+.pull-down-menu:hover .pull-down-menu__content {
+    display: block;
+}
+
+.pull-down-menu:hover .pull-down-menu__header {
+    background-color: $amsterdam-red;
+}

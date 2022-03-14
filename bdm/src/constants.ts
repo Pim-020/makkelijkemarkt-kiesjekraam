@@ -10,3 +10,6 @@ export const COLOR = {
   WHITE: '#fff',
   BLACK: '#000',
 }
+
+const KJK_HOME_LINK = '/markt'
+export const HOME_LINK = KJK_HOME_LINK
