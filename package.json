@@ -109,7 +109,6 @@
     "node-cache": "5.1.2",
     "node-stream-zip": "1.13.0",
     "nodemailer": "6.7.2",
-    "nodemailer-sendgrid-transport": "0.2.0",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "pg-pool": "^3.5.1",
