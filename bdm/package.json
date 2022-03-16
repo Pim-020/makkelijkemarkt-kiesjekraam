@@ -61,6 +61,7 @@
     "@types/react-edit-text": "^1.1.0",
     "@types/react-router-dom": "^5.1.6",
     "@types/styled-components": "^5.1.22",
+    "msw": "^0.39.2",
     "prettier": "2.5.1"
   }
 }
