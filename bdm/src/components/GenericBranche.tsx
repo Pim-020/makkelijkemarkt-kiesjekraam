@@ -10,11 +10,10 @@ import { getTextColor } from '../common/generic'
 import { networkErrorNotification } from '../common/notifications'
 import { COLOR } from '../constants'
 
-const getColorAndBackgroundColorStyle = (color: string): CSSProperties => {
-  color = `#${color}`
+export const getColorAndBackgroundColorStyle = (color: string): CSSProperties => {
   return {
-    background: color || COLOR.WHITE,
-    color: getTextColor(color) || COLOR.BLACK,
+    backgroundColor: color ? `#${color}` : COLOR.WHITE,
+    color: color ? getTextColor(color) : COLOR.BLACK,
   }
 }
 
