@@ -1,3 +1,4 @@
+import React from 'react'
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
@@ -67,7 +68,7 @@ describe('Afkorting input and save button', () => {
     return screen.getByText('Opslaan')
   }
 
-  const getSpinnerAfterClickingSaveButton = async (saveButton) => {
+  const getSpinnerAfterClickingSaveButton = async (saveButton: HTMLElement) => {
     userEvent.click(saveButton)
     return await screen.findByLabelText('loading')
   }
