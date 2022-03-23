@@ -72,7 +72,9 @@ const GenericBranche: React.VFC<Props> = ({
           trigger="click"
         >
           {isLoading ? (
-            <Skeleton.Button active style={{ width: 32 }} />
+            <div data-testid="skeleton-button">
+              <Skeleton.Button active style={{ width: 32 }} />
+            </div>
           ) : (
             <Button title="Kleur veranderen" icon={<BgColorsOutlined />} />
           )}
