@@ -1,5 +1,5 @@
 ### Bewerk de markten
-FROM node:13.12.0-alpine as bdm_build
+FROM node:16.4.2-alpine as bdm_build
 
 COPY bdm/package.json bdm/
 COPY bdm/package-lock.json bdm/
