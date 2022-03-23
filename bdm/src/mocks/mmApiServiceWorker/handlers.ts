@@ -1,16 +1,21 @@
-import { rest } from 'msw'
+import { rest, RestContext, RestRequest, ResponseComposition } from 'msw'
 import { MM_API_BASE_URL } from '../../constants'
 import { genericBranches } from '../../fixtures'
 
 const DELAY = 500
-const getDelay = (ctx) => ctx.delay(process.env.REACT_APP_MOCK_SERVICE_WORKER ? DELAY : 0)
+const getDelay = (ctx: RestContext) => ctx.delay(process.env.REACT_APP_MOCK_SERVICE_WORKER ? DELAY : 0)
 
-const unsafeMethodDefaultCatchers = ['delete', 'put', 'post'].map((method) => {
-  return rest[method]('*', (req, res, ctx) => {
-    console.error('No mock handler implemented for this modification request')
-    return res(ctx.status(501), ctx.json(req.body))
-  })
-})
+const unsafeMethodDefaultHandler = (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
+  console.error('No mock handler implemented for this modification request')
+  return res(ctx.status(501), ctx.json(req.body))
+}
+
+const unsafeMethodDefaultCatchers = [
+  rest.post('*', unsafeMethodDefaultHandler),
+  rest.put('*', unsafeMethodDefaultHandler),
+  rest.delete('*', unsafeMethodDefaultHandler),
+  rest.patch('*', unsafeMethodDefaultHandler),
+]
 
 const brancheHandlers = [
   rest.get(`${MM_API_BASE_URL}/branche/all`, (req, res, ctx) => {
@@ -18,7 +23,7 @@ const brancheHandlers = [
   }),
   rest.post(`${MM_API_BASE_URL}/branche`, (req, res, ctx) => {
     const id = Math.max(...genericBranches.map((branche) => branche.id)) + Math.random() * 1000
-    return res(getDelay(ctx), ctx.json({ ...req.body, id }))
+    return res(getDelay(ctx), ctx.json({ ...(req.body as {}), id }))
   }),
   rest.put(`${MM_API_BASE_URL}/branche/:id`, (req, res, ctx) => {
     return res(getDelay(ctx), ctx.json(req.body))
